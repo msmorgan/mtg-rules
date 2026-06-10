@@ -35,7 +35,7 @@ set -g scripts $repo/skill/scripts
 set -g fixtures $repo/tests/fixtures
 
 # --- lib.fish ---
-t "lib resolves rules dir" 'data/rules$' fish -c "source $scripts/lib.fish; echo \$rules_dir"
+t "lib resolves rules dir" 'data/rules$' fish -c "source $scripts/lib.fish; or exit 1; echo \$rules_dir"
 
 # (tests appended by later tasks above this line)
 
