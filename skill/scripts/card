@@ -1,0 +1,58 @@
+#!/usr/bin/env fish
+# card <name> — exact oracle text + characteristics from MTGJSON atomic data.
+
+source (path resolve (status dirname))/lib.fish; or exit 1
+
+test (count $argv) -ge 1; or die "usage: card <card name>"
+set -l name "$argv"
+set -l idx $derived_dir/cards.jsonl
+set -l atomic $mtgjson_dir/AtomicCards.json
+
+set -l fmt '
+    "# \(.name)\(if .face and .face != .name then "  (face: \(.face), \(.layout // "?"))" else "" end)",
+    "\(.manaCost // "(no mana cost)")  \(.type)",
+    (.text // "(no rules text)"),
+    (if .power != null then "P/T: \(.power)/\(.toughness)" else empty end),
+    (if .loyalty != null then "Loyalty: \(.loyalty)" else empty end),
+    (if .defense != null then "Defense: \(.defense)" else empty end),
+    ""
+'
+
+if not test -f $idx
+    echo >&2 "card: note: derived index missing — run scripts/build_derived.fish for fast lookups; using slow path"
+    jq -r --arg n $name '
+        ( .data[$n]
+          // [ .data | to_entries[]
+               | select(.key | ascii_downcase == ($n | ascii_downcase))
+               | .value[] ] ) as $faces
+        | if ($faces | length) == 0 then "card: no card named \($n)\n" | halt_error(1) else empty end,
+          ( $faces[] | {name, face: .faceName, layout, manaCost, type, text,
+                        power, toughness, loyalty, defense} | ('$fmt') )
+    ' $atomic
+    exit
+end
+
+test $idx -nt $atomic
+or echo >&2 "card: warning: derived index older than AtomicCards.json — run scripts/build_derived.fish"
+
+set -l lines (grep -iF -- $name $idx)
+set -l hits
+test (count $lines) -gt 0
+and set hits (printf '%s\n' $lines | jq -c --arg n $name '
+    ($n | ascii_downcase) as $q
+    | select(.supported == true)
+    | select(((.name | ascii_downcase) == $q) or (((.face // "") | ascii_downcase) == $q))')
+
+if test (count $hits) -eq 0
+    set -l near
+    test (count $lines) -gt 0
+    and set near (printf '%s\n' $lines | jq -r --arg n $name '
+        ($n | ascii_downcase) as $q
+        | select(.name | ascii_downcase | contains($q)) | .name' | sort -u | head -8)
+    if test (count $near) -gt 0
+        die "card: no exact match for '$name'. Did you mean: "(string join ', ' $near)
+    end
+    die "card: no card named '$name'"
+end
+
+printf '%s\n' $hits | jq -r "$fmt"

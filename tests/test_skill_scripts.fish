@@ -76,6 +76,13 @@ t "mtr search finds sideboard sections" '[Ss]ideboard' $scripts/mtr --search sid
 t_fails "mtr bogus section" $scripts/mtr 99.9
 t_fails "mtr rejects list with positional" $scripts/mtr --list 1.7
 
+# --- card ---
+t "card lightning bolt oracle text" '3 damage to any target' $scripts/card Lightning Bolt
+t "card face lookup resolves full name" 'Fire // Ice' $scripts/card Fire
+t "card case-insensitive" 'Llanowar Elves' $scripts/card llanowar elves
+t_fails "card bogus name" $scripts/card Zzgrokk the Unreal
+t_fails "card partial name fails with suggestions" $scripts/card Llanowar
+
 # (tests appended by later tasks above this line)
 
 echo
