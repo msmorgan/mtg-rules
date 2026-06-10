@@ -41,7 +41,7 @@ Per-player state the rules reference:
 - **Designations a player can have** — monarch (725.1), initiative (726.1),
   city's blessing (702.131c). The *game* can have day/night (731.1). Full
   enumeration with mechanics: see `designations.md`.
-- **Maximum hand size** — normally seven; excess discarded in cleanup (402.2).
+- **Maximum hand size** — normally seven; excess discarded in cleanup (402.2, 514.1).
 - **Ownership vs control** — owner = who started the game with the card in
   their deck (or brought/started it; 108.3). A card has no controller unless
   it represents a permanent or spell; otherwise use its owner (108.4, 108.4a).
