@@ -46,6 +46,11 @@ t "rule prints whole section" '120\.6' $scripts/rule 120
 t_fails "rule rejects bogus number" $scripts/rule 999.9
 t_fails "rule rejects garbage arg" $scripts/rule abc
 
+# --- rule-search ---
+t "rule-search finds deathtouch rules" '702\.2' $scripts/rule-search deathtouch
+t "rule-search truncation notice" 'more matches' $scripts/rule-search --max 1 'the'
+t_fails "rule-search misses garbage" $scripts/rule-search 'zzqqxyzzy'
+
 # (tests appended by later tasks above this line)
 
 echo

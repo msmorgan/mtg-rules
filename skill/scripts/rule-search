@@ -1,0 +1,18 @@
+#!/usr/bin/env fish
+# rule-search <regex> [--max N] — case-insensitive search over CR rule text.
+
+source (path resolve (status dirname))/lib.fish; or exit 1
+
+argparse 'm/max=' -- $argv; or exit 1
+set -l max 20
+set -ql _flag_max; and set max $_flag_max
+test (count $argv) -eq 1; or die "usage: rule-search <regex> [--max N]"
+
+jq -r --arg pat $argv[1] --argjson max $max '
+    [ to_entries[] | select(.value.ruleText | test($pat; "i")) ] as $hits
+    | ($hits | length) as $n
+    | if $n == 0 then "rule-search: nothing matches /\($pat)/\n" | halt_error(1) else empty end,
+      ( $hits[:$max][]
+        | "\(.key): \(.value.ruleText | if length > 200 then .[:200] + "…" else . end)" ),
+      ( if $n > $max then "(\($n - $max) more matches — raise --max)" else empty end )
+' $rules_dir/cr.json
