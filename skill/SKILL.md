@@ -57,11 +57,11 @@ live data's date is in line 3 of `../data/rules/cr.txt`. If
 `scripts/check-citations` fails, or a cited rule reads differently than a
 doc claims, trust the CR text, answer from it, and flag the doc for re-sync.
 
-## Data (repo `data/`, refreshed by repo-root `fetch_data.fish`)
+## Data (repo `data/`, refreshed by repo-root `scripts/fetch_data.fish`)
 
 - `rules/cr.{txt,json}` — Comprehensive Rules (json keyed by rule number)
 - `rules/{glossary,unofficial-glossary,keywords}.json` — terms + keyword lists
 - `rules/mtr.json` — Magic Tournament Rules
 - `catalogs/*.json` — Scryfall closed vocabularies (types, keywords, word-bank)
 - `mtgjson/` — card data; `derived/cards.jsonl` built by repo-root
-  `build_derived.fish` (rebuild after refreshes)
+  `scripts/build_derived.fish` (rebuild after refreshes)
