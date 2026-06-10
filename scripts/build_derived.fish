@@ -1,14 +1,18 @@
 #!/usr/bin/env fish
 # Build data/derived/cards.jsonl — one JSON object per card face — from AtomicCards.json.
 # Re-run after scripts/fetch_data.fish refreshes mtgjson data.
+# Note: .name is the full combined card name ("Fire // Ice"); .face is the per-face name.
 
 source (status dirname)/lib/setup.fish
 or exit 1
 
 set -l out $data_dir/derived/cards.jsonl
 mkdir -p $data_dir/derived
+or exit 1
 
-echo "build_derived: writing $out (takes ~1 minute)…" >&2
+echo "build_derived: writing $out (takes ~10 seconds)…" >&2
+rm -f $out.tmp
+# Emits ALL faces; supported=false rows (un-sets, reversibles) are retained for corpus --all.
 jq -c '
     .data | to_entries[] | .value[]
     | { name, face: .faceName, side, layout,
