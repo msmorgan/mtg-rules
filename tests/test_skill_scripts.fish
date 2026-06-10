@@ -37,6 +37,15 @@ set -g fixtures $repo/tests/fixtures
 # --- lib.fish ---
 t "lib resolves rules dir" 'data/rules$' fish -c "source $scripts/lib.fish; or exit 1; echo \$rules_dir"
 
+# --- rule ---
+t "rule prints a subrule" 'concedes leaves the game' $scripts/rule 104.3a
+t "rule walks rule family" '601\.2a' $scripts/rule 601.2
+t "rule family excludes neighbors" '^0$' fish -c "$scripts/rule 601.2 | grep -c '^601\.3' ; true"
+t "rule prints examples" 'Example:' $scripts/rule 702.19c
+t "rule prints whole section" '120\.6' $scripts/rule 120
+t_fails "rule rejects bogus number" $scripts/rule 999.9
+t_fails "rule rejects garbage arg" $scripts/rule abc
+
 # (tests appended by later tasks above this line)
 
 echo

@@ -1,0 +1,34 @@
+#!/usr/bin/env fish
+# rule <number> — print CR rule text with subrules and examples.
+#   rule 601    → whole section 601
+#   rule 601.2  → 601.2 and its lettered subrules
+#   rule 601.2a → that subrule only
+
+source (path resolve (status dirname))/lib.fish; or exit 1
+
+test (count $argv) -eq 1; or die "usage: rule <number>   (rule 601 | rule 601.2 | rule 601.2a)"
+set -l num $argv[1]
+
+set -l pat
+if string match -rq '^\d{3}$' -- $num
+    set pat '^'$num'\.'
+else if string match -rq '^\d{3}\.\d+$' -- $num
+    set pat '^'(string escape --style=regex -- $num)'[a-z]?$'
+else if string match -rq '^\d{3}\.\d+[a-z]$' -- $num
+    set pat '^'(string escape --style=regex -- $num)'$'
+else
+    die "rule: '$num' does not look like a CR rule number"
+end
+
+jq -r --arg pat $pat '
+    [ to_entries[] | select(.key | test($pat)) ] as $hits
+    | if ($hits | length) == 0
+      then "rule: no CR entry matches \($pat)" | halt_error(1)
+      else empty end,
+      ( $hits[] | .value
+        | (if (.ruleNumber | test("[a-z]$")) then .ruleNumber + " " else .ruleNumber + ". " end)
+          + .ruleText
+          + (if .examples
+             then "\n" + (.examples | map("    Example: " + .) | join("\n"))
+             else "" end) )
+' $rules_dir/cr.json
