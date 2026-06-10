@@ -3,7 +3,7 @@
 
 source (path resolve (status dirname))/lib.fish; or exit 1
 
-argparse 'm/max=' -- $argv; or exit 1
+argparse 'm/max=!_validate_int --min 1' -- $argv; or exit 1
 set -l max 20
 set -ql _flag_max; and set max $_flag_max
 test (count $argv) -eq 1; or die "usage: rule-search <regex> [--max N]"

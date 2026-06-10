@@ -50,6 +50,7 @@ t_fails "rule rejects garbage arg" $scripts/rule abc
 t "rule-search finds deathtouch rules" '702\.2' $scripts/rule-search deathtouch
 t "rule-search truncation notice" 'more matches' $scripts/rule-search --max 1 'the'
 t_fails "rule-search misses garbage" $scripts/rule-search 'zzqqxyzzy'
+t_fails "rule-search rejects --max abc" $scripts/rule-search --max abc deathtouch
 
 # (tests appended by later tasks above this line)
 
