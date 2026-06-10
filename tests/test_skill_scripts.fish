@@ -62,6 +62,12 @@ t "define normalizes apostrophe input" '[Cc]ity.s [Bb]lessing' $scripts/define "
 t "define reaches curly-quoted keys" '[Ii]ntervening' $scripts/define 'intervening "if" clause'
 t_fails "define near-match still exits 1" $scripts/define strike
 
+# --- keyword ---
+t "keyword trample → 702.19" '702\.19' $scripts/keyword trample
+t "keyword scry → 701.22 (action)" '701\.22' $scripts/keyword scry
+t "keyword multiword" '[Ff]irst [Ss]trike' $scripts/keyword first strike
+t_fails "keyword bogus" $scripts/keyword zzgrok
+
 # (tests appended by later tasks above this line)
 
 echo

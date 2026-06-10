@@ -1,0 +1,29 @@
+#!/usr/bin/env fish
+# keyword <name> — print the CR section defining a keyword ability or keyword action.
+
+source (path resolve (status dirname))/lib.fish; or exit 1
+
+test (count $argv) -ge 1; or die "usage: keyword <name>   (keyword trample | keyword first strike)"
+set -l name (string lower -- "$argv")
+# normalise curly apostrophe → straight so glossary lookup matches
+set -l name_norm (string replace -a ’ "'" $name)
+set -l selfdir (path resolve (status dirname))
+
+set -l rulenum (jq -r --arg n $name '
+    to_entries[]
+    | select((.key | test("^70[12][.][0-9]+$"))
+             and ((.value.ruleText | ascii_downcase) == $n))
+    | .key' $rules_dir/cr.json)
+set rulenum $rulenum[1]
+
+if test -z "$rulenum"
+    set rulenum (jq -r --arg n $name_norm '
+        (.[$n] // empty) | .definition
+        | [ scan("rule ([0-9]{3}[.][0-9]+)") ] | .[0][0]? // empty
+    ' $rules_dir/glossary.json)
+end
+
+test -n "$rulenum"
+or die "keyword: no CR section found for '$argv' — try scripts/define or scripts/rule-search"
+
+$selfdir/rule $rulenum
