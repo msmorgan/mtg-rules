@@ -97,6 +97,7 @@ t_fails "corpus rejects invalid regex" $scripts/corpus --match '['
 # --- check-citations ---
 t "check-citations passes good fixture" 'citations OK|cited rules exist' $scripts/check-citations $fixtures/cite-good.md
 t_fails "check-citations fails bad fixture" $scripts/check-citations $fixtures/cite-bad.md
+t "check-citations names the missing rules" '999\.99' fish -c "$scripts/check-citations $fixtures/cite-bad.md 2>&1; true"
 
 # (tests appended by later tasks above this line)
 

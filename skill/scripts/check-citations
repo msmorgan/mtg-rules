@@ -3,6 +3,8 @@
 # given files (default: this skill's references/*.md) exists in cr.json.
 # Convention: reference docs cite dotted rule numbers; bare section numbers
 # ("section 613") are allowed but not checked.
+# Caveat: any NNN.N-looking number in prose/URLs is treated as a citation —
+# avoid inline URLs or measurements that look like rule numbers.
 
 source (path resolve (status dirname))/lib.fish; or exit 1
 
