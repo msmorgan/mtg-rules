@@ -40,7 +40,6 @@ set -l hits
 test (count $lines) -gt 0
 and set hits (printf '%s\n' $lines | jq -c --arg n $name '
     ($n | ascii_downcase) as $q
-    | select(.supported == true)
     | select(((.name | ascii_downcase) == $q) or (((.face // "") | ascii_downcase) == $q))')
 
 if test (count $hits) -eq 0

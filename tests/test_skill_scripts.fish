@@ -81,7 +81,8 @@ t "card lightning bolt oracle text" '3 damage to any target' $scripts/card Light
 t "card face lookup resolves full name" 'Fire // Ice' $scripts/card Fire
 t "card case-insensitive" 'Llanowar Elves' $scripts/card llanowar elves
 t_fails "card bogus name" $scripts/card Zzgrokk the Unreal
-t_fails "card partial name fails with suggestions" $scripts/card Llanowar
+t_fails "card partial name fails with suggestions" $scripts/card Llanowar El
+t "card finds unsupported planes too" '[Pp]lane' $scripts/card Llanowar
 
 # (tests appended by later tasks above this line)
 
