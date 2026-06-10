@@ -28,7 +28,16 @@ Per-player state the rules reference:
 - **Counters a player can have** — counters are placed on an object *or a
   player* (122.1). Player counters defined in §122: **poison** (10+ loses the
   game, "poisoned" = 1+, 122.1f), **rad** (triggers at precombat main phase,
-  122.1i). Each counter has a timestamp (613.7c).
+  122.1i). Two more player counters are defined in §107, not §122: **energy**
+  (paid as {E}, one removed from the player per symbol, 107.14) and **ticket**
+  (a numbered {TK} cost removes that many from the player, 107.17a). Each
+  counter has a timestamp (613.7c).
+- **Speed** — a player has none until a rule/effect sets it (702.179b); values
+  run 1–4, "max speed" = 4 (702.179e). Start your engines! sets a player with
+  no speed to 1 as an SBA (704.5z, 702.179a). The inherent triggered ability
+  raises speed by 1 when an opponent loses life on the player's turn, only once
+  each turn, only while speed < 4 (702.179d). No speed counts as 0 for effects
+  that read it (702.179f).
 - **Designations a player can have** — monarch (725.1), initiative (726.1),
   city's blessing (702.131c). The *game* can have day/night (731.1). Full
   enumeration with mechanics: see `designations.md`.
@@ -125,6 +134,16 @@ controller, target, tapped, what an Aura enchants are not characteristics):
   phased in/phased out.** Enter untapped/unflipped/face up/phased in unless
   stated (110.5b); retained until changed (110.5c). Status is not a
   characteristic (110.5a).
+- **Class level** — a *level* designation any permanent can have (716.2b),
+  set by a class level bar; a Class retains its level even if it stops being a
+  Class, and level is not a copiable characteristic (716.2b). A permanent with
+  no level is treated as level 1 (716.2d).
+- **Room door designations** — a Room (shared-type-line permanent) tracks the
+  "left half unlocked" / "right half unlocked" designations; a half is
+  "unlocked" if it has the matching designation, else "locked" (709.5c).
+- **Secretly noted card name(s)** — hidden agenda: a face-down conspiracy in
+  the command zone has a card name (two for double agenda) noted in secret
+  with it (702.106b); per-object hidden state until turned face up.
 - **Counters** on the object — kinds, mechanics, and SBA interactions in §122
   (+1/+1 & -1/-1 annihilate, 122.3; loyalty 122.1e; defense 122.1g; shield
   122.1c; stun 122.1d; finality 122.1h; keyword counters 122.1b). Lost on zone
@@ -185,7 +204,13 @@ a source that changed zones before dealing damage use LKI (702.2e, 702.15c,
 702.80b, 702.90d). **Tokens** in any zone other than the battlefield cease to
 exist (SBA, 111.7); a token that has left the battlefield can't return and
 ceases to exist at the next SBA check (111.8). A copy of a permanent spell
-becomes a token as it resolves (111.13).
+becomes a token as it resolves (111.13). **Merged permanents:** a merged
+permanent is one object represented by multiple components — the card/copy that
+merged plus the components already there (730.2); it has only the topmost
+component's characteristics (730.2a). The engine must track every component,
+because when the merged permanent leaves the battlefield each component is put
+into its own appropriate zone (730.3) and a finder effect finds all of them
+(730.3c).
 
 ## 8. Game-level state
 
@@ -194,6 +219,11 @@ becomes a token as it resolves (111.13).
   postcombat main, ending; beginning/combat/ending have ordered steps (500.1).
 - **Priority holder** — the player who may cast/activate/take special actions
   (117.1); timing rules in 117.1a–d.
+- **Pending skips + extra-turn queue** — "skip [X]" is a replacement effect
+  (614.10); pending skips must be *counted*, since two skip-next effects make a
+  player skip the next two occurrences (614.10a). Extra turns are queued and
+  taken LIFO — added one at a time (APNAP if multiple players), most recently
+  created taken first (500.7).
 - **The stack** — LIFO of spells and abilities (405.1, 405.2); top resolves
   first.
 - **Triggers waiting to go on the stack** — abilities that have triggered are
@@ -216,6 +246,10 @@ becomes a token as it resolves (111.13).
   731.2).
 - **Dungeon progress** — per owner, a venture marker on the current room of a
   dungeon card in the command zone (309.4, 309.4a); venture moves it (309.5).
+- **Attraction state** (niche) — per player: a face-down Attraction deck in the
+  command zone (717.2) and a face-up "junkyard" pile of discarded Attractions
+  (717.6a); each precombat main phase a controller of Attractions rolls a d6 to
+  visit them (701.52).
 - **The Ring** — each tempting gives/updates an emblem named The Ring and sets
   the player's Ring-bearer (701.54a, 701.54c); Ring-bearer is a permanent
   designation (701.54b); the number of times the Ring has tempted a player is
