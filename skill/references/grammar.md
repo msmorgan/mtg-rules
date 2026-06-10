@@ -33,6 +33,16 @@ unit is **one paragraph = one ability**, but four cases break that:
   a rule and has no game function (207.2, 207.2a). Discard it before parsing
   (but see §3 — it may be the only place a keyword's parameters are spelled
   out in plain English).
+- **Striated-box lines are not ability words.** Cards with a striated text
+  box prefix their abilities with structural markers that *look* like the
+  `Word — text` form but are keyword abilities, not ability/flavor words:
+  - **Saga chapters** — a line `^[IVX]+(?:, [IVX]+)* — ` (Roman-numeral
+    chapter symbol; may carry a second `Word — ` flavor-word prefix after it,
+    e.g. `I — Aerial Blast — …`) is a chapter ability = a **triggered**
+    ability (714.2; `{rN}—[Effect]` = "When … lore counters … became at
+    least N, [effect]", 714.2b; `{rN1}, {rN2}—` = both, 714.2c). Do **not**
+    treat the numeral as an ability word.
+  - **Class level bars** and **Leveler bands** open their own bands — see §2.
 
 ### Worked example — Questing Beast
 
@@ -62,6 +72,13 @@ Four categories (113.3). Classify a paragraph by its surface shape:
   sorcery", "Activate only once each turn") is an **activation instruction**,
   not part of the effect, and appears last (602.1b). Marker: a top-level
   `:` not inside parentheses or a `{…}` symbol.
+  - **Loyalty abilities** — `[<cost>]: [effect]` where the bracketed cost is
+    `+N`, `0`, or `−N` are planeswalker loyalty abilities, a special kind of
+    **activated** ability (606.1; an activated ability with a loyalty symbol
+    in its cost, 606.2). Real: `[+1]: Add {R}. …`, `[0]: …`, `[−10]: …`.
+    CRITICAL: the minus is **U+2212 MINUS SIGN** (UTF-8 `e2 88 92`), *not*
+    ASCII hyphen `-` — a regex matching `\[-N\]` finds **zero** corpus lines;
+    match `\[\xe2\x88\x92[0-9]+\]:` (or the literal `−`).
 - **Triggered** — `"[When/Whenever/At] [trigger condition], [effect].
   [Instructions (if any).]"` (113.3c, 603.1). Begins with **When**,
   **Whenever**, or **At**. Trailing instructions (target limits, "can't be
@@ -84,6 +101,25 @@ Four categories (113.3). Classify a paragraph by its surface shape:
   e.g. Fire's `"Fire deals 2 damage divided as you choose among one or two
   targets."`
 
+**Band-opening lines (striated boxes).** Some lines are *headers* that open a
+band; the lines beneath them (until the next band header) belong to that band:
+
+- **Class level bar** — `{cost}: Level N` is a keyword ability representing
+  **both** an activated ability (the level-up: `Activate only … as a sorcery`,
+  only from level N−1) **and** a static ability (716.2/716.2a). Lines printed
+  in the same box section after the bar are that level's **static** text
+  (716.2). The top box section (before any bar) is always-on, parsed normally
+  (716.3). Real (Monk Class): `{W}{U}: Level 2` then
+  `When this Class becomes level 2, return up to one target …` (a triggered
+  ability gained at level 2).
+- **Leveler band** — `^LEVEL <N>-<M>` or `^LEVEL <N>+` is a keyword ability
+  (level symbol) representing a **static** ability (711.2). The P/T line and
+  any ability lines under it, until the next band, belong to that band
+  (711.2a "N1-N2": active while N1≤counters≤N2; 711.2b "N3+": active while
+  counters≥N3). The level-up activated ability sits *above* the first band and
+  is always active (711.4). Real (Kargan Dragonlord): `LEVEL 4-7` / `4/4` /
+  `Flying`, then `LEVEL 8+` / `8/8` / `Flying, trample`.
+
 ## 3. Keyword grammar
 
 Two terminal vocabularies: **keyword abilities** (702) in
@@ -103,12 +139,25 @@ Forms seen in the corpus:
   or planeswalker`.
 - **Landwalk family** — `<Type>walk`: `Forestwalk`, `Islandwalk`,
   `Mountainwalk`, `Swampwalk`, `Plainswalk`, `Desertwalk`, plus the
-  generic/qualified `Landwalk`, `Legendary landwalk`, `Nonbasic landwalk`,
-  and granted forms like `snow landwalk of the chosen type` (all listed in
-  `keyword-abilities.json`).
+  generic/qualified `Landwalk`, `Legendary landwalk`, `Nonbasic landwalk` —
+  all in `keyword-abilities.json`. Granted/ad-hoc forms ("…has landwalk of
+  the chosen type") are *not* discrete catalog entries; parse them as the
+  stem `Landwalk` plus a qualifier from the surrounding text.
 - **Stacked keywords with mixed punctuation:** `Ward {1}, haste` and
   `Protection from black; flanking (…)` show that `, ` and `; ` both
   delimit keyword abilities on a line.
+
+**Comma-split guard (§1 split test, precisely).** Before splitting a line on
+`, ` / `; `, test each candidate token by **stripping its trailing parameters**
+— mana/composite cost (`{…}`, `—{…}`), `from <quality>`, `<type>` after
+`Enchant`, bare numbers — then matching the remaining **stem** against the
+catalogs. Stems may be multi-word, so match longest-first: `First strike`,
+`Double strike`, `Partner with`, `Hexproof from`, `Living weapon`. Split the
+line into keyword abilities **only if every** token's stem resolves; if any
+token fails, treat the whole line as one ability. Note that the catalog stores
+some qualified forms as their own entries (`Hexproof from`, `Nonbasic
+landwalk`) while others keep the qualifier as a parameter on the bare stem
+(`Protection` + `from black`), so strip-then-match must try both.
 
 When `scripts/define`/`scripts/keyword` lacks a parameterized form, the
 keyword's **reminder text** in parens usually states the parameter in plain
@@ -134,8 +183,16 @@ even though some resemble triggers:
   `"… if that creature would deal combat damage to one of your opponents,
   it deals triple that damage to that player instead."` Also
   `"If that spell would be put into your graveyard, exile it instead."`
-- **"skip"** (614.1b) — replaces a step/phase/turn with nothing. Real:
-  `"You skip your next turn."`, `"You skip your next untap step."`
+- **"skip"** (614.1b) — replaces a step/phase/turn/draw with nothing — but
+  **bare "skip" over-fires.** A one-shot instruction that resolves from the
+  stack also says "skip": `"Draw four cards. You skip your next turn."`
+  (spell ability), `"… Target opponent skips their next X turns …"` (a loyalty
+  ability's *effect*), `"Skip your draw step."` — none of these are
+  replacement effects. Reminder text uses it too (`"Skipped chapters don't
+  trigger."`). Only flag 614.1b for **continuous** skip-forms: the
+  `"[would] … skip … [instead]"` shape (`"If a player would draw a card, that
+  player skips that draw instead."`) and standing static rules
+  (`"Players skip their untap steps."`, `"Skip your upkeep step if …"`).
 - **ETB modifiers** (614.1c): `"~ enters with …"`, `"As ~ enters …"`,
   `"~ enters as …"`. Real: `"As Alhammarret enters, each opponent reveals
   their hand…"`; `"… that creature enters with that many additional +1/+1
@@ -167,6 +224,10 @@ How text names the objects and players it acts on:
   permanents are legal unless the text says otherwise (115.2). The same
   `target` instance can't pick one object twice; distinct `target` instances
   can share an object (115.3).
+  - **Scope of "target" on an instant/sorcery** — an *activated or triggered*
+    ability **of** an instant/sorcery card that uses `target` makes that
+    ability targeted, but the spell itself is **not** targeted (115.1a). Only
+    a `target` in the card's own spell ability targets the spell.
 - **`any target`** (115.4) — a damage shorthand expanding to **any creature,
   player, planeswalker, or battle** (115.4). Variants `another target`,
   `two targets` behave likewise; noncreature artifacts and spells can't be
@@ -192,6 +253,13 @@ How text names the objects and players it acts on:
   `"Choose one. If this spell was kicked, choose any number instead."` Pick
   count is part of casting/putting-on-stack (700.2a–b); a mode with no legal
   target can't be chosen (700.2a).
+- **Pawprint modes** (700.2i) — a variant where modes are weighted by
+  pawprint symbols (`{P}`) instead of bullets. Header:
+  `Choose up to N {P} worth of modes` (real: `"Choose up to five {P} worth of
+  modes. You may choose the same mode more than once."`); mode lines are
+  `^{P}+ — ` (real: `{P} — Draw a card.`, `{P}{P} — Exile target nonland
+  permanent. …`). The chosen modes' pawprints must total ≤ N (700.2i). Consume
+  the `{P}…—` lines as the header's modes, same as `•` lines.
 - **Escalate** is the additive cost for extra modes — `Escalate {1} (Pay
   this cost for each mode chosen beyond the first.)` — not itself a mode.
 - **Division** — `"[N] damage divided as you choose among one[, two,] or
@@ -205,25 +273,34 @@ How text names the objects and players it acts on:
 1. Split `text` on `\n` into candidate paragraphs/lines.
 2. For each line, extract and set aside reminder text — italic `(…)` —
    keeping it as a parameter hint (207.2a); it is not rules text.
-3. Detect an ability-word / flavor-word prefix (`Word — …`); strip it,
-   classify via `ability-words.json` vs `flavor-words.json` (207.2c/d).
-4. If the line is a `Choose …` header, consume following `•` lines as its
-   modes — emit one modal ability, not many (700.2).
-5. If every comma/semicolon-delimited token on the line is a catalog
-   keyword, emit one keyword ability per token (702.1); else treat the line
-   as a single ability.
-6. Classify the single ability by surface form: top-level `:` → activated
-   (602.1); leading When/Whenever/At → triggered (603.1); imperative on an
-   instant/sorcery → spell ability (113.3a); otherwise declarative → static
-   (113.3d).
-7. For triggered abilities, test for intervening "if" right after the
+3. Recognize striated-box markers *before* treating any `Word — ` as an
+   ability word: `^[IVX]+(?:, [IVX]+)* — ` = Saga chapter → triggered
+   (714.2); `{cost}: Level N` = Class level bar (716.2); `^LEVEL N-M`/`^LEVEL
+   N+` = Leveler band (711.2). For Class/Leveler, open a band and bind the
+   following P/T and ability lines (until the next band) to it (716.2, 711.2).
+4. Otherwise detect an ability-word / flavor-word prefix (`Word — …`); strip
+   it, classify via `ability-words.json` vs `flavor-words.json` (207.2c/d).
+5. If the line is a `Choose …` header (incl. `Choose up to N {P} worth of
+   modes`), consume following `•` *or* `{P}…—` lines as its modes — emit one
+   modal ability, not many (700.2, 700.2i).
+6. Comma-split guard: split on `, `/`; ` only if **every** token, after
+   stripping trailing params (`{…}`, `from …`, numbers), has a stem resolving
+   in the catalogs (longest-match for multi-word stems); emit one keyword
+   ability per token (702.1). Else treat the line as a single ability.
+7. Classify the single ability by surface form: top-level `:` → activated
+   (602.1; `[±N]/[0]:` → loyalty, 606.2 — minus is U+2212, not `-`); leading
+   When/Whenever/At → triggered (603.1); imperative on an instant/sorcery →
+   spell ability (113.3a); otherwise declarative → static (113.3d).
+8. For triggered abilities, test for intervening "if" right after the
    trigger (603.4) and for reflexive "When you do" sub-triggers (603.12).
-8. Resolve keyword tokens against `keyword-abilities.json` /
+9. Resolve keyword tokens against `keyword-abilities.json` /
    `keyword-actions.json` / `keywords.json`; parse trailing parameters
    (cost `{…}`, `from <quality>`, `<type>walk`, `Enchant <object>`).
-9. Tag replacement effects by marker — "would … instead" / "skip" /
-   "enters with" / "as ~ enters" (614.1) — so they are not mis-filed as
-   triggers.
-10. Bind references: source name / "this <type>" → source; pronouns → last
+10. Tag replacement effects by marker — "would … instead" / continuous-only
+    "skip" (not one-shot/reminder "skip", §4) / "enters with" / "as ~ enters"
+    (614.1) — so they are not mis-filed as triggers.
+11. Bind references: source name / "this <type>" → source; pronouns → last
     matching antecedent; `target …` and `any target` → choosers and legal
-    sets (115); X/division → variable and split bindings.
+    sets (115; a `target` in an activated/triggered ability of an
+    instant/sorcery targets that ability, not the spell — 115.1a);
+    X/division → variable and split bindings.
