@@ -65,10 +65,10 @@ permanent leaving via an SBA uses last-known-info from before the batch
 | 704.5d | Token outside the battlefield ceases to exist |
 | 704.5e | Spell copy off the stack (or card copy off stack/battlefield) ceases to exist |
 | 704.5f | Creature with 0 or less toughness → owner's graveyard (regen can't replace) |
-| 704.5g | Creature with lethal marked damage is destroyed (regen can replace) |
-| 704.5h | Creature dealt deathtouch damage is destroyed (regen can replace) |
+| 704.5g | Creature (toughness > 0) with lethal marked damage is destroyed (704.5g) |
+| 704.5h | Creature (toughness > 0) dealt damage by a deathtouch source since the last SBA check is destroyed (regeneration can replace) (704.5h) |
 | 704.5i | Planeswalker with 0 loyalty → owner's graveyard |
-| 704.5j | Legend rule: keep one of same-name legendaries, rest → graveyard |
+| 704.5j | Legend rule: controller of same-name legendaries chooses one to keep; the rest go to their owners' graveyards (704.5j) |
 | 704.5k | World rule: only newest world permanent survives |
 | 704.5m | Aura attached illegally / unattached → owner's graveyard |
 | 704.5n | Equipment/Fortification attached illegally becomes unattached, stays |
@@ -181,5 +181,7 @@ If a player takes an illegal action or can't legally complete one, the
 entire action is reversed and payments canceled — no triggers fire, no
 effects apply, and a spell returns whence it came (733.1). Players may also
 reverse legal mana abilities used during the attempt, but actions touching
-libraries (moves into a library, draws/searches out of one, shuffles, or
-reveals) are never reversed (733.1).
+actions that moved cards to a library, moved cards from a library to any
+zone other than the stack (casting from a library can be reversed), caused
+a library to be shuffled, or caused cards from a library to be revealed are
+never reversed (733.1).
