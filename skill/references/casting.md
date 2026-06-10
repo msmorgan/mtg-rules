@@ -42,14 +42,8 @@ must be legally allowed to begin (601.3, see §3).
    (601.2d).
 5. **601.2e — legality check.** The game checks the proposed spell is legal
    to cast; if illegal, rewind to before proposal (601.2e, rule 733). This is
-   the gate at the *end of proposal*, but it is **not** the boundary after
-   which "cost trouble" stops rewinding. Two distinct cases (see §3): (a) if
-   the player **can't comply with** any later step — including being unable to
-   *pay* at 601.2h — the cast is illegal and the game still rewinds to before
-   proposal (601.2 intro, 733.1); (b) what 601.5 actually covers is narrower:
-   once proposal (601.2a–d) is complete, a **prohibition** arising later ("the
-   player is no longer *allowed* to cast") does **not** un-propose — cost
-   determination/payment proceed (601.5).
+   the legality gate at the *end of proposal*; for the unified rewind semantics
+   (can't-comply, can't-pay, and post-proposal prohibitions all rewind) see §3.
 6. **601.2f — determine total cost; lock it in.** Total cost = the mana cost
    *or* alternative cost (chosen in 601.2b) **plus** all additional costs and
    cost **increases**, **minus** all cost **reductions** (601.2f). Multiple
@@ -99,9 +93,9 @@ activating mana abilities is never mandatory (118.3c).
   601.3 / 601.2e (legality). Failing to *pay* at 601.2h is a separate failure,
   but it is **not** exempted from rewind: being unable to comply with 601.2h
   makes the cast illegal and the game returns to before proposal (601.2 intro,
-  733.1). What survives proposal is a later *prohibition* (601.5), not a
-  payment failure. Paying a reduced/changed cost still counts as paying the
-  original (118.7, 118.11).
+  733.1). A later *prohibition* rewinds too (601.5) — nothing survives a
+  completed proposal except conditional flash (601.5a). Paying a reduced/changed
+  cost still counts as paying the original (118.7, 118.11).
 - **X handling:** if X isn't defined by text, the controller announces it as
   part of casting, at 601.2b (107.3a, 601.2b). A spell cast for neither its
   mana cost nor an X-bearing alternative cost forces X = 0 (107.3b). Cards off
@@ -130,7 +124,7 @@ set of characteristics (morph/adventure off the top of library) and 601.3f for
 casting from among **face-down cards in exile** (only if the player may look at
 the card) (601.3a, 601.3b, 601.3c, 601.3d, 601.3e, 601.3f).
 
-Two kinds of "cost trouble" must be kept apart:
+Both kinds of "cost trouble" rewind — they are not opposed cases:
 
 - **(a) Can't comply / can't pay → full rewind.** If a player is *unable to
   comply* with the requirements of any step 601.2a–i — including determining
@@ -142,13 +136,18 @@ Two kinds of "cost trouble" must be kept apart:
   legally (733.1). Actions that moved cards to a library, moved cards out of a
   library to anywhere but the stack, shuffled a library, or revealed cards from
   a library **can't be reversed** (733.1).
-- **(b) Prohibition arises mid-process → does *not* rewind the proposal.** Once
-  proposal (601.2a–d) is complete, if a rule/effect would make the player *no
-  longer allowed* to cast the spell, that does **not** un-propose it: it
-  doesn't matter that the casting would be made illegal while determining or
-  paying costs (601.2f–h), or any time after the spell is cast (601.5). (And a
-  spell that began with conditional flash keeps it even if the conditions lapse
-  — 601.5a.)
+- **(b) Prohibition arises after proposal → also a full rewind.** If a player
+  is *no longer allowed* to cast the spell after completing its proposal
+  (601.2a–d), the casting is illegal and the game **returns to the moment
+  before the casting was proposed** (601.5, via rule 733). The "it doesn't
+  matter" clause is what makes this universal: the rewind applies regardless of
+  whether the prohibiting rule/effect would make the casting illegal *while
+  determining or paying costs* (601.2f–h) **or any time after the spell has
+  already been cast** (601.5). The **only** thing that persists past a completed
+  proposal is **conditional flash**: once a player has legally begun casting a
+  spell that had (or could be cast as though it had) flash because certain
+  conditions were met, they may continue casting it as though it had flash even
+  if those conditions stop being met (601.5a).
 
 The 601.2f **cost lock** is a real boundary but a different one: it isn't a
 rewind boundary, it's where the total cost is fixed so that later cost-changing
@@ -270,8 +269,9 @@ legal?     ── 601.2e gate; fail → rewind to pre-proposal (733)
 cost-locked── 601.2f total cost computed (alt/base + add'l + inc − red),
                 then "locked in" — later cost effects no-op
 paid       ── 601.2g mana abilities, 601.2h pay (no partials, no unpayable);
-                can't-comply / can't-pay here → STILL rewinds (601.2 intro,
-                733); a later *prohibition* (601.5) does not
+                can't-comply / can't-pay here → rewinds (601.2 intro, 733);
+                a later *prohibition* rewinds too (601.5) — nothing survives a
+                completed proposal except conditional flash (601.5a)
 cast       ── 601.2i becomes cast; cast/put-on-stack triggers fire;
                 controller may regain priority
 … stack …  ── waits; pass-in-succession (608.1)
@@ -282,10 +282,12 @@ done       ── 608.2n to graveyard / ceases; 608.3a–g for permanents
 
 Activated abilities use the same machine via 602.2a + 602.2b→601.2b–i;
 triggered abilities skip cast/pay and enter at the choices stage via 603.3.
-Two boundaries an engine must respect, and they are **not** the same boundary:
-(1) the **rewind rule** — *any* inability to comply with a step 601.2a–i,
-including can't-pay at 601.2h, rewinds to before proposal (601.2 intro, 733);
-the **only** thing that survives completed proposal is a later *prohibition*,
-which 601.5 declines to rewind. (2) the **cost lock** (601.2f) — after the
-total cost is locked in, later cost-changing effects are inert. The cost lock
-is a fixing boundary, not a rewind boundary.
+There is **no point-of-no-return *during* casting**: every failure mode rewinds
+until casting completes legally (subject to 733.1's irreversible library-action
+caveat). The one boundary an engine must respect is the **cost lock** (601.2f):
+after the total cost is locked in, later cost-changing effects are inert — it is
+a *fixing* boundary, not a rewind boundary. Both *any* inability to comply with
+a step 601.2a–i (including can't-pay at 601.2h, 601.2 intro + 733) **and** a
+player becoming no longer allowed to cast after proposal completes (601.5) send
+the game back to before proposal; the **only** thing that survives a completed
+proposal is **conditional flash** (601.5a).
