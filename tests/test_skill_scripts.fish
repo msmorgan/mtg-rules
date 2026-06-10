@@ -52,6 +52,12 @@ t "rule-search truncation notice" 'more matches' $scripts/rule-search --max 1 't
 t_fails "rule-search misses garbage" $scripts/rule-search 'zzqqxyzzy'
 t_fails "rule-search rejects --max abc" $scripts/rule-search --max abc deathtouch
 
+# --- define ---
+t "define deathtouch cites 702.2" '702\.2' $scripts/define deathtouch
+t "define handles multiword terms" '[Aa]ctive [Pp]layer' $scripts/define active player
+t "define falls back to unofficial" 'unofficial' $scripts/define battalion
+t_fails "define misses garbage" $scripts/define zzgrok
+
 # (tests appended by later tasks above this line)
 
 echo

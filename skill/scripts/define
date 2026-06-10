@@ -1,0 +1,21 @@
+#!/usr/bin/env fish
+# define <term> — look up a term in the CR glossary, then the unofficial glossary.
+
+source (path resolve (status dirname))/lib.fish; or exit 1
+
+test (count $argv) -ge 1; or die "usage: define <term>"
+set -l term (string lower -- "$argv")
+
+jq -r --arg t $term --slurpfile unof $rules_dir/unofficial-glossary.json '
+    . as $g | $unof[0] as $u
+    | ($t | gsub("\'"; "’")) as $tc
+    | if ($g[$t] // $g[$tc]) then ($g[$t] // $g[$tc]) | "\(.term): \(.definition)"
+      elif ($u[$t] // $u[$tc]) then ($u[$t] // $u[$tc]) | "\(.term) (unofficial): \(.definition)"
+      else
+        ( [ ($g, $u) | keys[] | select(contains($t)) ] ) as $near
+        | (if ($near | length) > 0
+           then "define: no exact entry for \"\($t)\". Near matches: \($near | join(", "))\n"
+           else "define: no glossary entry for \"\($t)\"\n" end)
+        | halt_error(1)
+      end
+' $rules_dir/glossary.json
