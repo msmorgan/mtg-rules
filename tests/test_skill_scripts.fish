@@ -83,6 +83,8 @@ t "card case-insensitive" 'Llanowar Elves' $scripts/card llanowar elves
 t_fails "card bogus name" $scripts/card Zzgrokk the Unreal
 t_fails "card partial name fails with suggestions" $scripts/card Llanowar El
 t "card finds unsupported planes too" '[Pp]lane' $scripts/card Llanowar
+t_fails "card empty name rejected" $scripts/card ''
+t "card handles quoted names" 'Ach! Hans' $scripts/card '"Ach! Hans, Run!"'
 
 # (tests appended by later tasks above this line)
 

@@ -5,6 +5,7 @@ source (path resolve (status dirname))/lib.fish; or exit 1
 
 test (count $argv) -ge 1; or die "usage: card <card name>"
 set -l name "$argv"
+test -n "$name"; or die "usage: card <card name>"
 set -l idx $derived_dir/cards.jsonl
 set -l atomic $mtgjson_dir/AtomicCards.json
 
@@ -37,10 +38,19 @@ or echo >&2 "card: warning: derived index older than AtomicCards.json — run sc
 
 set -l lines (grep -iF -- $name $idx)
 set -l hits
-test (count $lines) -gt 0
-and set hits (printf '%s\n' $lines | jq -c --arg n $name '
-    ($n | ascii_downcase) as $q
-    | select(((.name | ascii_downcase) == $q) or (((.face // "") | ascii_downcase) == $q))')
+if test (count $lines) -gt 0
+    set hits (printf '%s\n' $lines | jq -c --arg n $name '
+        ($n | ascii_downcase) as $q
+        | select(((.name | ascii_downcase) == $q)
+                 or (.face != null and (.face | ascii_downcase) == $q))')
+else
+    # grep -iF misses names stored JSON-escaped (embedded double quotes);
+    # fall back to a full jq scan of the index (~0.3 s).
+    set hits (jq -c --arg n $name '
+        ($n | ascii_downcase) as $q
+        | select(((.name | ascii_downcase) == $q)
+                 or (.face != null and (.face | ascii_downcase) == $q))' $idx)
+end
 
 if test (count $hits) -eq 0
     set -l near
