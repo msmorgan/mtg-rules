@@ -131,9 +131,11 @@ values** (613.2c, → 707.2).
    Fortification is **re-stamped each time it attaches** (613.7e); a permanent
    re-stamps on turning face up/down (613.7f) and on transform/convert
    (613.7g); each counter (613.7c) and sticker (613.7k) is stamped when
-   placed. Simultaneous timestamps resolve in APNAP order (613.7m); a static
-   effect ties earlier than a simultaneous resolved-effect on the same object
-   (613.7n).
+   placed. Simultaneous timestamps resolve in APNAP order (613.7m); when a
+   resolved spell/ability puts an object onto the battlefield and sets its
+   characteristics (see 611.2e), the continuous effect from that object's
+   **own static ability** receives an earlier relative timestamp than the
+   simultaneous resolved-effect (613.7n).
 3. **Dependency overrides timestamps** (613.8). Effect A *depends on* B when:
    they apply in the same (sub)layer; applying B would change A's text/
    existence/what-it-applies-to/what-it-does; and they aren't split across
@@ -195,6 +197,23 @@ Behavior:
 - **Self-replacement effects** are *not* continuous: a resolving spell/
   ability replaces part of its **own** effect; they are applied **before**
   other replacement effects (614.15).
+- **Token/counter doublers (614.16):** replacement effects keyed on "if an
+  effect would create one or more tokens" or "would put one or more counters
+  on a permanent" (e.g. Doubling Season) apply to tokens/counters produced
+  by a resolving spell or ability **and** to tokens/counters produced by
+  another replacement or prevention effect, even if the original event being
+  modified was not itself an effect (614.16).
+- **Damage redirection (614.9):** redirecting damage from one battle,
+  creature, planeswalker, or player to another is itself a **replacement
+  effect**; if the new target is no longer on the battlefield (or is no
+  longer a battle/creature/planeswalker) when the redirect would occur, the
+  effect does nothing (614.9).
+- **Draw replacements (614.11):** effects that replace card draws apply even
+  when the affected player's library is empty; within a sequence of draws,
+  all replacement actions are completed before the sequence resumes
+  (614.11a); if the effect would have the player perform an additional action
+  on the drawn card and the draw is replaced, that additional action is not
+  performed on cards drawn by the replacement (614.11b).
 - **ETB replacements:** check the permanent's characteristics *as it would
   exist on the battlefield*, accounting for replacements already applied
   (per 616.1), the permanent's own statics, and existing continuous effects
