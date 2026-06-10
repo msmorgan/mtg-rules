@@ -1,0 +1,26 @@
+#!/usr/bin/env fish
+# check-citations [files…] — verify every CR citation (NNN.N / NNN.Na) in the
+# given files (default: this skill's references/*.md) exists in cr.json.
+# Convention: reference docs cite dotted rule numbers; bare section numbers
+# ("section 613") are allowed but not checked.
+
+source (path resolve (status dirname))/lib.fish; or exit 1
+
+set -l files $argv
+if test (count $files) -eq 0
+    set files $skill_dir/references/*.md
+end
+test (count $files) -gt 0; or die "check-citations: no reference docs found"
+
+set -l cites (grep -hoE '\b[1-9][0-9]{2}\.[0-9]+[a-z]?\b' $files | sort -u)
+test (count $cites) -gt 0; or die "check-citations: no rule citations found in given files"
+
+set -l missing (printf '%s\n' $cites | jq -rR --slurpfile cr $rules_dir/cr.json '
+    . as $c | select(($cr[0] | has($c)) | not)')
+
+if test (count $missing) -gt 0
+    echo >&2 "check-citations: cited rules missing from cr.json (CR update? typo?):"
+    printf '  %s\n' $missing >&2
+    exit 1
+end
+echo "check-citations: all "(count $cites)" cited rules exist in cr.json"
