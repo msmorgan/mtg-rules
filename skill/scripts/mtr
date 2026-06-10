@@ -7,6 +7,7 @@ argparse 'l/list' 's/search=' -- $argv; or exit 1
 set -l mtr $rules_dir/mtr.json
 
 if set -ql _flag_list
+    test (count $argv) -eq 0; or die "usage: mtr --list takes no positional args"
     jq -r '
         .content[]
         | (if .section == null then ""
@@ -17,6 +18,7 @@ if set -ql _flag_list
 end
 
 if set -ql _flag_search
+    test (count $argv) -eq 0; or die "usage: mtr --search <regex> takes no positional args"
     jq -r --arg pat $_flag_search '
         [ .content[] | select(((.content // "") + " " + (.title // "")) | test($pat; "i")) ] as $hits
         | if ($hits | length) == 0 then "mtr: no sections match /\($pat)/\n" | halt_error(1) else empty end,
@@ -39,7 +41,7 @@ end
 
 jq -r --argjson sec $parts[1] --argjson sub $sub_json '
     [ .content[] | select(.section == $sec and ($sub == null or .subsection == $sub)) ] as $hits
-    | if ($hits | length) == 0 then "mtr: no section \($sec)\n" | halt_error(1) else empty end,
+    | if ($hits | length) == 0 then "mtr: no section \($sec)\(if $sub != null then ".\($sub)" else "" end)\n" | halt_error(1) else empty end,
       ( $hits[]
         | "## " + (.section | tostring)
           + (if .subsection then "." + (.subsection | tostring) else "" end)
