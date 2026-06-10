@@ -65,8 +65,9 @@ t_fails "define near-match still exits 1" $scripts/define strike
 # --- keyword ---
 t "keyword trample → 702.19" '702\.19' $scripts/keyword trample
 t "keyword scry → 701.22 (action)" '701\.22' $scripts/keyword scry
-t "keyword multiword" '[Ff]irst [Ss]trike' $scripts/keyword first strike
+t "keyword multiword" '702\.7.*[Ff]irst [Ss]trike' $scripts/keyword first strike
 t_fails "keyword bogus" $scripts/keyword zzgrok
+t "keyword tap → 701.26 (glossary fallback)" '701\.26' $scripts/keyword tap
 
 # (tests appended by later tasks above this line)
 
