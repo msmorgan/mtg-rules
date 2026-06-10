@@ -37,6 +37,13 @@ the stack (113.1c, 113.9).
   zone (113.3d, 604.1). Does not use the stack and can't be countered
   (113.9, 604.1). See `effects.md`.
 
+**Keyword abilities** (702.1) are notational shorthand: each keyword resolves
+to one or more abilities of the four kinds above (e.g. a keyword line may
+bundle an activated cost, a triggered effect, and a static clause together).
+The machine-readable list of keyword abilities lives in
+`data/rules/keywords.json`; `scripts/keyword <name>` prints a keyword's
+defining CR section.
+
 ## 2. Cross-cutting sub-kinds
 
 These overlay the four kinds. Each carries special timing or stack behavior
