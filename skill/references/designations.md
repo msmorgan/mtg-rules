@@ -68,6 +68,22 @@ persistence**, **effect**, **CR home**.
   are checked (702.131d).
 - **CR home:** 702.131a–702.131d.
 
+### Planar controller
+- **Carrier:** a player (single); exactly one whenever a face-up plane or
+  phenomenon card exists (Planechase) (311.5, 312.4, 901.6).
+- **Gained by:** being the active player by default — the planar controller is
+  normally whoever the active player is (901.6). Succession when the current
+  planar controller would leave the game: the next player in turn order who
+  wouldn't leave the game becomes the planar controller instead (901.6). In
+  the team variant, the planar controller is normally the primary player of
+  the active team; if that team would leave the game, the primary player of
+  the next team in turn order becomes the planar controller (901.12b).
+- **Lost by / persistence:** lost when the holder leaves the game (replaced by
+  succession, 901.6), or when a different player becomes the active player —
+  whichever comes first (311.5, 901.6).
+- **Effect:** controls the face-up plane or phenomenon card (311.5, 312.4).
+- **CR home:** 311.5, 312.4, 901.6, 901.12b.
+
 ## Game-carried designations
 
 ### Day / Night
@@ -91,13 +107,16 @@ persistence**, **effect**, **CR home**.
   emblem the player gets (701.54c).
 - **Gained by:** "the Ring tempts you" — choose a creature you control to
   become your Ring-bearer (701.54a). On first temptation the player also gets
-  an emblem named The Ring (701.54c).
+  an emblem named The Ring (701.54c). The temptation fires and increments the
+  per-player temptation count even if choosing a Ring-bearer was impossible
+  (e.g., you control no creatures) (701.54d).
 - **Lost by / persistence:** until another creature becomes your Ring-bearer or
   another player gains control of it (701.54a). Not a copiable value (701.54b).
 - **Effect:** The Ring emblem grants escalating abilities to your Ring-bearer
   by number of times the Ring has tempted you (1: legendary + can't be blocked
-  by greater power; 2+: draw/discard on attack; 3+: blocker sacrificed; 4+:
-  opponents lose 3 life on combat damage) (701.54c). "Is your Ring-bearer" =
+  by greater power; 2+: draw/discard on attack; 3+: blocker's controller
+  sacrifices it **at end of combat**; 4+: opponents lose 3 life on combat
+  damage) (701.54c). "Is your Ring-bearer" =
   on the battlefield under your control with the Ring-bearer designation
   (701.54e). The temptation count is tracked per player (701.54c).
 - **CR home:** 701.54a–701.54e.
@@ -233,6 +252,7 @@ State location terms cross-ref `state.md` (player state §2, per-object state
 | Monarch | player (single) | game flag = player ref (`state.md` §8) |
 | Initiative | player (single) | game flag = player ref (`state.md` §8) |
 | City's blessing | player (multi) | per-player flag (`state.md` §2) |
+| Planar controller | player (single) | per-player flag (`state.md` §2) |
 | Day / Night | game | game flag (tri-state) (`state.md` §8) |
 | Ring-bearer (+ Ring emblem, count) | permanent + player | object flag + per-player emblem/count (`state.md` §6, §8) |
 | Goaded | permanent | object flag w/ duration + goader set (`state.md` §6) |
