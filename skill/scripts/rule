@@ -23,7 +23,7 @@ end
 jq -r --arg pat $pat '
     [ to_entries[] | select(.key | test($pat)) ] as $hits
     | if ($hits | length) == 0
-      then "rule: no CR entry matches \($pat)" | halt_error(1)
+      then "rule: no CR entry matches \($pat)\n" | halt_error(1)
       else empty end,
       ( $hits[] | .value
         | (if (.ruleNumber | test("[a-z]$")) then .ruleNumber + " " else .ruleNumber + ". " end)
