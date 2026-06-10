@@ -69,6 +69,12 @@ t "keyword multiword" '702\.7.*[Ff]irst [Ss]trike' $scripts/keyword first strike
 t_fails "keyword bogus" $scripts/keyword zzgrok
 t "keyword tap → 701.26 (glossary fallback)" '701\.26' $scripts/keyword tap
 
+# --- mtr ---
+t "mtr list shows top sections" 'Tournament Fundamentals' $scripts/mtr --list
+t "mtr 1.7 is Head Judge" 'Head Judge' $scripts/mtr 1.7
+t "mtr search finds sideboard sections" '\d' $scripts/mtr --search sideboard
+t_fails "mtr bogus section" $scripts/mtr 99.9
+
 # (tests appended by later tasks above this line)
 
 echo

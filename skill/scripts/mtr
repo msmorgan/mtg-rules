@@ -1,0 +1,47 @@
+#!/usr/bin/env fish
+# mtr <sec[.sub]> | mtr --list | mtr --search <regex> — Magic Tournament Rules lookup.
+
+source (path resolve (status dirname))/lib.fish; or exit 1
+
+argparse 'l/list' 's/search=' -- $argv; or exit 1
+set -l mtr $rules_dir/mtr.json
+
+if set -ql _flag_list
+    jq -r '
+        .content[]
+        | (if .section == null then ""
+           elif .subsection == null then (.section | tostring) + ". "
+           else (.section | tostring) + "." + (.subsection | tostring) + "  " end) + .title
+    ' $mtr
+    exit
+end
+
+if set -ql _flag_search
+    jq -r --arg pat $_flag_search '
+        [ .content[] | select(((.content // "") + " " + (.title // "")) | test($pat; "i")) ] as $hits
+        | if ($hits | length) == 0 then "mtr: no sections match /\($pat)/\n" | halt_error(1) else empty end,
+          ( $hits[]
+            | (if .section == null then "intro"
+               else (.section | tostring) + (if .subsection then "." + (.subsection | tostring) else "" end)
+               end) + "  " + .title )
+    ' $mtr
+    exit
+end
+
+test (count $argv) -eq 1; or die "usage: mtr <sec[.sub]> | mtr --list | mtr --search <regex>"
+set -l parts (string split . -- $argv[1])
+string match -rq '^\d+$' -- $parts[1]; or die "mtr: bad section '$argv[1]'"
+set -l sub_json null
+if set -q parts[2]
+    string match -rq '^\d+$' -- $parts[2]; or die "mtr: bad subsection '$argv[1]'"
+    set sub_json $parts[2]
+end
+
+jq -r --argjson sec $parts[1] --argjson sub $sub_json '
+    [ .content[] | select(.section == $sec and ($sub == null or .subsection == $sub)) ] as $hits
+    | if ($hits | length) == 0 then "mtr: no section \($sec)\n" | halt_error(1) else empty end,
+      ( $hits[]
+        | "## " + (.section | tostring)
+          + (if .subsection then "." + (.subsection | tostring) else "" end)
+          + " " + .title + "\n\n" + .content + "\n" )
+' $mtr
