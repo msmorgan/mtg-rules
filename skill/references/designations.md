@@ -215,7 +215,11 @@ persistence**, **effect**, **CR home**.
 
 Each "has no rules meaning other than to act as a marker that spells and
 abilities can identify"; only permanents can have them; each persists until the
-permanent leaves the battlefield; none is an ability or a copiable value.
+permanent leaves the battlefield; none is an ability or a copiable value. These
+four share the same shape — permanent-carried, gained by their named keyword
+action, never lost while on the battlefield, no inherent effect beyond being
+referenced by abilities — so they're listed compactly; the only difference is
+how each is gained.
 
 - **Solved** — a Case becomes solved via "To solve — [Condition]" at your end
   step; enables its "Solved —" ability (719.3a–719.3c).

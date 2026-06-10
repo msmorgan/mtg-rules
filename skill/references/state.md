@@ -39,8 +39,8 @@ Per-player state the rules reference:
   each turn, only while speed < 4 (702.179d). No speed counts as 0 for effects
   that read it (702.179f).
 - **Designations a player can have** — monarch (725.1), initiative (726.1),
-  city's blessing (702.131c). The *game* can have day/night (731.1). Full
-  enumeration with mechanics: see `designations.md`.
+  city's blessing (702.131c), planar controller (901.6). The *game* can have
+  day/night (731.1). Full enumeration with mechanics: see `designations.md`.
 - **Maximum hand size** — normally seven; excess discarded in cleanup (402.2, 514.1).
 - **Ownership vs control** — owner = who started the game with the card in
   their deck (or brought/started it; 108.3). A card has no controller unless
