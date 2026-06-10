@@ -5,8 +5,8 @@ source (path resolve (status dirname))/lib.fish; or exit 1
 
 test (count $argv) -ge 1; or die "usage: keyword <name>   (keyword trample | keyword first strike)"
 set -l name (string lower -- "$argv")
-# normalise curly apostrophe → straight so glossary lookup matches
-set -l name_norm (string replace -a ’ "'" $name)
+# glossary keys use curly apostrophes; build a curly variant of ASCII input
+set -l name_curly (string replace -a "'" ’ $name)
 set -l selfdir (path resolve (status dirname))
 
 set -l rulenum (jq -r --arg n $name '
@@ -17,8 +17,8 @@ set -l rulenum (jq -r --arg n $name '
 set rulenum $rulenum[1]
 
 if test -z "$rulenum"
-    set rulenum (jq -r --arg n $name_norm '
-        (.[$n] // empty) | .definition
+    set rulenum (jq -r --arg n $name --arg nc $name_curly '
+        (.[$n] // .[$nc] // empty) | .definition
         | [ scan("rule ([0-9]{3}[.][0-9]+)") ] | .[0][0]? // empty
     ' $rules_dir/glossary.json)
 end
