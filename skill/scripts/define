@@ -7,14 +7,17 @@ test (count $argv) -ge 1; or die "usage: define <term>"
 set -l term (string lower -- "$argv")
 
 jq -r --arg t $term --slurpfile unof $rules_dir/unofficial-glossary.json '
+    def norm: gsub("’"; "\'") | gsub("[“”]"; "\"") | gsub("—"; "--");
     . as $g | $unof[0] as $u
-    | ($t | gsub("\'"; "’")) as $tc
-    | if ($g[$t] // $g[$tc]) then ($g[$t] // $g[$tc]) | "\(.term): \(.definition)"
-      elif ($u[$t] // $u[$tc]) then ($u[$t] // $u[$tc]) | "\(.term) (unofficial): \(.definition)"
+    | ($t | norm) as $q
+    | ($g | with_entries(.key |= norm)) as $gn
+    | ($u | with_entries(.key |= norm)) as $un
+    | if $gn[$q] then $gn[$q] | "\(.term): \(.definition)"
+      elif $un[$q] then $un[$q] | "\(.term) (unofficial): \(.definition)"
       else
-        ( [ ($g, $u) | keys[] | select(contains($t)) ] ) as $near
+        ( [ ($gn, $un) | keys[] | select(contains($q)) ] | unique ) as $near
         | (if ($near | length) > 0
-           then "define: no exact entry for \"\($t)\". Near matches: \($near | join(", "))\n"
+           then "define: no exact entry for \"\($t)\". Near matches: \($near[:30] | join(", "))\n"
            else "define: no glossary entry for \"\($t)\"\n" end)
         | halt_error(1)
       end

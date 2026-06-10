@@ -58,6 +58,10 @@ t "define handles multiword terms" '[Aa]ctive [Pp]layer' $scripts/define active 
 t "define falls back to unofficial" 'unofficial' $scripts/define battalion
 t_fails "define misses garbage" $scripts/define zzgrok
 
+t "define normalizes apostrophe input" '[Cc]ity.s [Bb]lessing' $scripts/define "city's blessing"
+t "define reaches curly-quoted keys" '[Ii]ntervening' $scripts/define 'intervening "if" clause'
+t_fails "define near-match still exits 1" $scripts/define strike
+
 # (tests appended by later tasks above this line)
 
 echo
