@@ -90,6 +90,9 @@ t "card handles quoted names" 'Ach! Hans' $scripts/card '"Ach! Hans, Run!"'
 t "corpus finds deathtouch lines" '[Dd]eathtouch' $scripts/corpus --match deathtouch
 t "corpus type filter" '.' $scripts/corpus --type Battle --match defeat
 t_fails "corpus no matches" $scripts/corpus --match zzqqxyzzy
+t "corpus --all reaches un-set lines" '[Gg]otcha' $scripts/corpus --all --match gotcha
+t "corpus type filter is case-insensitive" '.' $scripts/corpus --type battle --match defeat
+t_fails "corpus rejects invalid regex" $scripts/corpus --match '['
 
 # (tests appended by later tasks above this line)
 
