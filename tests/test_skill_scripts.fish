@@ -86,6 +86,11 @@ t "card finds unsupported planes too" '[Pp]lane' $scripts/card Llanowar
 t_fails "card empty name rejected" $scripts/card ''
 t "card handles quoted names" 'Ach! Hans' $scripts/card '"Ach! Hans, Run!"'
 
+# --- corpus ---
+t "corpus finds deathtouch lines" '[Dd]eathtouch' $scripts/corpus --match deathtouch
+t "corpus type filter" '.' $scripts/corpus --type Battle --match defeat
+t_fails "corpus no matches" $scripts/corpus --match zzqqxyzzy
+
 # (tests appended by later tasks above this line)
 
 echo

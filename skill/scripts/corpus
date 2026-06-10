@@ -1,0 +1,27 @@
+#!/usr/bin/env fish
+# corpus — distinct oracle-text lines (grammar corpus).
+#   corpus [--type Creature] [--keyword flying] [--match <regex>] [--all]
+# Default scope is "supported" cards (vintage-legal, non-reversible); --all lifts that.
+
+source (path resolve (status dirname))/lib.fish; or exit 1
+
+argparse 't/type=' 'k/keyword=' 'm/match=' 'a/all' -- $argv; or exit 1
+set -l idx $derived_dir/cards.jsonl
+test -f $idx; or die "corpus: data/derived/cards.jsonl missing — run scripts/build_derived.fish"
+
+set -l all false
+set -ql _flag_all; and set all true
+
+set -l out (jq -r --arg type "$_flag_type" --arg kw "$_flag_keyword" \
+        --arg pat "$_flag_match" --argjson all $all '
+    select($all or .supported)
+    | select($type == "" or ((.types // []) | index($type) != null))
+    | .text // empty
+    | split("\n")[]
+    | select(length > 0)
+    | select($kw == "" or (ascii_downcase | contains($kw | ascii_downcase)))
+    | select($pat == "" or test($pat; "i"))
+' $idx | sort -u)
+
+test (count $out) -gt 0; or die "corpus: no oracle lines match"
+printf '%s\n' $out
