@@ -104,7 +104,7 @@ this fixed layer order (613.1):
 | **6** | Ability add/remove, keyword counters, "can't have an ability" |
 | **7** | Power/toughness-changing effects |
 
-Layers 1 and 7 have ordered **sublayers**; layers 2–6 do not (613.2–613.4):
+Layers 1 and 7 have ordered **sublayers**; layers 2–6 do not (613.2, 613.4):
 
 | Sublayer | Scope |
 |----------|-------|
@@ -122,7 +122,9 @@ values** (613.2c, → 707.2).
 
 1. **CDAs first** in layers 2–6 (then everything else); layer 7 isolates
    CDAs in sublayer 7a instead (613.3, 613.4a). This is the "CDA placement"
-   rule — there is no separate CDA layer; CDAs simply sort first.
+   rule — there is no separate CDA layer; CDAs simply sort first. Among
+   multiple CDAs within the same layer, the normal timestamp and dependency
+   rules (613.7, 613.8) determine their relative order (613.3).
 2. **Timestamp order** — earlier timestamp applies first (613.7). What gets a
    timestamp and when: an effect from a resolved spell/ability is stamped at
    creation (613.7b); an effect from a static ability shares the source
