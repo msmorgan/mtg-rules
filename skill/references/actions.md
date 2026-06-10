@@ -39,7 +39,7 @@ that merely *watch* for a step beginning are triggered, not turn-based
 | 703.4h | AP chooses defending player (some multiplayer games) | Begin combat, on begin |
 | 703.4i | Active player declares attackers | Declare attackers, on begin |
 | 703.4j | Defending player declares blockers | Declare blockers, on begin |
-| 703.4k | Each player (APNAP) announces combat damage assignment | Combat damage, on begin |
+| 703.4k | Each player in APNAP order announces how each attacking or blocking creature they control assigns its combat damage | Combat damage, immediately on begin (510.1) |
 | 703.4m | All combat damage dealt simultaneously | Combat damage, after assignment |
 | 703.4n | AP discards down to maximum hand size | Cleanup, on begin |
 | 703.4p | Damage removed; "until end of turn"/"this turn" effects end | Cleanup, after discard |
@@ -96,7 +96,7 @@ pending trigger) → planar controller planeswalks (704.6f).
 
 Actions a player may take **while holding priority** that don't use the
 stack; not auto-generated like turn-based/SBAs (116.1). After taking one,
-that player gets priority again (116.3). The twelve (116.2):
+that player gets priority again (116.3). Full list (116.2a–m):
 
 | Rule | Action | Timing |
 |------|--------|--------|
@@ -154,7 +154,8 @@ The engine cycle once a step/phase has begun (turn-based actions already
 handled; 703.3):
 
 1. **Priority handshake.** Before any player gets priority, perform all
-   SBAs (repeat until none), then put waiting triggers on the stack, then
+   SBAs (repeat until none), then put waiting triggers on the stack (APNAP
+   order when multiple players have waiting triggers, 603.3b), then
    re-check — repeat until stable (704.3, 117.5). The active player gets
    priority at step/phase start and after each resolution; a player keeps
    priority after acting (117.3a, 117.3b, 117.3c).
