@@ -106,6 +106,11 @@ t "rulings case-insensitive" '\[\d{4}' $scripts/rulings humility
 t_fails "rulings bogus card" $scripts/rulings Zzgrokk the Unreal
 t_fails "rulings empty arg" $scripts/rulings ''
 
+# --- data resolution chain ---
+mkdir -p /tmp/mtg-data-test/rules; echo '{}' > /tmp/mtg-data-test/rules/cr.json
+t "lib honors MTG_RULES_DATA" '/tmp/mtg-data-test/rules$' fish -c "set -x MTG_RULES_DATA /tmp/mtg-data-test; source $scripts/lib.fish; or exit 1; echo \$rules_dir"
+t "lib ignores invalid MTG_RULES_DATA" 'data/rules$' fish -c "set -x MTG_RULES_DATA /nonexistent; source $scripts/lib.fish; or exit 1; echo \$rules_dir"
+
 # (tests appended by later tasks above this line)
 
 echo
