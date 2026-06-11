@@ -36,7 +36,13 @@ class Game:                                # see state.md §1, §8
     planar_controller: Player|None         # controls face-up plane/phenomenon;
                                            # normally the active player (901.6)
     turn_history: TurnHistory              # event log keyed by turn (608.2i)
-    # see designations.md for the full global-flag set
+    dungeon_progress: Map[Player, DungeonCard|None]  # venture marker position (309.4);
+                                           # None = no active dungeon
+    ring_temptation_count: Map[Player, int]  # times the Ring has tempted each player;
+                                           # drives which Ring abilities are active (701.54c)
+    attraction_state: Map[Player, AttractionDeck]  # supplementary command-zone deck;
+                                           # unlocked lights track open Attractions (717.2)
+    # see designations.md for the full global-flag set (monarch, initiative, ring-bearer, etc.)
 ```
 
 ```python
@@ -90,6 +96,9 @@ class Permanent(Object):                   # battlefield only (110.1); see state
     attached_to / attachments: ...         # Aura/Equip target; kept clear (400.5)
     timestamp: int                         # on entry (613.7d); renewed on attach/flip/transform
     counter_timestamps: Map[kind, int]     # each counter timestamped (613.7c)
+    stickers: list[Sticker]               # markers that modify characteristics; each sticker
+                                           # gets a new timestamp when placed or when the object
+                                           # gets a new timestamp (123.1, 613.7k)
     controlled_since: turn_marker          # summoning sickness: continuous since last turn began (302.6)
     class_level: int                       # any permanent can have a level; level-1 default;
                                            #   not copiable (716.2b, 716.2d)
@@ -97,7 +106,10 @@ class Permanent(Object):                   # battlefield only (110.1); see state
     merged_components: list[card|copy]     # merged permanent = multiple components (730.2);
                                            # has only the top component's chars (730.2a); on leave,
                                            # each component goes to its own zone (730.3, 730.3c)
-    linked_memory: ...                     # what the first linked ability did (607.1)
+    linked_memory: ...                     # what the first linked ability did (607.1);
+                                           # also covers secretly noted card names: a
+                                           # face-down/conspiracy card with hidden agenda notes
+                                           # a name on paper kept with the card (702.106b)
     casting_choices: ...                   # modes/targets/X/costs the spell was cast with (601.2c)
 ```
 
@@ -170,7 +182,7 @@ recipient resolves to the 120.3 letters (every letter verified against CR 120):
 | Creature, source with wither and/or infect | controller puts that many -1/-1 counters on it | 120.3d |
 | Creature, source with neither | mark that much damage on it | 120.3e |
 | Battle | remove that many defense counters | 120.3h |
-| (any) source with lifelink | controller gains that much life, in addition | 120.3f |
+| (any) source with lifelink | controller gains that much life, in addition; multiple simultaneous lifelink sources produce **separate** life-gain events, so "whenever you gain life" triggers count per source (120.3f, 702.15e) |
 | Player, combat damage from a creature with toxic | give poison = total toxic value, in addition | 120.3g |
 
 Life loss/gain then adjusts the life total (119.3); damage to a player
