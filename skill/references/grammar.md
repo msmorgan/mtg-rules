@@ -314,3 +314,7 @@ How text names the objects and players it acts on:
     production worth adding preemptively is a triggered-ability instruction
     tail mirroring 602.5d–e ("Resolve this ability only as a sorcery"),
     for Family 3's timing-restricted trigger pattern.
+
+The checklist's parse targets — predicates, counts, values, bindings —
+have their semantics specified in `queries.md`, the grammar↔engine
+contract.

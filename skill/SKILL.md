@@ -29,7 +29,10 @@ All paths below are relative to this skill's directory.
    Cost/payment, event/trigger-schema, decision/choice,
    visibility/hidden-information, and game-ending questions route to
    `references/costs.md`, `references/events.md`, `references/choices.md`,
-   `references/information.md`, and `references/outcomes.md` respectively.
+   `references/information.md`, and `references/outcomes.md` respectively;
+   predicate/value-language, mana, and duration/lock questions route to
+   `references/queries.md`, `references/mana.md`, and
+   `references/temporal.md` likewise.
 3. **Verify every load-bearing specific with the scripts before asserting
    it.** Quote rule text with rule numbers. For card questions, fetch exact
    oracle text first (`scripts/card`) — never trust memory of a card's
@@ -65,6 +68,9 @@ All paths below are relative to this skill's directory.
 | `references/choices.md` | decision points: kinds, lock stages, deciders, visibility, randomness |
 | `references/information.md` | visibility & hidden state: zones, face-down, reveals, per-player info sets |
 | `references/outcomes.md` | game end: losses/wins/draws/restart/subgames + outcome modification |
+| `references/queries.md` | the predicate & value language: selectors, bindings/anaphora, stored memory, undefined values — the grammar↔engine contract |
+| `references/mana.md` | the mana subsystem: unit schema, production, payment predicates, pool policy |
+| `references/temporal.md` | durations, windows, and the lock taxonomy |
 | `references/actions.md` | everything the game can do: events; turn-based, state-based, special, and keyword actions; the priority→stack→resolve loop |
 | `references/designations.md` | the scattered global flags, unified: monarch, initiative, day/night, city's blessing, ring-bearer, goaded, suspected, … |
 | `references/abilities.md` | ability kinds + sub-kinds (mana, loyalty, linked, CDA, delayed/state/reflexive triggers), where abilities function |
