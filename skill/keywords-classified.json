@@ -1,0 +1,3645 @@
+{
+  "meta": {
+    "generated_from": "CR effective 2026-04-17",
+    "rubric_version": 1,
+    "classes": [
+      "intrinsic",
+      "composite",
+      "composite-given",
+      "marker"
+    ],
+    "given_vocabulary": {
+      "cause-tagged-events": "Events carry a tag for what caused them (e.g. \"tapped because it was declared as an attacker\"), so statics/replacements can match on cause rather than the CR hardcoding the case.",
+      "damage-result-rewrite": "A stage that rewrites the RESULT of a damage event (substitute or augment what damage does) instead of the amount — the slot CR 120.3 hardcodes for lifelink/wither/infect/toxic.",
+      "progress-track": "A game-maintained monotonic value with thresholds (day/night, speed) advanced by turn-based actions or inherent triggers; statics read it.",
+      "attachment-relation": "A first-class attached-to edge between an object and a legal host (object or player) with legality predicate and violation policy.",
+      "cost-modification-hook": "A permission that edits how the generic/colored mana of an already-determined total cost is paid (601.2f-h) — neither an additional nor an alternative cost.",
+      "face-down-objects": "A primitive for objects existing face down (708): put/cast face down as a 2/2, secret-identity memory, and a special action to turn face up."
+    }
+  },
+  "keywords": [
+    {
+      "name": "Absorb",
+      "kind": "ability",
+      "rule": "702.64",
+      "class": "composite",
+      "given": null,
+      "how": "A prevention effect: prevent N of any damage a source would deal to this creature (per source, per instance).",
+      "cites": [
+        "702.64a",
+        "702.64b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Affinity",
+      "kind": "ability",
+      "rule": "702.41",
+      "class": "composite",
+      "given": null,
+      "how": "A cost-reduction static on the stack: the spell costs {1} less per qualifying permanent you control.",
+      "cites": [
+        "702.41a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Afflict",
+      "kind": "ability",
+      "rule": "702.130",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability: 'whenever this creature becomes blocked' trigger that makes the defending player lose N life.",
+      "cites": [
+        "702.130a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Afterlife",
+      "kind": "ability",
+      "rule": "702.135",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability: dies (put into graveyard from battlefield) trigger that creates N 1/1 Spirit tokens with flying.",
+      "cites": [
+        "702.135a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Aftermath",
+      "kind": "ability",
+      "rule": "702.127",
+      "class": "composite",
+      "given": null,
+      "how": "Three statics: permission to cast this half from the graveyard, a restriction barring casting from other zones, and an exile replacement when it leaves the stack.",
+      "cites": [
+        "702.127a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Amplify",
+      "kind": "ability",
+      "rule": "702.38",
+      "class": "composite",
+      "given": null,
+      "how": "An enters-with-counters static parameterized by a reveal action (reveal cards sharing a creature type, gain N counters per card).",
+      "cites": [
+        "702.38a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Annihilator",
+      "kind": "ability",
+      "rule": "702.86",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability: whenever this creature attacks, defending player sacrifices N permanents; attack trigger + forced sacrifice keyword-action.",
+      "cites": [
+        "702.86a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Ascend",
+      "kind": "ability",
+      "rule": "702.131",
+      "class": "composite",
+      "given": null,
+      "how": "Spell ability (instant/sorcery) or static ability (permanent) that checks a permanent-count condition and grants the city's blessing designation (itself a marker).",
+      "cites": [
+        "702.131a",
+        "702.131b",
+        "702.131c"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Assist",
+      "kind": "ability",
+      "rule": "702.132",
+      "class": "composite-given",
+      "given": "cost-modification-hook",
+      "how": "Modifies how the generic-mana component of the already-determined total cost is paid (601.2g-h): lets another chosen player pay any amount of that generic mana before you pay. Same pay-substitution hook category as Delve/Convoke, differing only in who pays; given the cost-modification-hook primitive it composes.",
+      "cites": [
+        "702.132a",
+        "601.2g",
+        "601.2h"
+      ],
+      "core_referenced": false,
+      "confidence": "borderline"
+    },
+    {
+      "name": "Aura Swap",
+      "kind": "ability",
+      "rule": "702.65",
+      "class": "composite",
+      "given": null,
+      "how": "An activated ability that exchanges this Aura permanent with an Aura card in your hand (cost + zone-exchange action, no effect if either half fails).",
+      "cites": [
+        "702.65a",
+        "702.65b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Awaken",
+      "kind": "ability",
+      "rule": "702.113",
+      "class": "composite",
+      "given": null,
+      "how": "Static alternative-cost permission plus a conditional spell ability that, if the awaken cost was paid, puts N counters on a land and animates it.",
+      "cites": [
+        "702.113a",
+        "702.113b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Backup",
+      "kind": "ability",
+      "rule": "702.165",
+      "class": "composite",
+      "given": null,
+      "how": "ETB triggered ability: put N +1/+1 counters on target creature and, if another creature, grant it this card's printed non-backup abilities until end of turn — trigger + place-counters + ability-grant.",
+      "cites": [
+        "702.165a",
+        "702.165c"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Banding",
+      "kind": "ability",
+      "rule": "702.22",
+      "class": "intrinsic",
+      "given": null,
+      "how": "Rewrites attacker declaration (band formation, shared-blocking) and reassigns who chooses combat damage division (702.22j/k are explicit exceptions to 510.1c/d), reshaping blocking and assignment machinery.",
+      "cites": [
+        "702.22c",
+        "702.22h",
+        "702.22j",
+        "510.1c"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Bargain",
+      "kind": "ability",
+      "rule": "702.166",
+      "class": "composite",
+      "given": null,
+      "how": "Static on the stack: optional additional cost to sacrifice an artifact/enchantment/token, with linked 'was bargained' memory referenced by other abilities — additional-cost choice plus a was-X flag.",
+      "cites": [
+        "702.166a",
+        "702.166b",
+        "702.166c"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Battle Cry",
+      "kind": "ability",
+      "rule": "702.91",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability: whenever this creature attacks, each other attacking creature gets +1/+0 until end of turn; attack trigger + mass temporary buff.",
+      "cites": [
+        "702.91a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Bestow",
+      "kind": "ability",
+      "rule": "702.103",
+      "class": "composite",
+      "given": null,
+      "how": "Static ability: an alternative cost to cast the creature as an Aura (type-changing static granting enchant creature), reverting to a creature on illegal target/unattach.",
+      "cites": [
+        "702.103a",
+        "702.103b",
+        "702.103e"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Blitz",
+      "kind": "ability",
+      "rule": "702.152",
+      "class": "composite",
+      "given": null,
+      "how": "Static alternative cost, a static creating a delayed sacrifice trigger if that cost was paid, and a static granting haste plus a dies-draw triggered ability.",
+      "cites": [
+        "702.152a",
+        "608.3g",
+        "601.2b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Bloodthirst",
+      "kind": "ability",
+      "rule": "702.54",
+      "class": "composite",
+      "given": null,
+      "how": "A conditional enters-with-counters static gated on whether an opponent was dealt damage this turn (enters-with counters over a damage-this-turn record).",
+      "cites": [
+        "702.54a",
+        "702.54b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Boast",
+      "kind": "ability",
+      "rule": "702.142",
+      "class": "composite",
+      "given": null,
+      "how": "An activated ability with an activation restriction (only if this creature attacked this turn, only once per turn).",
+      "cites": [
+        "702.142a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Bushido",
+      "kind": "ability",
+      "rule": "702.45",
+      "class": "composite",
+      "given": null,
+      "how": "A trigger on blocking/becoming blocked granting a +N/+N until-end-of-turn pump.",
+      "cites": [
+        "702.45a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Buyback",
+      "kind": "ability",
+      "rule": "702.27",
+      "class": "composite",
+      "given": null,
+      "how": "Optional additional cost as the spell is cast plus a replacement: if paid, the spell returns to hand instead of the graveyard as it resolves; composes from cost-modification + replacement effect.",
+      "cites": [
+        "702.27a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Cascade",
+      "kind": "ability",
+      "rule": "702.85",
+      "class": "composite",
+      "given": null,
+      "how": "Cast-trigger on the stack: exile from top until a nonland with lower mana value, may cast it for free, then bottom the rest randomly; cast trigger + exile sequence + conditional free cast + bottom-random.",
+      "cites": [
+        "702.85a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Casualty",
+      "kind": "ability",
+      "rule": "702.153",
+      "class": "composite",
+      "given": null,
+      "how": "Static additional cost (optionally sacrifice a creature with power N+) plus a cast trigger that copies the spell (new targets) if that cost was paid.",
+      "cites": [
+        "702.153a",
+        "601.2b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Champion",
+      "kind": "ability",
+      "rule": "702.72",
+      "class": "composite",
+      "given": null,
+      "how": "Two linked triggered abilities: ETB sacrifice-unless-exile-another-object, and LTB return-the-exiled-card; ETB/LTB triggers + exile/return keyword-actions + linked-ability memory.",
+      "cites": [
+        "702.72a",
+        "702.72b",
+        "702.72c"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Changeling",
+      "kind": "ability",
+      "rule": "702.73",
+      "class": "composite",
+      "given": null,
+      "how": "Characteristic-defining ability setting creature types to every creature type, working in all zones; a CDA over the type-line characteristic (rubric: NOT a marker).",
+      "cites": [
+        "702.73a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Cipher",
+      "kind": "ability",
+      "rule": "702.99",
+      "class": "composite",
+      "given": null,
+      "how": "Spell ability that exiles the card encoded on a creature, plus a granted triggered ability (on combat damage to a player, copy and optionally cast the encoded card for free) — all statics/triggers + keyword actions (exile/copy/cast).",
+      "cites": [
+        "702.99a",
+        "702.99b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Cleave",
+      "kind": "ability",
+      "rule": "702.148",
+      "class": "composite",
+      "given": null,
+      "how": "Static granting an alternative cost, plus a text-changing effect (rule 612) removing bracketed text when that cost was paid.",
+      "cites": [
+        "702.148a",
+        "702.148b",
+        "601.2b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Companion",
+      "kind": "ability",
+      "rule": "702.139",
+      "class": "intrinsic",
+      "given": null,
+      "how": "Functions outside the game and uses a dedicated special action (116.2g) to move a card from outside the game into hand; outside-game functioning plus the special action are structural pipeline machinery no static/trigger composition reproduces.",
+      "cites": [
+        "702.139a",
+        "116.2g",
+        "103.2b"
+      ],
+      "core_referenced": true,
+      "confidence": "borderline"
+    },
+    {
+      "name": "Compleated",
+      "kind": "ability",
+      "rule": "702.150",
+      "class": "composite",
+      "given": null,
+      "how": "Static replacement effect on entering loyalty counters: reduces them by two per Phyrexian mana symbol for which life was paid.",
+      "cites": [
+        "702.150a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Conspire",
+      "kind": "ability",
+      "rule": "702.78",
+      "class": "composite",
+      "given": null,
+      "how": "Static additional-cost option (tap two untapped creatures sharing a color) plus a linked cast-trigger that copies the spell if the conspire cost was paid; additional-cost + 'was paid' memory + cast trigger + copy-spell.",
+      "cites": [
+        "702.78a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Convoke",
+      "kind": "ability",
+      "rule": "702.51",
+      "class": "composite-given",
+      "given": "cost-modification-hook",
+      "how": "For each colored/generic mana in the already-determined total cost, may tap an untapped creature of that color (or any creature for generic) rather than pay that mana; CR explicitly says it is neither additional nor alternative cost (702.51b). Same pay-substitution hook as Delve.",
+      "cites": [
+        "702.51a",
+        "702.51b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Craft",
+      "kind": "ability",
+      "rule": "702.167",
+      "class": "composite",
+      "given": null,
+      "how": "Activated sorcery-speed ability: cost + exile this permanent + exile materials: return this card to the battlefield transformed — composes a cost (with exile components) and a return-transformed action.",
+      "cites": [
+        "702.167a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Crew",
+      "kind": "ability",
+      "rule": "702.122",
+      "class": "composite",
+      "given": null,
+      "how": "Activated ability of Vehicles: tap untapped creatures with total power N or more to make this an artifact creature until end of turn.",
+      "cites": [
+        "702.122a"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Cumulative Upkeep",
+      "kind": "ability",
+      "rule": "702.24",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability: at-upkeep trigger placing an age counter, then a pay-[cost]-per-counter-or-sacrifice cost gate; composes from upkeep trigger + place counters + cost + sacrifice keyword action.",
+      "cites": [
+        "702.24a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Cycling",
+      "kind": "ability",
+      "rule": "702.29",
+      "class": "composite",
+      "given": null,
+      "how": "Activated ability functioning from hand: '[Cost], Discard this card: Draw a card' — a cost (incl. discard keyword action) producing a draw.",
+      "cites": [
+        "702.29a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Dash",
+      "kind": "ability",
+      "rule": "702.109",
+      "class": "composite",
+      "given": null,
+      "how": "Alternative casting cost static, a delayed triggered ability to return the permanent to hand at next end step, and a static haste grant while the dash cost was paid.",
+      "cites": [
+        "702.109a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Daybound",
+      "kind": "ability",
+      "rule": "702.145",
+      "class": "composite-given",
+      "given": "progress-track",
+      "how": "Three statics that read the game day/night designation (a game-maintained state track advanced by the untap-step turn-based action, rule 731): enters transformed if night, transforms as it becomes night, can’t otherwise transform; given the day/night track these are statics + forced transforms.",
+      "cites": [
+        "702.145b",
+        "702.145c",
+        "731.1"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Deathtouch",
+      "kind": "ability",
+      "rule": "702.2",
+      "class": "intrinsic",
+      "given": null,
+      "how": "Lethality is read prospectively: 510.1c treats any nonzero combat damage from a deathtouch source as lethal during assignment (702.2c), and the dedicated SBA 704.5h destroys any creature it has damaged. No composition of primitives reproduces the planning-time lethality rewrite.",
+      "cites": [
+        "702.2b",
+        "702.2c",
+        "510.1c",
+        "704.5h"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Decayed",
+      "kind": "ability",
+      "rule": "702.147",
+      "class": "composite",
+      "given": null,
+      "how": "Static restriction (can't block) plus a triggered ability (attack trigger sacrificing it at end of combat).",
+      "cites": [
+        "702.147a",
+        "122.1b"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Defender",
+      "kind": "ability",
+      "rule": "702.3",
+      "class": "composite",
+      "given": null,
+      "how": "Static attack restriction: the creature can't attack, which is just an entry checked by the declare-attackers restriction step (508.1c).",
+      "cites": [
+        "702.3b",
+        "508.1c"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Delve",
+      "kind": "ability",
+      "rule": "702.66",
+      "class": "composite-given",
+      "given": "cost-modification-hook",
+      "how": "Static cost-payment alteration: for each generic mana in the total cost, may exile a graveyard card instead of paying. Decomposes given a hook that lets a permission edit how generic mana of an already-determined total cost is paid (it is neither additional nor alternative cost).",
+      "cites": [
+        "702.66a",
+        "702.66b"
+      ],
+      "core_referenced": false,
+      "confidence": "borderline"
+    },
+    {
+      "name": "Demonstrate",
+      "kind": "ability",
+      "rule": "702.144",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability: cast trigger that optionally copies the spell (new targets) and, if so, lets a chosen opponent copy it too.",
+      "cites": [
+        "702.144a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Dethrone",
+      "kind": "ability",
+      "rule": "702.105",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability: whenever this creature attacks the player with the most life, put a +1/+1 counter on it.",
+      "cites": [
+        "702.105a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Devoid",
+      "kind": "ability",
+      "rule": "702.114",
+      "class": "composite",
+      "given": null,
+      "how": "Characteristic-defining ability setting the object's color to colorless; functions in all zones (like changeling). Composite CDA, not a marker.",
+      "cites": [
+        "702.114a",
+        "604.3"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Devour",
+      "kind": "ability",
+      "rule": "702.82",
+      "class": "composite",
+      "given": null,
+      "how": "Static ability: as this enters, may sacrifice any number of creatures and it enters with N +1/+1 counters per creature sacrificed; ETB replacement choosing sacrifices + enters-with counters + 'it devoured' count memory.",
+      "cites": [
+        "702.82a",
+        "702.82b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Disguise",
+      "kind": "ability",
+      "rule": "702.168",
+      "class": "composite-given",
+      "given": "face-down-objects",
+      "how": "Alternative-cost face-down cast (708) of the card as a 2/2 ward {2} face-down creature for {3}, plus a special action (116) to turn it face up for the disguise cost; given the face-down-objects primitive, alt-cost cast + turn-face-up.",
+      "cites": [
+        "702.168a",
+        "702.168d",
+        "708.2a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Disturb",
+      "kind": "ability",
+      "rule": "702.146",
+      "class": "composite",
+      "given": null,
+      "how": "Static granting permission to cast the card transformed from the graveyard for an alternative cost, plus a replacement so it enters with its back face up.",
+      "cites": [
+        "702.146a",
+        "702.146b",
+        "601.2b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Double Strike",
+      "kind": "ability",
+      "rule": "702.4",
+      "class": "intrinsic",
+      "given": null,
+      "how": "Restructures the combat damage step itself: forces a first-strike damage step then a second combat damage step (510), changing turn/phase structure no primitive composition reproduces.",
+      "cites": [
+        "702.4a",
+        "702.4b",
+        "510.1"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Dredge",
+      "kind": "ability",
+      "rule": "702.52",
+      "class": "composite",
+      "given": null,
+      "how": "A replacement effect on drawing: instead of drawing, mill N and return this card from graveyard to hand.",
+      "cites": [
+        "702.52a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Echo",
+      "kind": "ability",
+      "rule": "702.30",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability: at the beginning of your upkeep, if this came under your control since your last upkeep, sacrifice it unless you pay the cost; upkeep trigger + intervening-if + pay-or-sacrifice gate.",
+      "cites": [
+        "702.30a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Embalm",
+      "kind": "ability",
+      "rule": "702.128",
+      "class": "composite",
+      "given": null,
+      "how": "Activated ability from the graveyard: [cost], exile this card: create a white no-mana-cost Zombie token copy; sorcery-speed restricted.",
+      "cites": [
+        "702.128a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Emerge",
+      "kind": "ability",
+      "rule": "702.119",
+      "class": "composite",
+      "given": null,
+      "how": "Static alternative cost (pay [cost] and sacrifice a creature) plus a generic-mana cost reduction equal to the sacrificed creature's mana value.",
+      "cites": [
+        "702.119a",
+        "702.119c"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Enchant",
+      "kind": "ability",
+      "rule": "702.5",
+      "class": "composite",
+      "given": null,
+      "how": "Static restriction on what an Aura spell may target and what an Aura may be attached to; pure target/attachment legality predicate.",
+      "cites": [
+        "702.5a",
+        "702.5d"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Encore",
+      "kind": "ability",
+      "rule": "702.141",
+      "class": "composite",
+      "given": null,
+      "how": "Activated ability from the graveyard (cost + exile self) creating attacking haste token copies per opponent, sacrificed at next end step; sorcery-speed restriction.",
+      "cites": [
+        "702.141a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Enlist",
+      "kind": "ability",
+      "rule": "702.154",
+      "class": "composite-given",
+      "given": "cause-tagged-events",
+      "how": "Optional cost-to-attack hook (508.1g) tapping an eligible creature, plus a linked triggered ability granting +X/+0; composes given the engine's attack-optional-cost hook.",
+      "cites": [
+        "702.154a",
+        "702.154b",
+        "508.1g"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Entwine",
+      "kind": "ability",
+      "rule": "702.42",
+      "class": "composite",
+      "given": null,
+      "how": "A modal-spell static letting you choose all modes for an additional cost (mode-choice override + additional cost, 601.2b/700.2).",
+      "cites": [
+        "702.42a",
+        "700.2",
+        "601.2b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Epic",
+      "kind": "ability",
+      "rule": "702.50",
+      "class": "composite",
+      "given": null,
+      "how": "A static restriction (you can't cast spells for the rest of the game) plus a delayed triggered ability copying this spell each upkeep with optional new targets.",
+      "cites": [
+        "702.50a",
+        "707.10"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Equip",
+      "kind": "ability",
+      "rule": "702.6",
+      "class": "composite",
+      "given": null,
+      "how": "Defined as an activated ability '[Cost]: Attach this permanent to target creature you control, activate only as a sorcery' — a cost + attach keyword action with a sorcery-speed timing restriction.",
+      "cites": [
+        "702.6a",
+        "702.6c"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Escalate",
+      "kind": "ability",
+      "rule": "702.120",
+      "class": "composite",
+      "given": null,
+      "how": "Static additional-cost ability on modal spells: pay an extra [cost] per mode chosen beyond the first.",
+      "cites": [
+        "702.120a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Escape",
+      "kind": "ability",
+      "rule": "702.138",
+      "class": "composite",
+      "given": null,
+      "how": "Static ability granting permission to cast the card from the graveyard for an alternative cost; 'escaped' is tracked memory, escape-with-counters is a replacement effect.",
+      "cites": [
+        "702.138a",
+        "702.138c",
+        "601.2b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Eternalize",
+      "kind": "ability",
+      "rule": "702.129",
+      "class": "composite",
+      "given": null,
+      "how": "Activated ability from the graveyard: [cost], exile this card: create a black 4/4 no-mana-cost Zombie token copy; sorcery-speed restricted.",
+      "cites": [
+        "702.129a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Evoke",
+      "kind": "ability",
+      "rule": "702.74",
+      "class": "composite",
+      "given": null,
+      "how": "Static alternative-cost permission (may cast for evoke cost) plus a linked ETB triggered ability that sacrifices it if the evoke cost was paid; alternative-cost + 'was paid' memory + ETB trigger sacrificing.",
+      "cites": [
+        "702.74a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Evolve",
+      "kind": "ability",
+      "rule": "702.100",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability: whenever a creature you control enters with greater power and/or toughness, put a +1/+1 counter on this creature.",
+      "cites": [
+        "702.100a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Exalted",
+      "kind": "ability",
+      "rule": "702.83",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability: whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn; attacks-alone trigger (506.5 predicate) + temporary buff.",
+      "cites": [
+        "702.83a",
+        "506.5"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Exhaust",
+      "kind": "ability",
+      "rule": "702.177",
+      "class": "composite",
+      "given": null,
+      "how": "An activated ability with an 'activate only once' (per game) usage restriction — the existing activated-ability template plus an activation-count restriction.",
+      "cites": [
+        "702.177a",
+        "702.177b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Exploit",
+      "kind": "ability",
+      "rule": "702.110",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability: when this creature enters, you may sacrifice a creature (sacrifice keyword action).",
+      "cites": [
+        "702.110a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Extort",
+      "kind": "ability",
+      "rule": "702.101",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability: whenever you cast a spell, optionally pay {W/B} to make each opponent lose 1 life and gain that much.",
+      "cites": [
+        "702.101a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Fabricate",
+      "kind": "ability",
+      "rule": "702.123",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability: when this enters, either put N +1/+1 counters on it or create N 1/1 Servo tokens.",
+      "cites": [
+        "702.123a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Fading",
+      "kind": "ability",
+      "rule": "702.32",
+      "class": "composite",
+      "given": null,
+      "how": "Two abilities: enters with N fade counters, plus an upkeep trigger that removes a fade counter or sacrifices the permanent if it can't; composes from enters-with-counters + upkeep trigger + remove counter + sacrifice.",
+      "cites": [
+        "702.32a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Fear",
+      "kind": "ability",
+      "rule": "702.36",
+      "class": "composite",
+      "given": null,
+      "how": "A static blocking restriction predicated on blocker characteristics (can't be blocked except by artifact/black creatures), the same shape as flying/menace evasion.",
+      "cites": [
+        "702.36b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Firebending",
+      "kind": "ability",
+      "rule": "702.189",
+      "class": "composite",
+      "given": null,
+      "how": "Attack-triggered ability adding N {R} that doesn't empty as steps/phases end until end of combat — combat trigger + mana addition + a don't-lose-this-mana effect.",
+      "cites": [
+        "702.189a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "First Strike",
+      "kind": "ability",
+      "rule": "702.7",
+      "class": "intrinsic",
+      "given": null,
+      "how": "Restructures the combat damage step: when present it splits combat damage into a first-strike step and a regular step (510), altering phase structure not reproducible from primitives.",
+      "cites": [
+        "702.7a",
+        "702.7b",
+        "510.1"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Flanking",
+      "kind": "ability",
+      "rule": "702.25",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability: whenever this becomes blocked by a creature without flanking, that blocker gets -1/-1; a become-blocked trigger producing a P/T-debuff effect.",
+      "cites": [
+        "702.25a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Flash",
+      "kind": "ability",
+      "rule": "702.8",
+      "class": "composite",
+      "given": null,
+      "how": "Timing permission: 'you may play this card any time you could cast an instant' — a static modifying when the casting/playing action is legal.",
+      "cites": [
+        "702.8a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Flashback",
+      "kind": "ability",
+      "rule": "702.34",
+      "class": "composite",
+      "given": null,
+      "how": "Two statics: an alternative-cost casting permission from the graveyard (601.2b alt-cost rules) plus a replacement effect that exiles the card instead of letting it leave the stack.",
+      "cites": [
+        "702.34a",
+        "601.2b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Flying",
+      "kind": "ability",
+      "rule": "702.9",
+      "class": "composite",
+      "given": null,
+      "how": "Blocking restriction predicated on blocker keywords: can't be blocked except by creatures with flying and/or reach (a declare-blockers legality predicate).",
+      "cites": [
+        "702.9b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "For Mirrodin!",
+      "kind": "ability",
+      "rule": "702.163",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability: 'when this Equipment enters, create a 2/2 Rebel token then attach this Equipment to it' — ETB trigger composing a create-token action and an attach action.",
+      "cites": [
+        "702.163a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Forecast",
+      "kind": "ability",
+      "rule": "702.57",
+      "class": "composite",
+      "given": null,
+      "how": "An activated ability usable only from hand, restricted to your upkeep and once per turn, that reveals the card as a cost (activated ability + timing/zone restriction).",
+      "cites": [
+        "702.57a",
+        "702.57b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Foretell",
+      "kind": "ability",
+      "rule": "702.143",
+      "class": "composite-given",
+      "given": "face-down-objects",
+      "how": "Special action (116.2h) to pay {2} and exile the card FACE DOWN (708), plus a static granting an alternative foretell cost to cast it on a later turn; given the face-down-objects primitive it is special-action exile-face-down + alt-cost cast.",
+      "cites": [
+        "702.143a",
+        "702.143b",
+        "116.2h",
+        "708.5"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Fortify",
+      "kind": "ability",
+      "rule": "702.67",
+      "class": "composite",
+      "given": null,
+      "how": "Activated ability = [cost] : attach this Fortification to target land you control, with a sorcery-speed timing restriction; pure cost + keyword-action (attach) + targeting + timing permission.",
+      "cites": [
+        "702.67a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Freerunning",
+      "kind": "ability",
+      "rule": "702.173",
+      "class": "composite",
+      "given": null,
+      "how": "Static alternative-cost permission predicated on a combat-damage condition (a player was dealt combat damage by your Assassin/commander this turn) — conditional alt-cost casting.",
+      "cites": [
+        "702.173a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Frenzy",
+      "kind": "ability",
+      "rule": "702.68",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability: when this creature attacks and isn't blocked, +N/+0 until end of turn; trigger condition + temporary P/T buff.",
+      "cites": [
+        "702.68a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Fuse",
+      "kind": "ability",
+      "rule": "702.102",
+      "class": "composite",
+      "given": null,
+      "how": "Static casting permission letting you cast both halves of a split card as one spell with the combined cost and sequential resolution — a casting-mode choice plus cost composition, no new pipeline opcode.",
+      "cites": [
+        "702.102a",
+        "702.102c",
+        "702.102d"
+      ],
+      "core_referenced": true,
+      "confidence": "borderline"
+    },
+    {
+      "name": "Gift",
+      "kind": "ability",
+      "rule": "702.174",
+      "class": "composite",
+      "given": null,
+      "how": "Optional additional cost (choose an opponent) plus a triggered/spell ability whose effect (token, draw, etc.) happens if the gift cost was paid — additional-cost choice + conditional effect + was-paid memory.",
+      "cites": [
+        "702.174a",
+        "702.174b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Graft",
+      "kind": "ability",
+      "rule": "702.58",
+      "class": "composite",
+      "given": null,
+      "how": "An enters-with-N-counters static plus a trigger on another creature entering that may move a +1/+1 counter onto it.",
+      "cites": [
+        "702.58a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Gravestorm",
+      "kind": "ability",
+      "rule": "702.69",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability on the stack: when you cast this spell, copy it once per permanent put into a graveyard from the battlefield this turn (a counted game event) and optionally choose new targets; cast trigger + copy-spell action + per-event count.",
+      "cites": [
+        "702.69a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Harmonize",
+      "kind": "ability",
+      "rule": "702.180",
+      "class": "composite",
+      "given": null,
+      "how": "Alternative-cost cast from graveyard (pay cost + tap a creature) with a generic cost reduction by the tapped creature's power and an exile-instead replacement when it leaves the stack — alt-cost + cost-reduction + replacement.",
+      "cites": [
+        "702.180a",
+        "702.180b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Haste",
+      "kind": "ability",
+      "rule": "702.10",
+      "class": "composite",
+      "given": null,
+      "how": "Lifts the 302.6/508.1a summoning-sickness restrictions so the creature may attack and use tap/untap abilities without continuous control since the turn began.",
+      "cites": [
+        "702.10b",
+        "702.10c",
+        "302.6"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Haunt",
+      "kind": "ability",
+      "rule": "702.55",
+      "class": "composite",
+      "given": null,
+      "how": "A dies/resolution trigger that exiles the card haunting a target creature, establishing a haunt attachment relation that lets later triggers fire from exile.",
+      "cites": [
+        "702.55a",
+        "702.55b",
+        "702.55c"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Hexproof",
+      "kind": "ability",
+      "rule": "702.11",
+      "class": "composite",
+      "given": null,
+      "how": "Static targeting restriction: can't be the target of spells or abilities opponents control; a target-legality predicate.",
+      "cites": [
+        "702.11b",
+        "702.11c"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Hidden Agenda",
+      "kind": "ability",
+      "rule": "702.106",
+      "class": "composite-given",
+      "given": "face-down-objects",
+      "how": "As the conspiracy enters the command zone it is turned FACE DOWN (708) and a card name is secretly noted (linked memory); a special action (116.2j) flips it face up; given the face-down-objects primitive it is enter-face-down + secret-name memory + turn-face-up.",
+      "cites": [
+        "702.106a",
+        "702.106c",
+        "702.106d",
+        "708.5"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Hideaway",
+      "kind": "ability",
+      "rule": "702.75",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability: ETB look at top N, exile one face down (granting a look-permission) and bottom the rest in random order; ETB trigger + look/exile/bottom sequence + granted static ability.",
+      "cites": [
+        "702.75a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Horsemanship",
+      "kind": "ability",
+      "rule": "702.31",
+      "class": "composite",
+      "given": null,
+      "how": "Evasion blocking restriction predicated on the horsemanship keyword: can't be blocked by creatures without horsemanship; a declare-blockers legality predicate.",
+      "cites": [
+        "702.31b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Impending",
+      "kind": "ability",
+      "rule": "702.176",
+      "class": "composite",
+      "given": null,
+      "how": "Alternative-cost cast + ETB replacement adding N time counters + static 'not a creature while it has a time counter' + end-step triggered counter removal — alt-cost + replacement + conditional static + trigger.",
+      "cites": [
+        "702.176a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Improvise",
+      "kind": "ability",
+      "rule": "702.126",
+      "class": "composite-given",
+      "given": "cost-modification-hook",
+      "how": "For each generic mana in the already-determined total cost, may tap an untapped artifact rather than pay that mana; CR explicitly says it is neither additional nor alternative cost (702.126b). Same pay-substitution hook as Delve/Convoke.",
+      "cites": [
+        "702.126a",
+        "702.126b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Increment",
+      "kind": "ability",
+      "rule": "702.191",
+      "class": "composite",
+      "given": null,
+      "how": "Cast-triggered ability: when you cast a spell, if mana spent exceeds this creature's power or toughness, put a +1/+1 counter on it — spell-cast trigger with an intervening-if condition + place-counter.",
+      "cites": [
+        "702.191a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Indestructible",
+      "kind": "ability",
+      "rule": "702.12",
+      "class": "composite",
+      "given": null,
+      "how": "Static “can’t be destroyed” restriction (702.12a/b): a “can’t” effect (614.17) that nulls the destroy keyword action for this permanent and exempts it from the lethal-damage SBA (704.5g). “Can’t” effects are statics in the rubric basis, so it composes as a static rule-modification rather than its own prospective machinery.",
+      "cites": [
+        "702.12a",
+        "702.12b",
+        "704.5g",
+        "614.17"
+      ],
+      "core_referenced": false,
+      "confidence": "borderline"
+    },
+    {
+      "name": "Infect",
+      "kind": "ability",
+      "rule": "702.90",
+      "class": "composite-given",
+      "given": "damage-result-rewrite",
+      "how": "Static result substitution given the damage-result-rewrite stage: damage to a player becomes that many poison counters instead of life loss, and damage to a creature becomes -1/-1 counters instead of marked damage (CR 120.3b/120.3d).",
+      "cites": [
+        "702.90b",
+        "702.90c",
+        "120.3b",
+        "120.3d"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Ingest",
+      "kind": "ability",
+      "rule": "702.115",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability: on combat damage to a player, that player exiles the top card of their library (exile keyword action).",
+      "cites": [
+        "702.115a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Intimidate",
+      "kind": "ability",
+      "rule": "702.13",
+      "class": "composite",
+      "given": null,
+      "how": "Evasion blocking restriction predicated on blocker characteristics: can't be blocked except by artifact creatures and/or creatures sharing a color; a declare-blockers legality predicate.",
+      "cites": [
+        "702.13b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Job Select",
+      "kind": "ability",
+      "rule": "702.182",
+      "class": "composite",
+      "given": null,
+      "how": "ETB triggered ability: create a 1/1 Hero token then attach this Equipment to it — ETB trigger composing create-token and attach actions.",
+      "cites": [
+        "702.182a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Jump-Start",
+      "kind": "ability",
+      "rule": "702.133",
+      "class": "composite",
+      "given": null,
+      "how": "Two statics: permission to cast from graveyard with an additional discard cost, plus a replacement that exiles the card when it would leave the stack.",
+      "cites": [
+        "702.133a",
+        "601.2b",
+        "601.2f"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Kicker",
+      "kind": "ability",
+      "rule": "702.33",
+      "class": "composite",
+      "given": null,
+      "how": "Optional additional cost paid as the spell is cast, plus 'was kicked' memory that linked abilities reference; composes from cost-modification choice + a kicked flag.",
+      "cites": [
+        "702.33a",
+        "702.33d",
+        "702.33e"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Landwalk",
+      "kind": "ability",
+      "rule": "702.14",
+      "class": "composite",
+      "given": null,
+      "how": "Conditional evasion blocking restriction: can't be blocked while the defending player controls a land of the specified type; a declare-blockers legality predicate over board state.",
+      "cites": [
+        "702.14c"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Level Up",
+      "kind": "ability",
+      "rule": "702.87",
+      "class": "composite",
+      "given": null,
+      "how": "Activated ability = [cost] : put a level counter on this permanent, sorcery-speed only; cost + place-counter + timing restriction (level symbols themselves are separate static abilities).",
+      "cites": [
+        "702.87a",
+        "711.4"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Lifelink",
+      "kind": "ability",
+      "rule": "702.15",
+      "class": "composite-given",
+      "given": "damage-result-rewrite",
+      "how": "Augments the damage RESULT (controller gains that much life in addition to other results) given the damage-result-rewrite stage; CR hardcodes this as 120.3f.",
+      "cites": [
+        "702.15b",
+        "120.3f"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Living Metal",
+      "kind": "ability",
+      "rule": "702.161",
+      "class": "composite",
+      "given": null,
+      "how": "Conditional characteristic-defining static: 'during your turn this is an artifact creature in addition to its other types' — a type-adding CDA gated on the active-player turn, expressible as a static type-modification effect.",
+      "cites": [
+        "702.161a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Living Weapon",
+      "kind": "ability",
+      "rule": "702.92",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability: ETB create a 0/0 black Phyrexian Germ token then attach this Equipment to it; ETB trigger + create-token + attach keyword-action.",
+      "cites": [
+        "702.92a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Madness",
+      "kind": "ability",
+      "rule": "702.35",
+      "class": "composite",
+      "given": null,
+      "how": "A replacement effect (discard exiles instead of going to graveyard) plus a triggered ability granting an alternative-cost cast of the exiled card.",
+      "cites": [
+        "702.35a",
+        "601.2b",
+        "400.7k"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Max Speed",
+      "kind": "ability",
+      "rule": "702.178",
+      "class": "composite-given",
+      "given": "progress-track",
+      "how": "Conditional static: 'as long as your speed is 4, this object has [ability]' — grants an ability gated on reading the player's speed progress track.",
+      "cites": [
+        "702.178a",
+        "702.178b"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Mayhem",
+      "kind": "ability",
+      "rule": "702.187",
+      "class": "composite",
+      "given": null,
+      "how": "Static in the graveyard: alternative-cost cast (or play) from the graveyard if you discarded this card this turn — conditional alt-cost casting from graveyard.",
+      "cites": [
+        "702.187a",
+        "702.187b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Melee",
+      "kind": "ability",
+      "rule": "702.121",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability: whenever this creature attacks, it gets +1/+1 until end of turn for each opponent you attacked this combat.",
+      "cites": [
+        "702.121a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Menace",
+      "kind": "ability",
+      "rule": "702.111",
+      "class": "composite",
+      "given": null,
+      "how": "Evasion ability = blocking restriction (can't be blocked except by two or more creatures) enforced by the 509.1b restriction check, like flying.",
+      "cites": [
+        "702.111b",
+        "509.1b"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Mentor",
+      "kind": "ability",
+      "rule": "702.134",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability: attack trigger placing a +1/+1 counter on a target attacking creature with lower power.",
+      "cites": [
+        "702.134a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Miracle",
+      "kind": "ability",
+      "rule": "702.94",
+      "class": "composite",
+      "given": null,
+      "how": "Static ability linked to a triggered ability: may reveal as you draw it if it's the first card drawn this turn, and when revealed this way you may cast it for the miracle cost; draw-event reveal option + reveal trigger + alternative-cost cast.",
+      "cites": [
+        "702.94a",
+        "603.11"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Mobilize",
+      "kind": "ability",
+      "rule": "702.181",
+      "class": "composite",
+      "given": null,
+      "how": "Attack-triggered ability creating N 1/1 Warrior tokens tapped and attacking, sacrificed at the next end step — combat trigger + create-token (entering attacking) + delayed sacrifice.",
+      "cites": [
+        "702.181a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Modular",
+      "kind": "ability",
+      "rule": "702.43",
+      "class": "composite",
+      "given": null,
+      "how": "An enters-with-N-counters static plus a leaves-battlefield trigger that moves those counters to a target artifact creature.",
+      "cites": [
+        "702.43a"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "More Than Meets the Eye",
+      "kind": "ability",
+      "rule": "702.162",
+      "class": "composite",
+      "given": null,
+      "how": "Static alternative-cost permission to cast the card converted rather than for its mana cost; follows the alternative-cost casting rules (601.2b/f–h) plus a convert action.",
+      "cites": [
+        "702.162a",
+        "701.28a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Morph",
+      "kind": "ability",
+      "rule": "702.37",
+      "class": "composite-given",
+      "given": "face-down-objects",
+      "how": "Alternative-cost face-down cast (708) of the card as a 2/2 face-down creature plus a special action (116) to turn it face up; given the face-down-objects primitive it is alt-cost cast + turn-face-up, the same shape as Disguise/Manifest/Cloak with no unique non-708 machinery.",
+      "cites": [
+        "702.37a",
+        "702.37c",
+        "702.37e",
+        "708.2a"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Mutate",
+      "kind": "ability",
+      "rule": "702.140",
+      "class": "intrinsic",
+      "given": null,
+      "how": "Alternative cost that makes the spell a targeting mutating creature spell which, on resolution, merges with the target into a single object represented by multiple cards (rule 730); merging is non-standard object machinery not reproducible by composition.",
+      "cites": [
+        "702.140a",
+        "702.140c",
+        "730.2"
+      ],
+      "core_referenced": true,
+      "confidence": "borderline"
+    },
+    {
+      "name": "Myriad",
+      "kind": "ability",
+      "rule": "702.116",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability creating tapped-and-attacking token copies for each other opponent, plus a delayed triggered ability to exile them at end of combat.",
+      "cites": [
+        "702.116a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Nightbound",
+      "kind": "ability",
+      "rule": "702.145",
+      "class": "composite-given",
+      "given": "progress-track",
+      "how": "Two statics that read the game day/night designation (game-maintained track, rule 731): transform as it becomes day, can’t otherwise transform; given the day/night track these are statics + forced transforms.",
+      "cites": [
+        "702.145e",
+        "702.145f",
+        "731.1"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Ninjutsu",
+      "kind": "ability",
+      "rule": "702.49",
+      "class": "composite",
+      "given": null,
+      "how": "An activated ability usable only from hand: cost + reveal + return an unblocked attacker, putting this card onto the battlefield tapped and attacking (cost components + put-onto-battlefield).",
+      "cites": [
+        "702.49a",
+        "702.49c"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Offering",
+      "kind": "ability",
+      "rule": "702.48",
+      "class": "composite",
+      "given": null,
+      "how": "An additional-cost option (sacrifice a qualifying permanent) that reduces total cost by the sacrificed permanent's mana cost and grants flash timing.",
+      "cites": [
+        "702.48a",
+        "601.2h"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Offspring",
+      "kind": "ability",
+      "rule": "702.175",
+      "class": "composite",
+      "given": null,
+      "how": "Optional additional cost plus an ETB triggered ability that creates a 1/1 token copy if the offspring cost was paid — additional-cost choice + conditional ETB token-copy.",
+      "cites": [
+        "702.175a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Outlast",
+      "kind": "ability",
+      "rule": "702.107",
+      "class": "composite",
+      "given": null,
+      "how": "Activated ability: [cost], {T}: put a +1/+1 counter on this creature, sorcery-speed restricted.",
+      "cites": [
+        "702.107a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Overload",
+      "kind": "ability",
+      "rule": "702.96",
+      "class": "composite",
+      "given": null,
+      "how": "Two static abilities on the stack: an alternative-cost permission and, if chosen, a text-changing effect replacing 'target' with 'each'; alternative-cost + text-changing effect (612).",
+      "cites": [
+        "702.96a",
+        "702.96c"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Paradigm",
+      "kind": "ability",
+      "rule": "702.192",
+      "class": "composite",
+      "given": null,
+      "how": "Spell abilities creating a delayed triggered ability that, on first resolution of a same-named spell, makes castable free copies each precombat main phase, plus exiling this spell — spell ability + delayed trigger + create-copy-in-exile.",
+      "cites": [
+        "702.192a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Partner",
+      "kind": "ability",
+      "rule": "702.124",
+      "class": "composite",
+      "given": null,
+      "how": "Static deck-construction modifier functioning before the game (designate two legendary commanders); 'partner with' also adds an ETB tutor trigger. Sits at the edge of the gameplay basis since it changes prospective deck-construction legality, but no in-game opcode is needed.",
+      "cites": [
+        "702.124a",
+        "702.124h",
+        "702.124j"
+      ],
+      "core_referenced": true,
+      "confidence": "borderline"
+    },
+    {
+      "name": "Persist",
+      "kind": "ability",
+      "rule": "702.79",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability: dies-from-battlefield trigger with intervening-if (had no -1/-1 counters) returning it with a -1/-1 counter; LTB-to-graveyard trigger + conditional + return/place counter.",
+      "cites": [
+        "702.79a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Phasing",
+      "kind": "ability",
+      "rule": "702.26",
+      "class": "intrinsic",
+      "given": null,
+      "how": "Modifies the untap step (phase out/in turn-based action) and introduces the phased-out status, a fundamental existence/visibility state in which the permanent is treated as not existing without changing zones; not reproducible from primitives.",
+      "cites": [
+        "702.26a",
+        "702.26b",
+        "702.26d"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Plot",
+      "kind": "ability",
+      "rule": "702.170",
+      "class": "composite",
+      "given": null,
+      "how": "Special action to exile a card from hand paying a cost (becoming plotted), then later alternative-cost casting from exile without paying mana — special action + alt-cost cast + a plotted marker.",
+      "cites": [
+        "702.170a",
+        "702.170b",
+        "702.170d"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Poisonous",
+      "kind": "ability",
+      "rule": "702.70",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability: whenever this creature deals combat damage to a player, that player gets N poison counters; combat-damage trigger + place counters.",
+      "cites": [
+        "702.70a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Protection",
+      "kind": "ability",
+      "rule": "702.16",
+      "class": "composite",
+      "given": null,
+      "how": "Bundle of restrictions/prevention: can't be targeted by qualified spells/abilities, can't be enchanted/equipped (with SBA detachment), damage from qualified sources is prevented, and can't be blocked by qualified creatures — all from target restrictions + prevention + SBA + blocking restrictions.",
+      "cites": [
+        "702.16b",
+        "702.16c",
+        "702.16e",
+        "702.16f"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Prototype",
+      "kind": "ability",
+      "rule": "702.160",
+      "class": "composite",
+      "given": null,
+      "how": "Static ability offering a casting choice to use an alternative set of power/toughness/mana cost characteristics for the spell and resulting permanent.",
+      "cites": [
+        "702.160a",
+        "718.3a"
+      ],
+      "core_referenced": true,
+      "confidence": "borderline"
+    },
+    {
+      "name": "Provoke",
+      "kind": "ability",
+      "rule": "702.39",
+      "class": "composite",
+      "given": null,
+      "how": "An attack-trigger that imposes a must-block requirement on a target defender's creature and untaps it (block requirement + untap action).",
+      "cites": [
+        "702.39a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Prowess",
+      "kind": "ability",
+      "rule": "702.108",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability: whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.",
+      "cites": [
+        "702.108a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Prowl",
+      "kind": "ability",
+      "rule": "702.76",
+      "class": "composite",
+      "given": null,
+      "how": "Static alternative-cost permission on the stack gated on a condition (a source you controlled sharing this spell's creature type dealt combat damage this turn); alternative-cost + game-history predicate.",
+      "cites": [
+        "702.76a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Rampage",
+      "kind": "ability",
+      "rule": "702.23",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability: whenever this becomes blocked, it gets +N/+N for each blocker beyond the first; a become-blocked trigger producing a P/T-pump continuous effect.",
+      "cites": [
+        "702.23a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Ravenous",
+      "kind": "ability",
+      "rule": "702.156",
+      "class": "composite",
+      "given": null,
+      "how": "Replacement effect (enters with X +1/+1 counters) plus an ETB triggered ability drawing a card if X is 5+.",
+      "cites": [
+        "702.156a",
+        "107.3m"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Reach",
+      "kind": "ability",
+      "rule": "702.17",
+      "class": "marker",
+      "given": null,
+      "how": "Has no function of its own; meaning lives entirely in flying's blocking predicate (702.9b), which lets reach creatures block fliers.",
+      "cites": [
+        "702.17b",
+        "702.9b"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Read Ahead",
+      "kind": "ability",
+      "rule": "702.155",
+      "class": "composite",
+      "given": null,
+      "how": "Static restriction on when a Saga's chapter abilities can trigger (only at the exact lore count) plus intrinsic enter-choosing-lore-count abilities (replacement on lore counters); restriction + replacement.",
+      "cites": [
+        "702.155a",
+        "702.155b",
+        "714.3b"
+      ],
+      "core_referenced": true,
+      "confidence": "borderline"
+    },
+    {
+      "name": "Rebound",
+      "kind": "ability",
+      "rule": "702.88",
+      "class": "composite",
+      "given": null,
+      "how": "Static replacement (if cast from hand, exile instead of going to graveyard on resolution) creating a delayed triggered ability to cast it for free next upkeep; resolution-zone replacement + delayed trigger + free cast.",
+      "cites": [
+        "702.88a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Reconfigure",
+      "kind": "ability",
+      "rule": "702.151",
+      "class": "composite",
+      "given": null,
+      "how": "Two sorcery-speed activated abilities (attach to a creature you control / unattach) using the attachment relation; attaching an Equipment with it stops it being a creature.",
+      "cites": [
+        "702.151a",
+        "702.151b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Recover",
+      "kind": "ability",
+      "rule": "702.59",
+      "class": "composite",
+      "given": null,
+      "how": "A graveyard-functioning trigger when a creature dies: optionally pay [cost] to return this card to hand, otherwise exile it.",
+      "cites": [
+        "702.59a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Reinforce",
+      "kind": "ability",
+      "rule": "702.77",
+      "class": "composite",
+      "given": null,
+      "how": "Activated ability from hand = [cost], discard this card : put N +1/+1 counters on target creature; cost + discard keyword-action + targeting + place counters.",
+      "cites": [
+        "702.77a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Renown",
+      "kind": "ability",
+      "rule": "702.112",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability: on combat damage to a player, if not renowned, put N +1/+1 counters and become renowned (a marker designation other abilities read).",
+      "cites": [
+        "702.112a",
+        "702.112b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Replicate",
+      "kind": "ability",
+      "rule": "702.56",
+      "class": "composite",
+      "given": null,
+      "how": "An additional-cost static (pay [cost] any number of times) plus a cast-trigger copying the spell once per payment, with optional new targets.",
+      "cites": [
+        "702.56a",
+        "707.10"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Retrace",
+      "kind": "ability",
+      "rule": "702.81",
+      "class": "composite",
+      "given": null,
+      "how": "Static permission to cast this card from the graveyard with discarding a land card as an additional cost; cast-from-alternate-zone permission + additional-cost.",
+      "cites": [
+        "702.81a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Riot",
+      "kind": "ability",
+      "rule": "702.136",
+      "class": "composite",
+      "given": null,
+      "how": "Static replacement-style choice as the permanent enters: either an extra +1/+1 counter or it gains haste.",
+      "cites": [
+        "702.136a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Ripple",
+      "kind": "ability",
+      "rule": "702.60",
+      "class": "composite",
+      "given": null,
+      "how": "A cast-trigger that reveals the top N cards, lets you cast same-named cards without paying mana costs, then bottoms the rest (sequence of reveal/cast-free/move actions).",
+      "cites": [
+        "702.60a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Saddle",
+      "kind": "ability",
+      "rule": "702.171",
+      "class": "composite",
+      "given": null,
+      "how": "Activated sorcery-speed ability: tap other untapped creatures with total power N+ to make this permanent 'saddled' until end of turn — cost (tap components) producing a marker designation.",
+      "cites": [
+        "702.171a",
+        "702.171b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Scavenge",
+      "kind": "ability",
+      "rule": "702.97",
+      "class": "composite",
+      "given": null,
+      "how": "Activated ability from graveyard = [cost], exile this card : put +1/+1 counters equal to the exiled card's power on target creature, sorcery-speed; cost + exile keyword-action + targeting + place counters + timing restriction.",
+      "cites": [
+        "702.97a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Shadow",
+      "kind": "ability",
+      "rule": "702.28",
+      "class": "composite",
+      "given": null,
+      "how": "Bidirectional evasion blocking restriction predicated on the shadow keyword: shadow can't be blocked by non-shadow and vice versa; a declare-blockers legality predicate.",
+      "cites": [
+        "702.28b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Shroud",
+      "kind": "ability",
+      "rule": "702.18",
+      "class": "composite",
+      "given": null,
+      "how": "Static targeting restriction: can't be the target of any spells or abilities; a target-legality predicate.",
+      "cites": [
+        "702.18a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Skulk",
+      "kind": "ability",
+      "rule": "702.118",
+      "class": "composite",
+      "given": null,
+      "how": "Evasion ability = blocking restriction (can't be blocked by creatures with greater power) enforced by the 509.1b restriction check.",
+      "cites": [
+        "702.118b",
+        "509.1b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Sneak",
+      "kind": "ability",
+      "rule": "702.190",
+      "class": "composite",
+      "given": null,
+      "how": "Static on the stack: alternative-cost cast at instant timing during declare-blockers, paying [cost] and returning an unblocked creature; the spell enters tapped and attacking per 506.3a — alt-cost casting + bounce + enters-attacking.",
+      "cites": [
+        "702.190a",
+        "702.190b",
+        "506.3a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Solved",
+      "kind": "ability",
+      "rule": "702.169",
+      "class": "composite",
+      "given": null,
+      "how": "Meta-keyword wrapping a static, triggered, or activated ability gated on the Case being solved ('as long as solved' / 'triggers only if solved' / 'activate only if solved') — a condition-gate over the existing ability templates.",
+      "cites": [
+        "702.169a",
+        "702.169b",
+        "702.169c",
+        "702.169d"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Soulbond",
+      "kind": "ability",
+      "rule": "702.95",
+      "class": "composite",
+      "given": null,
+      "how": "Two triggered abilities (this enters / another creature you control enters) that optionally pair two unpaired creatures, with pairing tracked as a relation that breaks on control change or leaving; ETB triggers + pairing relation memory.",
+      "cites": [
+        "702.95a",
+        "702.95b",
+        "702.95e"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Soulshift",
+      "kind": "ability",
+      "rule": "702.46",
+      "class": "composite",
+      "given": null,
+      "how": "A dies-trigger that may return a target Spirit card of mana value N or less from your graveyard to hand.",
+      "cites": [
+        "702.46a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Space Sculptor",
+      "kind": "ability",
+      "rule": "702.158",
+      "class": "composite",
+      "given": null,
+      "how": "Static ability whose presence causes a state-based action (704.5u) assigning sector designations (markers) to creatures lacking them.",
+      "cites": [
+        "702.158a",
+        "702.158c",
+        "704.5u"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Spectacle",
+      "kind": "ability",
+      "rule": "702.137",
+      "class": "composite",
+      "given": null,
+      "how": "Static ability on the stack granting an alternative cost, payable if an opponent lost life this turn; follows alternative-cost rules.",
+      "cites": [
+        "702.137a",
+        "601.2b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Splice",
+      "kind": "ability",
+      "rule": "702.47",
+      "class": "composite",
+      "given": null,
+      "how": "A static letting you reveal the card as you cast a qualifying spell to add its rules text (a text-changing effect, 612.10) and pay an additional cost.",
+      "cites": [
+        "702.47a",
+        "612.10",
+        "601.2b"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Split Second",
+      "kind": "ability",
+      "rule": "702.61",
+      "class": "composite",
+      "given": null,
+      "how": "A static restriction while on the stack: players can't cast other spells or activate non-mana abilities (a continuous restriction on the legality of those actions).",
+      "cites": [
+        "702.61a",
+        "702.61b"
+      ],
+      "core_referenced": false,
+      "confidence": "borderline"
+    },
+    {
+      "name": "Spree",
+      "kind": "ability",
+      "rule": "702.172",
+      "class": "composite",
+      "given": null,
+      "how": "Static on the stack: choose one or more modes and pay their associated costs as additional costs — modal selection plus additional-cost payment.",
+      "cites": [
+        "702.172a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Squad",
+      "kind": "ability",
+      "rule": "702.157",
+      "class": "composite",
+      "given": null,
+      "how": "Static additional cost payable any number of times plus a linked ETB trigger creating a token copy per payment.",
+      "cites": [
+        "702.157a",
+        "601.2b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Start Your Engines!",
+      "kind": "ability",
+      "rule": "702.179",
+      "class": "composite-given",
+      "given": "progress-track",
+      "how": "Static SBA that sets a player's speed to 1 plus an inherent triggered ability increasing speed when opponents lose life — initializes and advances the speed progress track given native player-speed state.",
+      "cites": [
+        "702.179a",
+        "702.179d"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Station",
+      "kind": "ability",
+      "rule": "702.184",
+      "class": "composite",
+      "given": null,
+      "how": "Activated sorcery-speed ability: tap another untapped creature to put charge counters equal to its power on this permanent — cost (tap) + place-counters action.",
+      "cites": [
+        "702.184a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Storm",
+      "kind": "ability",
+      "rule": "702.40",
+      "class": "composite",
+      "given": null,
+      "how": "A cast-trigger that copies the spell for each other spell cast earlier this turn, with optional new targets (trigger + copy-spell over a spells-cast-this-turn count).",
+      "cites": [
+        "702.40a",
+        "707.10"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Sunburst",
+      "kind": "ability",
+      "rule": "702.44",
+      "class": "composite",
+      "given": null,
+      "how": "An enters-with-counters static parameterized by the number of colors of mana spent to cast it (enters-with counters over a mana-spent record).",
+      "cites": [
+        "702.44a",
+        "702.44b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Surge",
+      "kind": "ability",
+      "rule": "702.117",
+      "class": "composite",
+      "given": null,
+      "how": "Static alternative-cost permission conditioned on you or a teammate having cast another spell this turn.",
+      "cites": [
+        "702.117a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Suspend",
+      "kind": "ability",
+      "rule": "702.62",
+      "class": "composite",
+      "given": null,
+      "how": "A special action to exile the card with N time counters, an upkeep trigger removing a counter, and a last-counter trigger granting a free alternative-cost cast (special action + triggers over a time-counter track).",
+      "cites": [
+        "702.62a",
+        "116.2f",
+        "601.2b"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Tiered",
+      "kind": "ability",
+      "rule": "702.183",
+      "class": "composite",
+      "given": null,
+      "how": "Static on the stack: choose one mode and pay its cost as an additional cost — modal selection plus additional-cost payment.",
+      "cites": [
+        "702.183a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Toxic",
+      "kind": "ability",
+      "rule": "702.164",
+      "class": "composite-given",
+      "given": "damage-result-rewrite",
+      "how": "Augments the result of combat damage to a player: in addition to damage's other results, give poison counters equal to total toxic value (120.3g) — a damage-result augmentation at the damage-result stage, like lifelink/infect.",
+      "cites": [
+        "702.164c",
+        "120.3g"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Training",
+      "kind": "ability",
+      "rule": "702.149",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability: triggers when this and a higher-power creature attack, placing a +1/+1 counter on this creature.",
+      "cites": [
+        "702.149a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Trample",
+      "kind": "ability",
+      "rule": "702.19",
+      "class": "intrinsic",
+      "given": null,
+      "how": "Modifies the prospective combat damage assignment rules (510.1c–d): controller must assign lethal to blockers first, then may assign excess to the defending player/planeswalker.",
+      "cites": [
+        "702.19a",
+        "702.19b",
+        "510.1c",
+        "510.1d"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Transfigure",
+      "kind": "ability",
+      "rule": "702.71",
+      "class": "composite",
+      "given": null,
+      "how": "Activated ability = [cost], sacrifice this : tutor a creature with equal mana value onto the battlefield then shuffle, sorcery-speed only; cost + sacrifice keyword-action + search/move + timing restriction.",
+      "cites": [
+        "702.71a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Transmute",
+      "kind": "ability",
+      "rule": "702.53",
+      "class": "composite",
+      "given": null,
+      "how": "An activated ability usable only from hand (cost + discard this card) to tutor a card with the same mana value, with a sorcery-speed timing restriction.",
+      "cites": [
+        "702.53a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Tribute",
+      "kind": "ability",
+      "rule": "702.104",
+      "class": "composite",
+      "given": null,
+      "how": "Static enter replacement: an opponent chooses whether the creature enters with N extra +1/+1 counters, plus a 'tribute wasn't paid' memory predicate other triggers read.",
+      "cites": [
+        "702.104a",
+        "702.104b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Umbra Armor",
+      "kind": "ability",
+      "rule": "702.89",
+      "class": "composite",
+      "given": null,
+      "how": "Static replacement on an Aura: if enchanted permanent would be destroyed, instead remove all marked damage and destroy this Aura; destruction-event replacement effect.",
+      "cites": [
+        "702.89a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Undaunted",
+      "kind": "ability",
+      "rule": "702.125",
+      "class": "composite",
+      "given": null,
+      "how": "Static cost-reduction ability: costs {1} less for each opponent you have.",
+      "cites": [
+        "702.125a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Undying",
+      "kind": "ability",
+      "rule": "702.93",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability: dies-from-battlefield trigger with intervening-if (had no +1/+1 counters) returning it with a +1/+1 counter; LTB-to-graveyard trigger + conditional + return/place counter.",
+      "cites": [
+        "702.93a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Unearth",
+      "kind": "ability",
+      "rule": "702.84",
+      "class": "composite",
+      "given": null,
+      "how": "Activated ability from graveyard = [cost] : return this to battlefield, it gains haste, exile it at next end step, exile-instead-of-leaving replacement, sorcery-speed; cost + return keyword-action + granted haste + delayed exile trigger + leave-replacement.",
+      "cites": [
+        "702.84a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Unleash",
+      "kind": "ability",
+      "rule": "702.98",
+      "class": "composite",
+      "given": null,
+      "how": "Two static abilities: an enter-with-additional-+1/+1-counter replacement option, plus a can't-block restriction conditioned on having a +1/+1 counter.",
+      "cites": [
+        "702.98a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Vanishing",
+      "kind": "ability",
+      "rule": "702.63",
+      "class": "composite",
+      "given": null,
+      "how": "An enters-with-N-time-counters static, an upkeep trigger removing a counter, and a last-counter-removed trigger that sacrifices the permanent.",
+      "cites": [
+        "702.63a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Vigilance",
+      "kind": "ability",
+      "rule": "702.20",
+      "class": "composite-given",
+      "given": "cause-tagged-events",
+      "how": "Null-replacement on the 'tapped because declared attacker' event given cause-tagged events; CR instead hardcodes the exemption in 508.1f.",
+      "cites": [
+        "702.20b",
+        "508.1f"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Visit",
+      "kind": "ability",
+      "rule": "702.159",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered ability: triggers when you roll to visit your Attractions and the result matches a lit number, doing the effect.",
+      "cites": [
+        "702.159a",
+        "701.52"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Ward",
+      "kind": "ability",
+      "rule": "702.21",
+      "class": "composite",
+      "given": null,
+      "how": "Triggered toll: whenever this becomes the target of an opponent's spell/ability, counter it unless they pay the cost; a trigger + counter keyword action with a cost gate.",
+      "cites": [
+        "702.21a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Warp",
+      "kind": "ability",
+      "rule": "702.185",
+      "class": "composite",
+      "given": null,
+      "how": "Alternative-cost cast from hand plus a delayed triggered ability exiling the permanent at the next end step with a recast permission — alt-cost casting + delayed-trigger exile + cast-from-exile.",
+      "cites": [
+        "702.185a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Web-slinging",
+      "kind": "ability",
+      "rule": "702.188",
+      "class": "composite",
+      "given": null,
+      "how": "Static on the stack: alternative-cost cast paying [cost] and returning a tapped creature you control to hand rather than the mana cost — alt-cost casting with a bounce cost component.",
+      "cites": [
+        "702.188a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Wither",
+      "kind": "ability",
+      "rule": "702.80",
+      "class": "composite-given",
+      "given": "damage-result-rewrite",
+      "how": "Static result substitution: damage dealt to a creature by a wither source is put as that many -1/-1 counters instead of being marked, given the damage-result-rewrite stage (CR 120.3d).",
+      "cites": [
+        "702.80a",
+        "120.3d",
+        "302.7"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "∞ (Infinity)",
+      "kind": "ability",
+      "rule": "702.186",
+      "class": "composite",
+      "given": null,
+      "how": "Conditional static: 'as long as this permanent is harnessed, it has [ability]' — grants an ability gated on the harnessed designation marker (701.64).",
+      "cites": [
+        "702.186b",
+        "701.64b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Abandon",
+      "kind": "action",
+      "rule": "701.33",
+      "class": "composite",
+      "given": null,
+      "how": "Variant (Archenemy) macro: turn a face-up ongoing scheme face down and put it on the bottom of the scheme deck. A turn-face-down + move sequence.",
+      "cites": [
+        "701.33a",
+        "701.33b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Activate",
+      "kind": "action",
+      "rule": "701.2",
+      "class": "intrinsic",
+      "given": null,
+      "how": "Defines the activated-ability casting-pipeline analog: put ability on stack and pay costs (601-structured). A native engine opcode for putting an object on the stack and paying costs; the primitive basis other abilities reference.",
+      "cites": [
+        "701.2a"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Adapt",
+      "kind": "action",
+      "rule": "701.46",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: if the permanent has no +1/+1 counters, put N +1/+1 counters on it.",
+      "cites": [
+        "701.46a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Airbend",
+      "kind": "action",
+      "rule": "701.65",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: exile the chosen objects, and grant each exiled card's owner permission to cast it from exile for {2} (exile + alternative-cost casting permission).",
+      "cites": [
+        "701.65a",
+        "701.65b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Amass",
+      "kind": "action",
+      "rule": "701.47",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: create a 0/0 Army token if you control none, choose an Army, put N +1/+1 counters on it, and add the subtype if absent.",
+      "cites": [
+        "701.47a",
+        "701.47b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Assemble",
+      "kind": "action",
+      "rule": "701.45",
+      "class": "composite",
+      "given": null,
+      "how": "Un-set action that puts Contraptions onto the battlefield; not part of standard rules, but decomposes to a put-onto-battlefield macro.",
+      "cites": [
+        "701.45a"
+      ],
+      "core_referenced": false,
+      "confidence": "borderline"
+    },
+    {
+      "name": "Attach",
+      "kind": "action",
+      "rule": "701.3",
+      "class": "composite-given",
+      "given": "attachment-relation",
+      "how": "Moves an Aura/Equipment/Fortification into the attached-to relation with a legal object/player (with no-op/legality guards and new timestamp). Decomposes given the engine models the attachment relation as a primitive.",
+      "cites": [
+        "701.3a",
+        "701.3b",
+        "701.3c"
+      ],
+      "core_referenced": true,
+      "confidence": "borderline"
+    },
+    {
+      "name": "Behold",
+      "kind": "action",
+      "rule": "701.4",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: 'reveal a [quality] card from hand OR choose a [quality] permanent you control' plus a 'was beheld' memory snapshot. Compiles to a choice over the reveal action and a choose-permanent action.",
+      "cites": [
+        "701.4a",
+        "701.4b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Blight",
+      "kind": "action",
+      "rule": "701.68",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: put N -1/-1 counters on a creature you control (with a legality gate and a 'blighted creature' reference).",
+      "cites": [
+        "701.68a",
+        "701.68b",
+        "701.68c"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Bolster",
+      "kind": "action",
+      "rule": "701.39",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: choose a creature you control with least (or tied-for-least) toughness, then put N +1/+1 counters on it.",
+      "cites": [
+        "701.39a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Cast",
+      "kind": "action",
+      "rule": "701.5",
+      "class": "intrinsic",
+      "given": null,
+      "how": "Defines the casting-pipeline event (601): take from zone, put on stack, pay costs. The fundamental spell-creation primitive the entire casting machinery hangs on.",
+      "cites": [
+        "701.5a",
+        "701.5b"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Clash",
+      "kind": "action",
+      "rule": "701.30",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: reveal top card, optionally move it to bottom; 'clash with an opponent' = choose opponent and both clash; winner determined by mana-value comparison. A sequence of reveal/move actions plus a comparison.",
+      "cites": [
+        "701.30a",
+        "701.30b",
+        "701.30d"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Cloak",
+      "kind": "action",
+      "rule": "701.58",
+      "class": "composite-given",
+      "given": "face-down-objects",
+      "how": "Like manifest but the 2/2 face-down creature has ward {2} (708); special action (116) to turn face up; given the face-down-objects primitive, put-onto-battlefield-face-down + turn-face-up.",
+      "cites": [
+        "701.58a",
+        "701.58b",
+        "701.58h",
+        "708.2a"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Collect Evidence",
+      "kind": "action",
+      "rule": "701.59",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: exile any number of cards from your graveyard with total mana value >= N (with a legality gate and linked 'evidence collected' memory).",
+      "cites": [
+        "701.59a",
+        "701.59b",
+        "701.59c"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Connive",
+      "kind": "action",
+      "rule": "701.50",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: draw a card, discard a card, then put a +1/+1 counter on the permanent if a nonland card was discarded (N is a count loop).",
+      "cites": [
+        "701.50a",
+        "701.50e"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Convert",
+      "kind": "action",
+      "rule": "701.28",
+      "class": "intrinsic",
+      "given": null,
+      "how": "Identical face-flip primitive to Transform (explicitly follows 701.27a-f), differing only in name/event-tag; same once-per-stack guard. Native face-state machinery; can't-transform also blocks convert.",
+      "cites": [
+        "701.28a",
+        "701.28b",
+        "701.28e",
+        "701.28f"
+      ],
+      "core_referenced": true,
+      "confidence": "borderline"
+    },
+    {
+      "name": "Counter",
+      "kind": "action",
+      "rule": "701.6",
+      "class": "intrinsic",
+      "given": null,
+      "how": "Defines cancel/remove-from-stack event: object doesn't resolve, no effects occur, countered spell goes to graveyard, no cost refund. A primitive stack-removal opcode other abilities target.",
+      "cites": [
+        "701.6a",
+        "701.6b"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Create",
+      "kind": "action",
+      "rule": "701.7",
+      "class": "intrinsic",
+      "given": null,
+      "how": "Instantiates tokens onto the battlefield with specified characteristics; carries token-specific replacement-effect ordering (701.7b) distinct from generic ETB. A native token-instantiation primitive.",
+      "cites": [
+        "701.7a",
+        "701.7b"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Destroy",
+      "kind": "action",
+      "rule": "701.8",
+      "class": "intrinsic",
+      "given": null,
+      "how": "Defines the battlefield-to-graveyard destruction event that regeneration replaces and that SBA lethal-damage/deathtouch checks invoke; only 'destroy'-word effects and those SBAs cause it. A primitive event the engine must distinguish from generic moves.",
+      "cites": [
+        "701.8a",
+        "701.8b",
+        "701.8c"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Detain",
+      "kind": "action",
+      "rule": "701.35",
+      "class": "composite",
+      "given": null,
+      "how": "Applies a continuous restriction effect (can't attack/block; activated abilities can't be activated) on a permanent with a duration ending at the spell/ability controller's next turn.",
+      "cites": [
+        "701.35a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Discard",
+      "kind": "action",
+      "rule": "701.9",
+      "class": "intrinsic",
+      "given": null,
+      "how": "Defines hand-to-graveyard event with default-chooser/random/opponent-chooser modes and the hidden-zone undefined-characteristics / illegal-cost-rewind nuance. These randomness and replacement subtleties make it a primitive event other rules read.",
+      "cites": [
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Discover",
+      "kind": "action",
+      "rule": "701.57",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: exile from top of library until a nonland of mana value <= N, then either cast it without paying mana cost or put it in hand, and bottom the rest randomly; composes exile + cast-without-paying.",
+      "cites": [
+        "701.57a",
+        "701.57b"
+      ],
+      "core_referenced": false,
+      "confidence": "borderline"
+    },
+    {
+      "name": "Double",
+      "kind": "action",
+      "rule": "701.10",
+      "class": "composite",
+      "given": null,
+      "how": "Compiles to existing effects: a layer-7c continuous +X/+0 P/T modifier, life gain/loss to twice current, adding equal counters/mana, or a damage-doubling replacement effect. No new machinery beyond the layer system and replacement effects.",
+      "cites": [
+        "701.10a",
+        "701.10b",
+        "701.10g",
+        "613.4c"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Earthbend",
+      "kind": "action",
+      "rule": "701.66",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: target land becomes a 0/0 land creature with haste (CDA), put N +1/+1 counters on it, and create a delayed triggered ability returning it if it dies/exiles.",
+      "cites": [
+        "701.66a",
+        "701.66b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Endure",
+      "kind": "action",
+      "rule": "701.63",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: create an N/N white Spirit token OR put N +1/+1 counters on the permanent (controller's choice; 0 does nothing).",
+      "cites": [
+        "701.63a",
+        "701.63b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Exchange",
+      "kind": "action",
+      "rule": "701.12",
+      "class": "composite",
+      "given": null,
+      "how": "Resolution-time swap that compiles to existing primitives: simultaneous control changes, life gain/loss to match, set-value continuous effects, or zone swaps; all-or-nothing if uncompletable. Composes from control-change, life-change, and set effects.",
+      "cites": [
+        "701.12a",
+        "701.12b",
+        "701.12c",
+        "701.12g"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Exert",
+      "kind": "action",
+      "rule": "701.43",
+      "class": "composite",
+      "given": null,
+      "how": "Choose to apply a continuous 'doesn't untap during your next untap step' effect to a permanent; just a duration-limited untap-restriction effect.",
+      "cites": [
+        "701.43a",
+        "701.43b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Exile",
+      "kind": "action",
+      "rule": "701.13",
+      "class": "intrinsic",
+      "given": null,
+      "how": "Primitive zone-move into the exile zone. A fundamental move event referenced as a destination by many effects; the basis-level relocation opcode.",
+      "cites": [
+        "701.13a"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Explore",
+      "kind": "action",
+      "rule": "701.44",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: reveal top card; if land put in hand, else put +1/+1 counter on the permanent and may put revealed card in graveyard.",
+      "cites": [
+        "701.44a",
+        "701.44b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Face a Villainous Choice",
+      "kind": "action",
+      "rule": "701.55",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: a player chooses one of two listed options, then performs all actions in the chosen option (with APNAP/illegality exceptions to 608.2d-e); a structured choice + action sequence.",
+      "cites": [
+        "701.55a",
+        "701.55b",
+        "701.55d"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Fateseal",
+      "kind": "action",
+      "rule": "701.29",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: look at top N of an OPPONENT's library, distribute between top and bottom (any order). Same look/move sequence as scry but on an opponent's library.",
+      "cites": [
+        "701.29a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Fight",
+      "kind": "action",
+      "rule": "701.14",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: each creature deals damage equal to its power to the other (non-combat damage), with legality/illegal-target guards. Compiles to two simultaneous deal-damage actions.",
+      "cites": [
+        "701.14a",
+        "701.14b",
+        "701.14d"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Forage",
+      "kind": "action",
+      "rule": "701.61",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: exile three cards from your graveyard OR sacrifice a Food (a choice between two cost-like actions).",
+      "cites": [
+        "701.61a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Goad",
+      "kind": "action",
+      "rule": "701.15",
+      "class": "composite",
+      "given": null,
+      "how": "Applies the 'goaded' designation = an attack requirement (must attack each combat if able) plus an attack-direction restriction (must attack a player other than the goader). Compiles to combat requirements/restrictions plus a decider constraint.",
+      "cites": [
+        "701.15a",
+        "701.15b",
+        "701.15c"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Harness",
+      "kind": "action",
+      "rule": "701.64",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: if not harnessed, apply the 'harnessed' designation (a marker with no rules meaning beyond identification by other abilities).",
+      "cites": [
+        "701.64a",
+        "701.64b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Incubate",
+      "kind": "action",
+      "rule": "701.53",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: create a (double-faced) Incubator token entering with N +1/+1 counters.",
+      "cites": [
+        "701.53a",
+        "701.53b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Investigate",
+      "kind": "action",
+      "rule": "701.16",
+      "class": "composite",
+      "given": null,
+      "how": "Pure macro: 'create a Clue token.' Expands directly to the Create action.",
+      "cites": [
+        "701.16a",
+        "111.10f"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Learn",
+      "kind": "action",
+      "rule": "701.48",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: may discard then draw; if you didn't discard, may reveal a Lesson card from outside the game and put it into hand.",
+      "cites": [
+        "701.48a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Manifest",
+      "kind": "action",
+      "rule": "701.40",
+      "class": "composite-given",
+      "given": "face-down-objects",
+      "how": "Puts a card onto the battlefield as a 2/2 face-down creature (708) plus a special action (116) to turn it face up by paying its mana cost; given the face-down-objects primitive it is put-onto-battlefield-face-down + turn-face-up.",
+      "cites": [
+        "701.40a",
+        "701.40b",
+        "701.40h",
+        "708.2a"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Manifest Dread",
+      "kind": "action",
+      "rule": "701.62",
+      "class": "composite-given",
+      "given": "face-down-objects",
+      "how": "Look at top two, manifest one (put it onto the battlefield as a 2/2 face-down creature, 708) and graveyard the rest; built on manifest, so given the face-down-objects primitive it is look + manifest + move.",
+      "cites": [
+        "701.62a",
+        "701.62b",
+        "701.40a",
+        "708.2a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Meld",
+      "kind": "action",
+      "rule": "701.42",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: put both cards of a meld pair onto the battlefield back-faces-up and combined as a single object; relies on existing double-faced/meld card machinery (712).",
+      "cites": [
+        "701.42a",
+        "701.42b"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Mill",
+      "kind": "action",
+      "rule": "701.17",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: move the top N cards of library to graveyard (can't exceed library size). A sequence over the zone-move primitive; milled-card references are public-zone lookups.",
+      "cites": [
+        "701.17a",
+        "701.17b",
+        "701.17c"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Monstrosity",
+      "kind": "action",
+      "rule": "701.37",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: if not monstrous, put N +1/+1 counters and set the 'monstrous' designation (a marker with no rules meaning beyond being identified by other abilities).",
+      "cites": [
+        "701.37a",
+        "701.37b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Open an Attraction",
+      "kind": "action",
+      "rule": "701.51",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: move the top card off your Attraction deck, turn it face up, and put it onto the battlefield under your control.",
+      "cites": [
+        "701.51b",
+        "701.51c"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Planeswalk",
+      "kind": "action",
+      "rule": "701.31",
+      "class": "composite",
+      "given": null,
+      "how": "Variant (Planechase) macro: put face-up plane/phenomenon cards to bottom of planar deck face down, then move top of planar deck up and turn it face up. A sequence of move/turn-face actions over the planar deck.",
+      "cites": [
+        "701.31a",
+        "701.31b",
+        "701.31d"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Play",
+      "kind": "action",
+      "rule": "701.18",
+      "class": "intrinsic",
+      "given": null,
+      "how": "Defines the land-play special action (116): put land onto battlefield without using the stack under the once-per-turn/main-phase/empty-stack timing constraints, plus dispatch to cast for non-lands. The non-stack land-play machinery is native turn-structure/priority machinery.",
+      "cites": [
+        "701.18a",
+        "701.18b",
+        "116.1",
+        "116.2"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Populate",
+      "kind": "action",
+      "rule": "701.36",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: choose a creature token you control, then create a token that is a copy of it (no token => no creation).",
+      "cites": [
+        "701.36a",
+        "701.36b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Proliferate",
+      "kind": "action",
+      "rule": "701.34",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: choose any number of permanents/players that have a counter, then give each one more of each kind it already has (with 2HG poison sharing). A selector plus the place-counters primitive, the rubric's stated composite example.",
+      "cites": [
+        "701.34a",
+        "701.34b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Regenerate",
+      "kind": "action",
+      "rule": "701.19",
+      "class": "composite",
+      "given": null,
+      "how": "CR 614.8 states regeneration IS a destruction-replacement effect: “the next time this would be destroyed, instead remove all marked damage, its controller taps it, and remove it from combat.” Replacement/prevention effects are in the rubric basis, so this composes from a destroy-event replacement + remove-damage + tap + remove-from-combat.",
+      "cites": [
+        "701.19a",
+        "701.19b",
+        "614.8"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Reveal",
+      "kind": "action",
+      "rule": "701.20",
+      "class": "intrinsic",
+      "given": null,
+      "how": "Primitive information event: show card to all players with a defined revealed-state lifetime, without changing zone, and with the rule that reordered revealed cards become new objects. The revealed-state tracking and object-identity interaction make it a basis primitive.",
+      "cites": [
+        "701.20a",
+        "701.20b",
+        "701.20d"
+      ],
+      "core_referenced": true,
+      "confidence": "borderline"
+    },
+    {
+      "name": "Roll to Visit Your Attractions",
+      "kind": "action",
+      "rule": "701.52",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: roll a d6, then any controlled Attraction with that number lit is 'visited' and its visit ability triggers; a die roll feeding triggered abilities.",
+      "cites": [
+        "701.52a"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Sacrifice",
+      "kind": "action",
+      "rule": "701.21",
+      "class": "intrinsic",
+      "given": null,
+      "how": "Defines the controller-only battlefield-to-graveyard event that is NOT destruction and so bypasses destruction-replacement (regeneration). A distinct primitive move event the engine must separate from destroy.",
+      "cites": [
+        "701.21a"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Scry",
+      "kind": "action",
+      "rule": "701.22",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: look at top N, then distribute between top (any order) and bottom (any order); scry-0 no-op; APNAP simultaneity. A sequence of look/move actions, the rubric exemplar of composite.",
+      "cites": [
+        "701.22a",
+        "701.22b",
+        "701.22c"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Search",
+      "kind": "action",
+      "rule": "701.23",
+      "class": "intrinsic",
+      "given": null,
+      "how": "Primitive look-at-all-cards-in-a-zone (even hidden) and find-matching operation, with optional-find / undefined-quality / search-replacement (search-portion) and library-searched triggers. The hidden-zone look + find-legality machinery is a basis primitive other effects build on.",
+      "cites": [
+        "701.23a",
+        "701.23b",
+        "701.23f"
+      ],
+      "core_referenced": true,
+      "confidence": "borderline"
+    },
+    {
+      "name": "Set in Motion",
+      "kind": "action",
+      "rule": "701.32",
+      "class": "composite",
+      "given": null,
+      "how": "Variant (Archenemy) macro: move a scheme off the scheme deck and/or turn it face up; one at a time. A sequence of move/turn-face actions over the scheme deck.",
+      "cites": [
+        "701.32a",
+        "701.32b",
+        "701.32c"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Shuffle",
+      "kind": "action",
+      "rule": "701.24",
+      "class": "intrinsic",
+      "given": null,
+      "how": "Primitive randomize-a-library operation with subtleties: excludes searched-then-found cards, fires shuffle triggers even on empty/single-card libraries and per-effect, and resolves simultaneous put-into-position. A native randomization primitive.",
+      "cites": [
+        "701.24a",
+        "701.24b",
+        "701.24g"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Support",
+      "kind": "action",
+      "rule": "701.41",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: put a +1/+1 counter on each of up to N target creatures (other creatures if on a permanent).",
+      "cites": [
+        "701.41a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Surveil",
+      "kind": "action",
+      "rule": "701.25",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: look at top N, then distribute between graveyard and top (any order); surveil-0 no-op. A sequence of look/move actions like scry.",
+      "cites": [
+        "701.25a",
+        "701.25c"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Suspect",
+      "kind": "action",
+      "rule": "701.60",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: apply the 'suspected' designation to a creature, which grants the static abilities menace and 'can't block' while suspected.",
+      "cites": [
+        "701.60a",
+        "701.60b",
+        "701.60c"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Tap",
+      "kind": "action",
+      "rule": "701.26",
+      "class": "intrinsic",
+      "given": null,
+      "how": "Primitive that flips the tapped/untapped status (only untapped can be tapped). The boolean status the engine must track natively; cost payments, attack declaration, and many rules read/write it.",
+      "cites": [
+        "701.26a"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "The Ring Tempts You",
+      "kind": "action",
+      "rule": "701.54",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: choose a creature to gain the Ring-bearer designation, granting/upgrading 'The Ring' emblem whose tier-gated static and triggered abilities reference the Ring-bearer.",
+      "cites": [
+        "701.54a",
+        "701.54c",
+        "701.54d"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Time Travel",
+      "kind": "action",
+      "rule": "701.56",
+      "class": "composite",
+      "given": null,
+      "how": "Macro: choose any number of your objects bearing time counters (permanents/suspended cards) and add or remove a time counter on each; a selector + counter manipulation over the suspend/vanishing machinery.",
+      "cites": [
+        "701.56a"
+      ],
+      "core_referenced": false,
+      "confidence": "borderline"
+    },
+    {
+      "name": "Transform",
+      "kind": "action",
+      "rule": "701.27",
+      "class": "intrinsic",
+      "given": null,
+      "how": "Primitive face-flip on a DFC/DFT, a distinct game event from turn-face-up/down, with a once-per-stack guard against re-transforming and 'transformed permanent' status. The native face-state machinery and event identity make it a basis primitive.",
+      "cites": [
+        "701.27a",
+        "701.27b",
+        "701.27f",
+        "701.27g"
+      ],
+      "core_referenced": true,
+      "confidence": "borderline"
+    },
+    {
+      "name": "Triple",
+      "kind": "action",
+      "rule": "701.11",
+      "class": "composite",
+      "given": null,
+      "how": "Same as Double: a layer-7c continuous P/T modifier (+2X) built on the existing layer system. No new machinery.",
+      "cites": [
+        "701.11a",
+        "701.11b",
+        "613.4c"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Untap",
+      "kind": "action",
+      "rule": "701.26",
+      "class": "intrinsic",
+      "given": null,
+      "how": "Primitive that flips status back to untapped (only tapped can be untapped). The complementary native status-write to Tap.",
+      "cites": [
+        "701.26b"
+      ],
+      "core_referenced": true,
+      "confidence": "high"
+    },
+    {
+      "name": "Venture into the Dungeon",
+      "kind": "action",
+      "rule": "701.49",
+      "class": "composite",
+      "given": null,
+      "how": "Macro over the dungeon subsystem (309): place/advance the venture marker among rooms following arrows, completing and re-choosing dungeons; sequenced marker moves + choices.",
+      "cites": [
+        "701.49a",
+        "701.49b",
+        "701.49c"
+      ],
+      "core_referenced": false,
+      "confidence": "borderline"
+    },
+    {
+      "name": "Vote",
+      "kind": "action",
+      "rule": "701.38",
+      "class": "composite",
+      "given": null,
+      "how": "Structured choice procedure: each player in turn order chooses one listed option; resolution then reads the vote tally. Just sequenced player choices.",
+      "cites": [
+        "701.38a",
+        "701.38d"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Waterbend",
+      "kind": "action",
+      "rule": "701.67",
+      "class": "composite-given",
+      "given": "cost-modification-hook",
+      "how": "Pay [cost]; for each generic mana in that cost, may tap an untapped artifact/creature rather than pay that mana (701.67b limits the substitution to the waterbend cost’s generic component). Same pay-substitution hook as Delve/Convoke/Improvise.",
+      "cites": [
+        "701.67a",
+        "701.67b",
+        "701.67c"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    }
+  ]
+}

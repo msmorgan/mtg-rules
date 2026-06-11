@@ -116,6 +116,11 @@ rm -rf /tmp/mtg-data-test
 t "setup-data shows usage" '(?i)usage' fish -c "$scripts/setup-data --help; true"
 t_fails "setup-data rejects bogus flag" $scripts/setup-data --bogus
 
+# --- keyword classification ---
+t "keywords-classified.json parses" '^valid$' fish -c "jq -e . skill/keywords-classified.json >/dev/null; and echo valid"
+t "keyword classes are all in enum" '^0$' fish -c 'jq -r "[.keywords[].class] - [\"intrinsic\",\"composite\",\"composite-given\",\"marker\"] | length" skill/keywords-classified.json'
+t "keyword count covers both lists" '^260$' fish -c "jq -r '.keywords | length' skill/keywords-classified.json"
+
 # (tests appended by later tasks above this line)
 
 echo

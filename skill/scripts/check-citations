@@ -1,6 +1,7 @@
 #!/usr/bin/env fish
 # check-citations [files…] — verify every CR citation (NNN.N / NNN.Na) in the
-# given files (default: this skill's references/*.md) exists in cr.json.
+# given files (default: this skill's references/*.md + keywords-classified.json)
+# exists in cr.json.
 # Convention: reference docs cite dotted rule numbers; bare section numbers
 # ("section 613") are allowed but not checked.
 # Caveat: any NNN.N-looking number in prose/URLs is treated as a citation —
@@ -10,7 +11,7 @@ source (path resolve (status dirname))/lib.fish; or exit 1
 
 set -l files $argv
 if test (count $files) -eq 0
-    set files $skill_dir/references/*.md
+    set files $skill_dir/references/*.md $skill_dir/keywords-classified.json
 end
 test (count $files) -gt 0; or die "check-citations: no reference docs found"
 
