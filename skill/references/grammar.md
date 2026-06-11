@@ -15,13 +15,16 @@ replacement-effect semantics see `effects.md` §6.
 ## 1. Segmentation
 
 MTGJSON's `text` field separates paragraphs/lines with `\n`. The default
-unit is **one paragraph = one ability**, but four cases break that:
+unit is **one paragraph = one ability** — CR rule, not formatting
+convention: "each paragraph break in a card's text marks a separate
+ability" (113.2c) — but four cases break that:
 
 - **Comma-separated keyword line = multiple abilities.** Keyword abilities
   written on one line, separated by commas (or whitespace), are each a
-  separate ability (702.1; per-keyword rules in 702 treat each as its own
-  ability). Split on `, ` *within* a line only when every token resolves to
-  a keyword in the catalogs.
+  separate ability — 113.2c's own carve-out for "certain defined abilities
+  that may be strung together on a single line" (702.1; per-keyword rules
+  in 702 treat each as its own ability). Split on `, ` *within* a line only
+  when every token resolves to a keyword in the catalogs.
 - **Modal blocks span lines.** A `Choose …` header plus its bulleted modes
   (`•` lines) is *one* ability with multiple modes (700.2); do not split the
   bullets into separate abilities.

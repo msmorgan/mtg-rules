@@ -32,7 +32,8 @@ All paths below are relative to this skill's directory.
    `references/information.md`, and `references/outcomes.md` respectively;
    predicate/value-language, mana, and duration/lock questions route to
    `references/queries.md`, `references/mana.md`, and
-   `references/temporal.md` likewise.
+   `references/temporal.md` likewise. "Is this defined by the rules or an
+   engine choice?" questions route to `references/underdetermined.md`.
 3. **Verify every load-bearing specific with the scripts before asserting
    it.** Quote rule text with rule numbers. For card questions, fetch exact
    oracle text first (`scripts/card`) — never trust memory of a card's
@@ -71,6 +72,7 @@ All paths below are relative to this skill's directory.
 | `references/queries.md` | the predicate & value language: selectors, bindings/anaphora, stored memory, undefined values — the grammar↔engine contract |
 | `references/mana.md` | the mana subsystem: unit schema, production, payment predicates, pool policy |
 | `references/temporal.md` | durations, windows, and the lock taxonomy |
+| `references/underdetermined.md` | registry of CR-underdetermined semantics — the engine's ADR seed list (assumed/open/representation-only/settled) |
 | `references/actions.md` | everything the game can do: events; turn-based, state-based, special, and keyword actions; the priority→stack→resolve loop |
 | `references/designations.md` | the scattered global flags, unified: monarch, initiative, day/night, city's blessing, ring-bearer, goaded, suspected, … |
 | `references/abilities.md` | ability kinds + sub-kinds (mana, loyalty, linked, CDA, delayed/state/reflexive triggers), where abilities function |

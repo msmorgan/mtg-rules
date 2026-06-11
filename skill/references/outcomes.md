@@ -91,8 +91,16 @@ legality.
   Angel, verified oracle text): no CR rule defines the *base* semantics of
   can't-lose/can't-win. Its rules home is 101.1: the card text directly
   contradicts 104.3b–e and the loss SBAs, so the card takes precedence and
-  the loss simply doesn't happen — the SBA condition keeps holding, gated,
-  until the effect goes away. The CR's one dedicated text is the Two-Headed
+  the loss simply doesn't happen — the "can't" gates each application,
+  consuming nothing (101.2, 704.3). What happens when the effect ends is
+  per-SBA: 704.5a and 704.5c are standing state predicates ("has 0 or less
+  life," "has ten or more poison counters"), so a still-true condition
+  fires at the first check after the effect ends (Abyssal Persecutor
+  leaves with an opponent at −5: that player loses as an SBA, no window to
+  respond); 704.5b is a *windowed event* predicate ("attempted to draw …
+  since the last time state-based actions were checked"), so the window
+  lapses at each check and there is no retroactive empty-draw loss once
+  can't-lose ends. The CR's one dedicated text is the Two-Headed
   Giant team lift: 810.8a raises a player's can't-win/can't-lose to their
   whole team (its example names Platinum Angel). Codified edges: concession
   pierces it (101.1, 104.3a); the last-player-standing win pierces "can't
