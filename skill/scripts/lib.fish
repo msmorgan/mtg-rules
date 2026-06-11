@@ -20,6 +20,8 @@ for _cand in $_candidates
     if test -r $_cand/rules/cr.json
         set data_dir $_cand
         break
+    else if set -q MTG_RULES_DATA; and test "$_cand" = "$MTG_RULES_DATA"
+        echo >&2 "mtg-rules: warning: MTG_RULES_DATA is set but $_cand/rules/cr.json is unreadable — trying other locations"
     end
 end
 

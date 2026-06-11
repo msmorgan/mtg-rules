@@ -110,6 +110,7 @@ t_fails "rulings empty arg" $scripts/rulings ''
 mkdir -p /tmp/mtg-data-test/rules; echo '{}' > /tmp/mtg-data-test/rules/cr.json
 t "lib honors MTG_RULES_DATA" '/tmp/mtg-data-test/rules$' fish -c "set -x MTG_RULES_DATA /tmp/mtg-data-test; source $scripts/lib.fish; or exit 1; echo \$rules_dir"
 t "lib ignores invalid MTG_RULES_DATA" 'data/rules$' fish -c "set -x MTG_RULES_DATA /nonexistent; source $scripts/lib.fish; or exit 1; echo \$rules_dir"
+rm -rf /tmp/mtg-data-test
 
 # (tests appended by later tasks above this line)
 
