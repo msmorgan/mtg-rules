@@ -1,0 +1,11 @@
+{
+  "name": "mtg",
+  "owner": { "name": "msmorgan" },
+  "plugins": [
+    {
+      "name": "mtg-rules",
+      "source": "./skill",
+      "description": "MTG Comprehensive Rules skill: lookup scripts (CR, glossary, MTR, cards, official rulings) + synthesized taxonomies (game state, actions, effects/layers, designations, oracle grammar)."
+    }
+  ]
+}
