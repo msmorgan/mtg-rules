@@ -1,0 +1,33 @@
+#!/usr/bin/env fish
+# rulings <card name> — official per-card rulings (MTGJSON cardRulings), deduped, by date.
+# Ruling texts embed CR numbers from their publication date; renumbering drifts —
+# re-resolve any cited rule with scripts/rule before repeating it.
+
+source (path resolve (status dirname))/lib.fish; or exit 1
+
+test (count $argv) -ge 1; or die "usage: rulings <card name>"
+set -l name "$argv"
+test -n "$name"; or die "usage: rulings <card name>"
+command -q sqlite3; or die "rulings: sqlite3 not found"
+set -l db $mtgjson_dir/AllPrintings.sqlite
+test -r $db; or die "rulings: $db missing — run scripts/fetch_data.fish"
+
+set -l esc (string replace -a "'" "''" -- $name)
+
+set -l names (sqlite3 $db "
+    SELECT DISTINCT c.name FROM cards c JOIN cardRulings r ON r.uuid = c.uuid
+    WHERE c.name = '$esc' COLLATE NOCASE OR c.faceName = '$esc' COLLATE NOCASE
+    ORDER BY c.name;")
+
+test (count $names) -gt 0
+or die "rulings: no rulings found for '$name' (check the exact name with scripts/card; the card may have none)"
+
+for n in $names
+    set -l nesc (string replace -a "'" "''" -- $n)
+    echo "# $n"
+    sqlite3 $db "
+        SELECT DISTINCT '['||r.date||']  '||r.text
+        FROM cards c JOIN cardRulings r ON r.uuid = c.uuid
+        WHERE c.name = '$nesc' ORDER BY r.date;"
+end
+echo >&2 "note: ruling texts may cite CR numbers from their publication date — verify with scripts/rule"

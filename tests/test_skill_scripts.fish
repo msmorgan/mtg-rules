@@ -99,6 +99,13 @@ t "check-citations passes good fixture" 'citations OK|cited rules exist' $script
 t_fails "check-citations fails bad fixture" $scripts/check-citations $fixtures/cite-bad.md
 t "check-citations names the missing rules" '999\.99' fish -c "$scripts/check-citations $fixtures/cite-bad.md 2>&1; true"
 
+# --- rulings ---
+t "rulings humility has dated entries" '\[\d{4}-\d{2}-\d{2}\]' $scripts/rulings Humility
+t "rulings face name resolves to full card" 'Fire // Ice' $scripts/rulings Fire
+t "rulings case-insensitive" '\[\d{4}' $scripts/rulings humility
+t_fails "rulings bogus card" $scripts/rulings Zzgrokk the Unreal
+t_fails "rulings empty arg" $scripts/rulings ''
+
 # (tests appended by later tasks above this line)
 
 echo

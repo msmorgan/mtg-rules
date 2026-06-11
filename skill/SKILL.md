@@ -33,6 +33,7 @@ All paths below are relative to this skill's directory.
 | `scripts/define <term>` | official + unofficial glossary |
 | `scripts/keyword <name>` | keyword ability/action → its full CR section |
 | `scripts/card <name>` | exact oracle text + characteristics (MTGJSON atomic) |
+| `scripts/rulings <name>` | official per-card rulings (MTGJSON), date-stamped — re-resolve any CR numbers they cite |
 | `scripts/mtr 1.7` / `--list` / `--search <re>` | Magic Tournament Rules sections |
 | `scripts/corpus [--type T] [--keyword K] [--match RE] [--all]` | distinct oracle-text lines (grammar corpus) |
 | `scripts/check-citations` | verify reference-doc citations still exist in the CR |
