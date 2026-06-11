@@ -65,14 +65,14 @@ set -x MTG_RULES_DATA /path/to/your/data
 # 1. Re-fetch upstream sources
 scripts/fetch_data.fish
 
-# 2. Rebuild derived files (cards.jsonl, subtypes, etc.)
+# 2. Rebuild the derived card index (data/derived/cards.jsonl)
 scripts/build_derived.fish
 
 # 3. Verify all in-skill citations resolve
-skill/scripts/check-citations skill/references/*.md skill/SKILL.md
+skill/scripts/check-citations
 
-# 4. Spot-check official rulings probes
-skill/scripts/rulings-check
+# 4. Re-derive the ten validation probes in skill/references/rulings-check.md
+#    against fresh `skill/scripts/rulings` output; fix any doc that drifted
 ```
 
 ## Lookup Scripts
@@ -83,7 +83,23 @@ skill/scripts/rulings-check
 | `define` | `skill/scripts/define deathtouch` |
 | `keyword` | `skill/scripts/keyword flying` |
 | `mtr` | `skill/scripts/mtr 3.4` |
+| `rule-search` | `skill/scripts/rule-search 'last known information'` |
 | `card` | `skill/scripts/card "Lightning Bolt"` |
-| `corpus` | `skill/scripts/corpus "damage prevention"` |
-| `rulings` | `skill/scripts/rulings "Lightning Bolt"` |
-| `check-citations` | `skill/scripts/check-citations skill/references/effects.md` |
+| `corpus` | `skill/scripts/corpus --type Creature --match 'deals damage'` |
+| `rulings` | `skill/scripts/rulings Humility` |
+| `check-citations` | `skill/scripts/check-citations` |
+
+## License & Fan Content Notice
+
+Original content of this repository (scripts, tooling, document structure,
+and synthesis) is licensed under the [MIT License](LICENSE).
+
+**mtg-rules-skill is unofficial Fan Content permitted under the
+[Wizards of the Coast Fan Content Policy](https://company.wizards.com/en/legal/fancontentpolicy).
+Not approved/endorsed by Wizards. Portions of the materials used are property
+of Wizards of the Coast. ©Wizards of the Coast LLC.** Quoted excerpts from
+the Magic: The Gathering Comprehensive Rules and official card rulings in
+`skill/references/` remain the property of Wizards of the Coast LLC and are
+not covered by the MIT license. The repository ships no card data; users
+fetch rules text and card data themselves from public sources (Wizards via
+Academy Ruins, Scryfall, MTGJSON) using the bundled tooling.
