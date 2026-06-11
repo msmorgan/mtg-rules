@@ -15,25 +15,25 @@ All paths below are relative to this skill's directory.
 
 1. Classify the question: rules mechanics | card-specific | tournament
    policy | engine taxonomy | grammar | mechanic design-space.
-2. Orient with the matching reference doc (table below). Engine-taxonomy
-   questions start from `references/state.md` + `references/actions.md`.
-   Mechanic design-space questions (generalizing/unifying mechanics,
-   custom-mechanic feasibility) start from `references/generalizations.md`
-   + `references/engine.md`. Capability/restriction/permission questions
-   (what "can't", "only", "as though", "if able", or ward-style tolls mean,
-   and how they compose) start from `references/deontics.md`. "Is keyword X
-   intrinsic or composite?" and
-   engine instruction-set questions start from
-   `references/keyword-classification.md`; per-keyword data is queryable:
-   `jq '.keywords[] | select(.name=="Cascade")' keywords-classified.json`.
-   Cost/payment, event/trigger-schema, decision/choice,
-   visibility/hidden-information, and game-ending questions route to
-   `references/costs.md`, `references/events.md`, `references/choices.md`,
-   `references/information.md`, and `references/outcomes.md` respectively;
-   predicate/value-language, mana, and duration/lock questions route to
-   `references/queries.md`, `references/mana.md`, and
-   `references/temporal.md` likewise. "Is this defined by the rules or an
-   engine choice?" questions route to `references/underdetermined.md`.
+2. Orient with the matching reference doc (table below). Routing by
+   question type:
+
+   | question type | start here |
+   |---|---|
+   | engine taxonomy | `references/state.md` + `references/actions.md` |
+   | mechanic design-space (generalizing/unifying, custom-mechanic feasibility) | `references/generalizations.md` + `references/engine.md` |
+   | capability/restriction/permission ("can't", "only", "as though", "if able", ward-style tolls) | `references/deontics.md` |
+   | keyword intrinsic/composite class, engine instruction-set | `references/keyword-classification.md`; per-keyword: `jq '.keywords[] \| select(.name=="Cascade")' keywords-classified.json` |
+   | cost/payment | `references/costs.md` |
+   | event/trigger schema | `references/events.md` |
+   | decision/choice | `references/choices.md` |
+   | visibility/hidden information | `references/information.md` |
+   | game-ending | `references/outcomes.md` |
+   | predicate/value language | `references/queries.md` |
+   | mana | `references/mana.md` |
+   | duration/lock | `references/temporal.md` |
+   | "rules-defined or engine choice?" | `references/underdetermined.md` |
+   | variant/multiplayer | `references/variants.md` |
 3. **Verify every load-bearing specific with the scripts before asserting
    it.** Quote rule text with rule numbers. For card questions, fetch exact
    oracle text first (`scripts/card`) — never trust memory of a card's
@@ -73,6 +73,7 @@ All paths below are relative to this skill's directory.
 | `references/mana.md` | the mana subsystem: unit schema, production, payment predicates, pool policy |
 | `references/temporal.md` | durations, windows, and the lock taxonomy |
 | `references/underdetermined.md` | registry of CR-underdetermined semantics — the engine's ADR seed list (assumed/open/representation-only/settled) |
+| `references/variants.md` | which multiplayer/variant rules (CR 8xx–9xx) override base-game claims — lookup-first index |
 | `references/actions.md` | everything the game can do: events; turn-based, state-based, special, and keyword actions; the priority→stack→resolve loop |
 | `references/designations.md` | the scattered global flags, unified: monarch, initiative, day/night, city's blessing, ring-bearer, goaded, suspected, … |
 | `references/abilities.md` | ability kinds + sub-kinds (mana, loyalty, linked, CDA, delayed/state/reflexive triggers), where abilities function |

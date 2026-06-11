@@ -5,10 +5,12 @@
 with `scripts/rule` before citing. Run `scripts/check-citations` after CR
 refreshes.*
 
-This doc validates the skill's model against WotC's own answer key. For ten
-subsystem probes it states our **independent** derivation (from the
+This doc validates the skill's model against WotC's own answer key. For
+eighteen subsystem probes it states our **independent** derivation (from the
 sibling reference docs + `scripts/rule`), then quotes the official ruling
 (`scripts/rulings`, date-stamped `[YYYY-MM-DD]`) and records a verdict.
+Probes 1–10 validate the original synthesis layer; 11–18 the newer docs
+(costs, events, choices, information, outcomes, mana, temporal, queries).
 
 **Renumber-drift warning:** official ruling texts embed CR numbers from their
 publication date; the CR renumbers over time. Every CR number below was
@@ -22,8 +24,8 @@ derivation patterns — orient with the named reference doc, then quote the
 specific dotted CR rule that does the work, then sanity-check against the
 card's official rulings. Ruling first, citations second.
 
-All ten probes verdict **MATCH** on the current CR; no sibling-doc fixes were
-required. Re-run them (see Maintenance) after each CR refresh.
+All eighteen probes verdict **MATCH** on the current CR; no sibling-doc fixes
+were required. Re-run them (see Maintenance) after each CR refresh.
 
 ## 1. Humility + Opalescence — layers/timestamps
 
@@ -254,6 +256,189 @@ exile it, then you may cast it transformed without paying its mana cost.'" And:
 this means a Siege's controller can attack it." And: "As a Siege enters the
 battlefield, its controller chooses an opponent to be its protector."
 **MATCH.**
+
+## 11. Trinisphere — total-cost pipeline and the 601.2f lock
+
+**Q:** When does "costs three mana to cast" apply, and what if Trinisphere
+taps as part of payment? **Frame:** `costs.md` §4 (modification pipeline).
+
+- The pipeline: base (mana or alternative, 601.2b) → + additional costs and
+  increases → − reductions → floor {0} → **effects that directly affect the
+  total** → locked (601.2f). Trinisphere is the direct-total stage — applied
+  after every increase and reduction, last before the lock.
+- After 601.2f nothing changes the total; the 601.2h example is on point — a
+  cost-reducer sacrificed *as part of payment* doesn't re-raise the price, so
+  Trinisphere tapping or leaving inside the 601.2g–h payment window changes
+  nothing either. (Mana value never moves regardless: 202.3.)
+
+Official `[2020-08-07]`: "… start with the mana cost or alternative cost
+you're paying, add any cost increases, then apply any cost reductions.
+Finally, apply Trinisphere's effect … The mana value of the spell remains
+unchanged …" And:
+"If Trinisphere leaves the battlefield or becomes tapped or untapped as a cost
+to cast a spell, this cost is paid after you've locked in the total cost."
+**MATCH.**
+
+## 12. Guerrilla Tactics — discard cause: the agent coordinate
+
+**Q:** Which discards match "a spell or ability an opponent controls causes
+you to discard this card"? **Frame:** `events.md` §3 (cause tags).
+
+- The trigger is a predicate over the discard event's **cause triple**: verb
+  = discard (701.9a), agent kind = spell-or-ability, agent controller = an
+  opponent (`events.md` names this exact oracle family).
+- Discarding **as a cost** carries agency = cost-payment (601.2h), not
+  effect-instruction — no spell or ability is the causing agent — so
+  cost-discards never match. **Optionality is not a coordinate**: an
+  opponent's resolving spell that merely *lets* you discard still has that
+  spell as agent → trigger fires; who picks the card (default: the affected
+  player, 701.9b) doesn't matter either.
+
+Official `[2004-10-04]`: "Discarding as a cost to cast a spell will not
+trigger the ability. Only discarding as an effect will trigger the ability."
+And: "The second ability will trigger even on an optional discard caused by
+an opponent." **MATCH.**
+
+## 13. Krark's Thumb — replacement per flip, revisable RNG
+
+**Q:** How does it apply to multi-coin effects, and when is the ignore choice
+made? **Frame:** `choices.md` §4 (randomness as pseudo-decider).
+
+- The Thumb replaces the **flip event**, and its own text defines the event
+  it watches (700.1): "flip two coins" is two would-flip-a-coin events, each
+  replaced separately into flip-two-ignore-one — one opportunity per event,
+  no re-invoking on its own replacement flips (614.5), so pairs stay pairs.
+- `choices.md`: the RNG is a pseudo-decider whose **output is revisable after
+  the fact** (the 705.3 override family); "ignore one" is a **follow-up
+  decision fed by the RNG events** (the 706.2b shape) — made after the flips,
+  whose results are public, so all simultaneous flips are visible first.
+
+Official `[2019-01-25]`: "… you flip two coins, flip two coins, and then
+ignore one flip from each pair of flips. You will know the results of all
+simultaneous flips before choosing which to ignore." And `[2004-10-04]`: "If
+you and your opponent both flip at the same time, you can see your opponent's
+result before choosing which result to keep." **MATCH.**
+
+## 14. Ixidron — face-down identity, look rights, copiable blanks
+
+**Q:** What are the creatures Ixidron turns face down, who may look at them,
+and what does a copy of one copy? **Frame:** `information.md` §2 (face-down).
+
+- Ixidron's effect lists no characteristics, so the 708.2a default applies:
+  a 2/2 face-down creature with no text, name, subtypes, or mana cost — and
+  those defaults are the **copiable values** (708.2a): a copy of one copies
+  the blank 2/2, not the hidden card (707.2, "as modified by … face-down
+  status").
+- Look rights: a controller may look at their own face-down permanents at
+  any time — morph not required (708.5); other players never may. The
+  **differentiation duty** (708.6) still applies: every face-down object
+  must stay distinguishable.
+
+Official `[2006-09-25]`: "The controller of a face-down creature can look at
+it at any time, even if it doesn't have morph. Other players can't, but …
+'you must ensure at all times that your face-down spells and permanents can
+be easily differentiated from each other.'" And `[2018-04-27]`: "Creatures
+turned face down by Ixidron are 2/2 creatures with no text, no name, no
+subtypes … These values are copiable … and their normal values are not
+copiable." **MATCH.**
+
+## 15. Abyssal Persecutor — can't-lose: standing vs windowed SBAs
+
+**Q:** What still ends an opponent's game while it's out, and what happens
+the instant it leaves? **Frame:** `outcomes.md` §2 (outcome modification).
+
+- No CR rule defines can't-win/can't-lose base semantics; the home is 101.1 —
+  the card text contradicts 104.2b/104.3e and the loss SBAs and takes
+  precedence, gating **each application** while consuming nothing.
+- The SBA split: 704.5a and 704.5c are **standing state predicates** ("has 0
+  or less life") — still true at the first check after Persecutor leaves, and
+  SBAs run before any player gets priority (704.3): the opponent at −5 loses
+  with no response window. 704.5b is a **windowed event predicate**
+  ("attempted to draw … since the last check"); a suppressed empty-library
+  draw lapses with its window.
+- Pierces and edges: concession is the single exception to card-beats-rules
+  (101.1, 104.3a); judge penalties bypass it too (104.3k); draws are neither
+  wins nor losses (104.4c); life still drops below 0 — the gate is on the
+  outcome, not the life change — but life *payments* stay capped (119.4).
+
+Official `[2017-11-17]`: "If Abyssal Persecutor leaves the battlefield while
+an opponent has 0 or less life, that opponent will lose the game as a
+state-based action. No player can respond …" And: "An opponent will lose a
+game if they concede, if that player is penalized …" And: "Effects that say
+the game is a draw … are not affected by Abyssal Persecutor." **MATCH.**
+
+## 16. Exotic Orchard — 106.7 could-produce
+
+**Q:** Which colors can it tap for? **Frame:** `mana.md` §3 (producing the
+hypothetical).
+
+- "Could produce" = whatever an opponent's land's abilities **would produce
+  if they resolved now**, replacement effects considered in any possible
+  order, **ignoring costs entirely** (106.7) — tapped status, missing charge
+  counters, any activation cost: invisible. Riders never matter either: they
+  don't touch the **type** (106.6), and 106.7 asks only after types.
+- "Any color" ranges over the five colors (105.1); colorless is a sixth
+  *type*, not a color (106.1b, `mana.md` §1) — the Orchard can never make {C}.
+- Fixpoint: if the only feeders are themselves could-produce lands, no type
+  is definable and no mana is produced (106.7's no-type clause; its example
+  is an Exotic Orchard chain); one real Forest anywhere in the web gives
+  every chained land {G}.
+
+Official `[2009-02-01]`: "It doesn't matter whether Vivid Crag has a charge
+counter on it, and it doesn't matter whether it's untapped." And: "Exotic
+Orchard can't be tapped for colorless mana, even if a land an opponent
+controls could produce colorless mana." And: "… if you control a Forest and
+an Exotic Orchard, and your opponent controls an Exotic Orchard and a
+Reflecting Pool, then each of those lands can be tapped to produce {G}."
+**MATCH.**
+
+## 17. Phyrexian Fleshgorger — ward amount fixed at resolution
+
+**Q:** Ward—Pay life equal to its power: when is the amount determined?
+**Frame:** `temporal.md` §3 lock row 4 (X) + `queries.md` §4 (the X trio).
+
+- Ward is a triggered ability demanding a **resolution toll** — "counter that
+  spell or ability unless that player pays [cost]" (702.21a; `costs.md`'s
+  resolution-toll position) — and the variable amount is **not locked as the
+  ability triggers**: ward X is determined as the demanding ability resolves
+  (702.21b). "Equal to this creature's power" is the same shape read through
+  608.2h (information determined once, when applied): the power is read at
+  ward-resolution time.
+- Source gone before the ward resolves → **last known information** supplies
+  the power (608.2h, 113.7a); if Fleshgorger was also the spell's only
+  target, the spell won't resolve no matter what is paid (608.2b).
+
+Official `[2022-10-14]`: "The amount of life an opponent needs to pay … is
+equal to Phyrexian Fleshgorger's power at the time the ward ability resolves,
+which may be different from its power when the ward ability triggered. If
+Phyrexian Fleshgorger is no longer on the battlefield … use the power it had
+the last time it was on the battlefield … (though if Phyrexian Fleshgorger
+was the only target, the spell … would not resolve even if they pay the
+life)." **MATCH.**
+
+## 18. Cone of Flame — "another"/"a third": final-set distinctness
+
+**Q:** 1, 2, and 3 damage to three targets — must they differ, and can the
+amounts move if a target goes illegal? **Frame:** `queries.md` §2
+("another"/"other"). *(Substitute for the ruling-less Arc Trail.)*
+
+- Three separate instances of "target": 115.3 alone would *allow* re-picking
+  the same object across instances; the distinctness comes from "another"/"a
+  third" — `queries.md`'s verified finding: templating-level English compiling
+  to a **set-distinctness constraint on the final target set** (115.7e — its
+  CR example is Arc Trail). At announcement the final set is the announced
+  set: three distinct legal targets per 601.2c or the proposal rewinds
+  (601.2e).
+- The amounts are bound per target instance by the spell's own text — nothing
+  is "divided," so nothing can reflow. A target illegal at resolution is
+  simply unaffected; the parts aimed at the others apply unchanged (608.2b) —
+  the no-redistribution behavior of `temporal.md`'s division lock row.
+
+Official `[2014-07-18]`: "Each of the three targets must be different. If
+there aren't three different legal targets available, you can't cast the
+spell." And: "If one or two of Cone of Flame's targets are illegal when it
+resolves, you can't change how much damage will be dealt to the remaining
+legal targets." **MATCH.**
 
 ## Maintenance
 

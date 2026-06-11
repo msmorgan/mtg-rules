@@ -59,21 +59,17 @@ Set `MTG_RULES_DATA` to override where scripts look for data:
 set -x MTG_RULES_DATA /path/to/your/data
 ```
 
-## Data Refresh Workflow
+## Maintenance (post-refresh checklist)
 
-```bash
-# 1. Re-fetch upstream sources
-scripts/fetch_data.fish
+After WotC publishes updated rules or card data:
 
-# 2. Rebuild the derived card index (data/derived/cards.jsonl)
-scripts/build_derived.fish
-
-# 3. Verify all in-skill citations resolve
-skill/scripts/check-citations
-
-# 4. Re-derive the ten validation probes in skill/references/rulings-check.md
-#    against fresh `skill/scripts/rulings` output; fix any doc that drifted
-```
+1. `scripts/fetch_data.fish` — re-fetch upstream sources
+2. `scripts/build_derived.fish` — rebuild the derived card index (`data/derived/cards.jsonl`)
+3. `skill/scripts/check-citations` — verify every in-skill citation resolves; fix flagged docs
+4. Re-derive the validation probes in `skill/references/rulings-check.md` against fresh `skill/scripts/rulings` output; fix any doc that drifted
+5. Re-test `skill/references/underdetermined.md` entries — a new rule may settle one
+6. Re-examine `skill/references/generalizations.md` empty cells — a newly printed instance is a finding
+7. Classify any new keywords — they land unclassified in `skill/keywords-classified.json`
 
 ## Lookup Scripts
 

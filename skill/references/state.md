@@ -264,3 +264,14 @@ into its own appropriate zone (730.3) and a finder effect finds all of them
   combat damage from one commander loses the game, tracked per
   (dealer-commander, recipient) pair as an SBA (903.10a). Commanders may be
   redirected to the command zone (903.9a, 903.9b).
+
+### Carrier classes (where facts attach)
+
+Every fact in this doc hangs off one of six carriers: **object** (§§5–6);
+**ability instance** — an acquired ability's once-per-turn restriction scopes
+to that ability as acquired from that object, not to identically worded ones
+(602.5c); **controller** — "Do this only once each turn" checks the source's
+controller (603.2h); **player** (§2); **team** — e.g. Two-Headed Giant's
+shared life total (810.4); and the **game** (§8). The carrier column in
+`designations.md` classifies every designation along this axis; `temporal.md`
+§4 splits the once-per-turn flags by the same scopes (instance vs controller).
