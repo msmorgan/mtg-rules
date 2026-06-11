@@ -1,6 +1,6 @@
 ---
 name: mtg-rules
-description: Use for ANY Magic: The Gathering rules question, card interaction or ruling, judge call, tournament-policy (MTR) question, MTG engine design (game-state modeling, action/effect taxonomy), or oracle-text grammar/parsing work. Provides authoritative local lookups (Comprehensive Rules, glossaries, MTR, exact card oracle text) plus synthesized taxonomies of game state, actions, abilities, effects, and designations. Never answer MTG specifics from memory — verify with this skill's scripts.
+description: Use for ANY Magic: The Gathering rules question, card interaction or ruling, judge call, tournament-policy (MTR) question, MTG engine design (game-state modeling, action/effect taxonomy), oracle-text grammar/parsing work, and mechanic design-space analysis (asymmetric rule families, generalization feasibility). Provides authoritative local lookups (Comprehensive Rules, glossaries, MTR, exact card oracle text) plus synthesized taxonomies of game state, actions, abilities, effects, and designations. Never answer MTG specifics from memory — verify with this skill's scripts.
 ---
 
 # MTG Rules
@@ -14,9 +14,12 @@ All paths below are relative to this skill's directory.
 ## Workflow (rigid)
 
 1. Classify the question: rules mechanics | card-specific | tournament
-   policy | engine taxonomy | grammar.
+   policy | engine taxonomy | grammar | mechanic design-space.
 2. Orient with the matching reference doc (table below). Engine-taxonomy
    questions start from `references/state.md` + `references/actions.md`.
+   Mechanic design-space questions (generalizing/unifying mechanics,
+   custom-mechanic feasibility) start from `references/generalizations.md`
+   + `references/engine.md`.
 3. **Verify every load-bearing specific with the scripts before asserting
    it.** Quote rule text with rule numbers. For card questions, fetch exact
    oracle text first (`scripts/card`) — never trust memory of a card's
@@ -44,6 +47,7 @@ All paths below are relative to this skill's directory.
 |---|---|
 | `references/state.md` | component taxonomy of a game state: players, zones, objects, characteristics, per-object state, identity/LKI, game-level state |
 | `references/engine.md` | pseudo-code game-state model + the damage pipeline (CR 120) |
+| `references/generalizations.md` | asymmetric rule families, the generalized mechanic each implies, and 12 engine modeling directives |
 | `references/actions.md` | everything the game can do: events; turn-based, state-based, special, and keyword actions; the priority→stack→resolve loop |
 | `references/designations.md` | the scattered global flags, unified: monarch, initiative, day/night, city's blessing, ring-bearer, goaded, suspected, … |
 | `references/abilities.md` | ability kinds + sub-kinds (mana, loyalty, linked, CDA, delayed/state/reflexive triggers), where abilities function |

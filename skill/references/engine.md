@@ -5,6 +5,8 @@
 with `scripts/rule` before citing. Run `scripts/check-citations` after CR
 refreshes.*
 
+Read alongside `generalizations.md` — its 12 engine modeling directives prescribe which operations to model as parameterized records.
+
 A pseudo-code rendering of the taxonomy `state.md` argues in prose, plus the
 damage pipeline (CR 120) it touches only piecemeal. `state.md` is the
 authority; the classes below cross-reference its sections (`see state.md §N`)

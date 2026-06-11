@@ -1,9 +1,15 @@
+# Generalizations — Asymmetric Rule Families and the Mechanics They Imply
 
-# Asymmetric Families in the Comprehensive Rules: A Design-Space Analysis for Engine and Grammar
+*Synthesized from the Comprehensive Rules effective 2026-04-17
+(`data/rules/cr.json`). Orientation only — verify load-bearing specifics
+with `scripts/rule` before citing. Run `scripts/check-citations` after CR
+refreshes.*
 
 **Method.** Every claim below was checked against the live Comprehensive Rules text (effective 2026-04-17, per the local `data/rules/cr.txt`) using the mtg-rules skill's lookup scripts (`rule`, `rule-search`, `keyword`, `card`, `corpus`); reference docs (`state.md`, `actions.md`, `abilities.md`, `effects.md`, `casting.md`, `designations.md`, `grammar.md`, `engine.md`) were used for orientation only. A "family" is admitted only when (a) at least two CR-verified instances share an abstract operation shape, (b) the CR demonstrably permits some parameterizations and not others, and (c) there is at least one *precedent* — a place where the CR has already lifted a similar restriction once — showing the generalization is rules-compatible rather than speculative. Families are ranked by how load-bearing the unification is for an engine data model and oracle-text grammar: a high-ranked family is one where modeling the general operation now (with current rules as parameter constraints) saves the most future schema churn.
 
 **How to read.** Each family gives: **Shape** (the abstract parameterized operation), **Instances** (verified, cited), **Asymmetry** (which parameter cells are filled vs. silently empty, plus the precedent showing the CR already generalized once), **Unified mechanic** (the engine operation + grammar impact), and **Danger notes** (rules machinery that breaks or gets interesting when constraints are lifted). Citations are dotted CR rules; every one was retrieved and read during this analysis. "Empty cell" never means "illegal in principle" — it means *no rule or card currently instantiates it*, which is exactly the design space an engine should leave reachable.
+
+**Maintenance.** After CR refreshes, beyond running `scripts/check-citations`, re-examine each family's "empty cells" — a newly filled cell (a new set printing one of the missing instances) is a finding to record, not an error; update the family and the engine directives accordingly.
 
 ---
 

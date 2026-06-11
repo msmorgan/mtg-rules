@@ -304,3 +304,8 @@ How text names the objects and players it acts on:
     sets (115; a `target` in an activated/triggered ability of an
     instant/sorcery targets that ability, not the spell — 115.1a);
     X/division → variable and split bindings.
+12. Per `generalizations.md`'s conclusion (directive 12): the generalized
+    mechanics need parameterized semantic targets, not new syntax — the one
+    production worth adding preemptively is a triggered-ability instruction
+    tail mirroring 602.5d–e ("Resolve this ability only as a sorcery"),
+    for Family 3's timing-restricted trigger pattern.
