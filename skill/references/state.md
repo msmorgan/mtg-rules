@@ -7,6 +7,8 @@ refreshes.*
 
 What an engine must track, top to bottom. Closed lists are enumerated in
 full; open vocabularies (creature types, etc.) point at `data/catalogs/*.json`.
+A pseudo-code rendering of this taxonomy (plus the damage pipeline) lives in
+`engine.md`.
 
 ## 1. Top level
 
