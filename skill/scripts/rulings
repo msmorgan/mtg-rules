@@ -16,8 +16,17 @@ set -l esc (string replace -a "'" "''" -- $name)
 
 set -l names (sqlite3 $db "
     SELECT DISTINCT c.name FROM cards c JOIN cardRulings r ON r.uuid = c.uuid
-    WHERE c.name = '$esc' COLLATE NOCASE OR c.faceName = '$esc' COLLATE NOCASE
+    WHERE c.name = '$esc' COLLATE NOCASE
     ORDER BY c.name;")
+
+if test (count $names) -eq 0
+    set names (sqlite3 $db "
+        SELECT DISTINCT c.name FROM cards c JOIN cardRulings r ON r.uuid = c.uuid
+        WHERE c.faceName = '$esc' COLLATE NOCASE
+        ORDER BY c.name;")
+    test (count $names) -gt 0
+    and echo >&2 "rulings: no card named exactly '$name' has rulings; showing cards with that FACE name"
+end
 
 test (count $names) -gt 0
 or die "rulings: no rulings found for '$name' (check the exact name with scripts/card; the card may have none)"
@@ -29,5 +38,6 @@ for n in $names
         SELECT DISTINCT '['||r.date||']  '||r.text
         FROM cards c JOIN cardRulings r ON r.uuid = c.uuid
         WHERE c.name = '$nesc' ORDER BY r.date;"
+    or die "rulings: query failed for '$n'"
 end
 echo >&2 "note: ruling texts may cite CR numbers from their publication date — verify with scripts/rule"
