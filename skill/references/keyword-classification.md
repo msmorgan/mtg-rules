@@ -54,11 +54,11 @@ directive/family.
 
 | primitive | one-line definition | keywords needing it | generalizations cross-ref |
 |---|---|---|---|
-| `cause-tagged-events` | Events carry a tag for *what caused them* ("tapped because declared as an attacker"), so statics/replacements match on cause instead of the CR hardcoding the case. | Vigilance, Enlist | `engine.md` event log / TurnHistory (608.2i); directive 2 (role-vs-identity parameters) |
+| `cause-tagged-events` | Events carry a tag for *what caused them* ("tapped because declared as an attacker"), so statics/replacements match on cause instead of the CR hardcoding the case. | Vigilance, Enlist | **defining home: `events.md` §3** (cause = a *(verb, agency, agent)* triple there); directive 2 (role-vs-identity parameters) |
 | `damage-result-rewrite` | A stage that rewrites the *result* of a damage event (substitute or augment what damage does), not its amount — the slot CR 120.3 hardcodes. | Lifelink, Wither, Infect, Toxic | Family 11 / directive 3 (typed transform algebra: substitute/augment) |
 | `progress-track` | A game-maintained monotonic value with thresholds (day/night, speed), advanced by turn-based actions or inherent triggers; statics read it. | Daybound, Nightbound, Max Speed, Start Your Engines! | Family 4 / directive 4 (one ProgressTrack type) |
 | `attachment-relation` | A first-class `attached_to` edge to a legal host (object or player) with legality predicate and violation policy. | Attach | Family 5 / directive 2 (attach carries host+predicate+policy) |
-| `cost-modification-hook` | A permission that edits how generic/colored mana of an already-determined total cost is paid (601.2f–h) — *neither* additional *nor* alternative cost. | Delve, Convoke, Improvise, Assist, Waterbend | `casting.md` 601.2f–h (cost lock); directive 10 (mana payment predicates) |
+| `cost-modification-hook` | A permission that edits how generic/colored mana of an already-determined total cost is paid (601.2f–h) — *neither* additional *nor* alternative cost. | Delve, Convoke, Improvise, Assist, Waterbend | **defining home: `costs.md` §4** (payment-stage substitution at the 601.2f–h lock); directive 10 (mana payment predicates) |
 | `face-down-objects` | A primitive for objects existing face down (708): put/cast face down as a 2/2, secret-identity memory, special action to turn face up. | Morph, Manifest, Manifest Dread, Disguise, Cloak, Foretell, Hidden Agenda | Family 8 / directive 6 (copy/cast through the copiable-value lens, across the 708 boundary) |
 
 ## Intrinsic table (24)

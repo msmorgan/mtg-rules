@@ -26,6 +26,10 @@ All paths below are relative to this skill's directory.
    engine instruction-set questions start from
    `references/keyword-classification.md`; per-keyword data is queryable:
    `jq '.keywords[] | select(.name=="Cascade")' keywords-classified.json`.
+   Cost/payment, event/trigger-schema, decision/choice,
+   visibility/hidden-information, and game-ending questions route to
+   `references/costs.md`, `references/events.md`, `references/choices.md`,
+   `references/information.md`, and `references/outcomes.md` respectively.
 3. **Verify every load-bearing specific with the scripts before asserting
    it.** Quote rule text with rule numbers. For card questions, fetch exact
    oracle text first (`scripts/card`) — never trust memory of a card's
@@ -56,6 +60,11 @@ All paths below are relative to this skill's directory.
 | `references/generalizations.md` | asymmetric rule families, the generalized mechanic each implies, and 12 engine modeling directives |
 | `references/keyword-classification.md` | every keyword classified intrinsic / composite / composite-given(P) / marker, + the 6-primitive engine basis (full data: skill/keywords-classified.json) |
 | `references/deontics.md` | the deontic layer: May/Cant/Must/toll algebra over action legality — "can't", "only", "as though", "if able" unified |
+| `references/costs.md` | the cost algebra: positions, components, modification pipeline, payability |
+| `references/events.md` | event ontology: types, cause triples, composition, trigger interface |
+| `references/choices.md` | decision points: kinds, lock stages, deciders, visibility, randomness |
+| `references/information.md` | visibility & hidden state: zones, face-down, reveals, per-player info sets |
+| `references/outcomes.md` | game end: losses/wins/draws/restart/subgames + outcome modification |
 | `references/actions.md` | everything the game can do: events; turn-based, state-based, special, and keyword actions; the priority→stack→resolve loop |
 | `references/designations.md` | the scattered global flags, unified: monarch, initiative, day/night, city's blessing, ring-bearer, goaded, suspected, … |
 | `references/abilities.md` | ability kinds + sub-kinds (mana, loyalty, linked, CDA, delayed/state/reflexive triggers), where abilities function |
