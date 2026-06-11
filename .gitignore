@@ -1,4 +1,5 @@
-/data/
+# Matches the data directory and the symlink used in jj workspaces
+/data
 
 # CLAUDE.md is intentionally tracked (overrides any global ignore)
 !CLAUDE.md

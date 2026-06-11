@@ -121,6 +121,14 @@ t "keywords-classified.json parses" '^valid$' fish -c "jq -e . skill/keywords-cl
 t "keyword classes are all in enum" '^0$' fish -c 'jq -r "[.keywords[].class] - [\"intrinsic\",\"composite\",\"composite-given\",\"marker\"] | length" skill/keywords-classified.json'
 t "keyword count covers both lists" '^260$' fish -c "jq -r '.keywords | length' skill/keywords-classified.json"
 
+# --- lookup/classify/health ---
+t "lookup deathtouch spans rule and keyword sources" '(?s)\[rule\] 702\.2.*\[keyword\]' $scripts/lookup deathtouch
+t_fails "lookup rejects invalid regex" $scripts/lookup '['
+t_fails "lookup misses garbage" $scripts/lookup zzqqxyzzy
+t "classify Cascade is composite" 'Cascade.*composite' $scripts/classify Cascade
+t_fails "classify bogus keyword" $scripts/classify zzgrok
+t "health reports effective date and exits 0" '(?s)effective.*HEALTH_OK' fish -c "$scripts/health; and echo HEALTH_OK"
+
 # (tests appended by later tasks above this line)
 
 echo

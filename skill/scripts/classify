@@ -1,0 +1,27 @@
+#!/usr/bin/env fish
+# classify <keyword> — intrinsic/composite classification record from
+# skill/keywords-classified.json (case-insensitive name match).
+
+source (path resolve (status dirname))/lib.fish; or exit 1
+
+test (count $argv) -ge 1; or die "usage: classify <keyword>   (classify cascade | classify first strike)"
+set -l name (string lower -- "$argv")
+
+jq -r --arg n "$name" '
+    [ .keywords[] | select((.name | ascii_downcase) == $n) ] as $hit
+    | if ($hit | length) > 0 then
+        $hit[0]
+        | "\(.name) (\(.kind)) — \(.class)"
+          + (if .given then " given: \(.given)" else "" end)
+          + "\nrule: \(.rule)"
+          + "\nhow: \(.how)"
+          + "\ncites: \(.cites | join(", "))"
+          + "\ncore_referenced: \(.core_referenced)"
+      else
+        [ .keywords[].name | select(ascii_downcase | contains($n)) ] as $near
+        | (if ($near | length) > 0
+           then "classify: no keyword \"\($n)\". Near matches: \($near | join(", "))\n"
+           else "classify: no keyword \"\($n)\" in keywords-classified.json\n" end)
+        | halt_error(1)
+      end
+' $skill_dir/keywords-classified.json

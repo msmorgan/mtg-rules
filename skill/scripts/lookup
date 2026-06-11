@@ -1,0 +1,73 @@
+#!/usr/bin/env fish
+# lookup <query> — unified meta-search: one query fanned out across every source.
+# Hits are labeled [rule]/[gloss]/[keyword]/[mtr]/[doc] so the next call can be
+# routed to the right drill-down script. Case-insensitive regex; output kept
+# compact (caps per source) for agent context budgets.
+
+source (path resolve (status dirname))/lib.fish; or exit 1
+
+test (count $argv) -ge 1; or die "usage: lookup <query>   (lookup deathtouch | lookup 'priority.*passes')"
+set -l query "$argv"
+
+# pre-validate the regex (same probe as corpus)
+echo '""' | jq --arg p "$query" 'test($p)' >/dev/null 2>&1
+or die "lookup: invalid regex: $query"
+
+# [rule] — CR ruleText hits (cap 8)
+set -l rule_hits (jq -r --arg pat "$query" '
+    [ to_entries[] | select(.value.ruleText | test($pat; "i")) ] as $hits
+    | ( $hits[:8][]
+        | "[rule] \(.key): \(.value.ruleText | gsub("\n"; " ") | if length > 120 then .[:120] + "…" else . end)" ),
+      ( if ($hits | length) > 8 then "[rule] (+\(($hits | length) - 8) more — scripts/rule-search)" else empty end )
+' $rules_dir/cr.json)
+
+# [gloss] — official + unofficial glossary, term or definition hits (cap 5)
+set -l gloss_hits (jq -r --arg pat "$query" --slurpfile unof $rules_dir/unofficial-glossary.json '
+    [ ( .[], ($unof[0] | .[]) )
+      | select((.term + " " + .definition) | test($pat; "i")) ] as $hits
+    | ( $hits[:5][]
+        | "[gloss] \(.term): \(.definition | gsub("\n"; " ") | if length > 110 then .[:110] + "…" else . end)" ),
+      ( if ($hits | length) > 5 then "[gloss] (+\(($hits | length) - 5) more — scripts/define)" else empty end )
+' $rules_dir/glossary.json)
+
+# [keyword] — 701/702 section headers + keywords-classified.json names (cap 8)
+set -l kw_hits (jq -r --arg pat "$query" --slurpfile kc $skill_dir/keywords-classified.json '
+    ( [ to_entries[]
+        | select((.key | test("^70[12][.][0-9]+$")) and (.value.ruleText | test($pat; "i")))
+        | "[keyword] \(.key) \(.value.ruleText)" ]
+      + [ $kc[0].keywords[]
+          | select(.name | test($pat; "i"))
+          | "[keyword] \(.name) — \(.class)\(if .given then " given: \(.given)" else "" end) [\(.rule)] — scripts/classify" ]
+    ) as $hits
+    | ( $hits[:8][] ),
+      ( if ($hits | length) > 8 then "[keyword] (+\(($hits | length) - 8) more — scripts/keyword, scripts/classify)" else empty end )
+' $rules_dir/cr.json)
+
+# [mtr] — MTR title/content hits (cap 4)
+set -l mtr_hits (jq -r --arg pat "$query" '
+    [ .content[] | select(((.content // "") + " " + (.title // "")) | test($pat; "i")) ] as $hits
+    | ( $hits[:4][]
+        | "[mtr] " + (if .section == null then "intro"
+                      else (.section | tostring) + (if .subsection then "." + (.subsection | tostring) else "" end)
+                      end) + "  " + .title ),
+      ( if ($hits | length) > 4 then "[mtr] (+\(($hits | length) - 4) more — scripts/mtr --search)" else empty end )
+' $rules_dir/mtr.json)
+
+# [doc] — reference-doc heading hits (cap 8)
+set -l doc_hits
+for f in $skill_dir/references/*.md
+    set -l base (path basename $f)
+    for h in (grep -h '^#' $f | string match -rie -- $query)
+        set -a doc_hits "[doc] $base  $h"
+    end
+end
+if test (count $doc_hits) -gt 8
+    set -l extra (math (count $doc_hits) - 8)
+    set doc_hits $doc_hits[1..8] "[doc] (+$extra more headings — grep '^#' references/*.md)"
+end
+
+test (count $rule_hits $gloss_hits $kw_hits $mtr_hits $doc_hits) -gt 0
+or die "lookup: nothing matches /$query/ in CR rules, glossaries, keywords, MTR, or reference docs"
+
+printf '%s\n' $rule_hits $gloss_hits $kw_hits $mtr_hits $doc_hits
+echo "→ drill down with scripts/rule, define, keyword, mtr, or Read the doc"

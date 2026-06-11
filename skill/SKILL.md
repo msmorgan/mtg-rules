@@ -23,7 +23,7 @@ All paths below are relative to this skill's directory.
    | engine taxonomy | `references/state.md` + `references/actions.md` |
    | mechanic design-space (generalizing/unifying, custom-mechanic feasibility) | `references/generalizations.md` + `references/engine.md` |
    | capability/restriction/permission ("can't", "only", "as though", "if able", ward-style tolls) | `references/deontics.md` |
-   | keyword intrinsic/composite class, engine instruction-set | `references/keyword-classification.md`; per-keyword: `jq '.keywords[] \| select(.name=="Cascade")' keywords-classified.json` |
+   | keyword intrinsic/composite class, engine instruction-set | `references/keyword-classification.md`; per-keyword: `scripts/classify cascade` |
    | cost/payment | `references/costs.md` |
    | event/trigger schema | `references/events.md` |
    | decision/choice | `references/choices.md` |
@@ -35,7 +35,8 @@ All paths below are relative to this skill's directory.
    | "rules-defined or engine choice?" | `references/underdetermined.md` |
    | variant/multiplayer | `references/variants.md` |
 3. **Verify every load-bearing specific with the scripts before asserting
-   it.** Quote rule text with rule numbers. For card questions, fetch exact
+   it.** Start broad with `scripts/lookup` when unsure where an answer
+   lives. Quote rule text with rule numbers. For card questions, fetch exact
    oracle text first (`scripts/card`) — never trust memory of a card's
    wording.
 4. Answer: ruling first, then supporting citations (rule numbers + brief
@@ -45,6 +46,7 @@ All paths below are relative to this skill's directory.
 
 | command | purpose |
 |---|---|
+| `scripts/lookup <query>` | unified meta-search: one regex fanned out over CR rules, glossaries, keywords, MTR, and reference-doc headings, hits labeled by source — recommended FIRST call for orientation |
 | `scripts/rule 601.2` | rule + subrules + examples; `rule 601` = whole section |
 | `scripts/rule-search <regex> [--max N]` | case-insensitive search over all CR rule text |
 | `scripts/define <term>` | official + unofficial glossary |
@@ -53,7 +55,9 @@ All paths below are relative to this skill's directory.
 | `scripts/rulings <name>` | official per-card rulings (MTGJSON), date-stamped — re-resolve any CR numbers they cite |
 | `scripts/mtr 1.7` / `--list` / `--search <re>` | Magic Tournament Rules sections |
 | `scripts/corpus [--type T] [--keyword K] [--match RE] [--all]` | distinct oracle-text lines (grammar corpus) |
+| `scripts/classify <keyword>` | a keyword's intrinsic/composite classification record (class, given, how, cites) from keywords-classified.json |
 | `scripts/check-citations` | verify reference-doc citations still exist in the CR |
+| `scripts/health` | self-diagnosis: data resolution, CR date, data tiers, citation check |
 
 ## Reference docs
 

@@ -1,0 +1,170 @@
+{
+  "meta": {
+    "source": "rulings-check.md",
+    "cr_effective": "2026-04-17"
+  },
+  "probes": [
+    {
+      "id": 1,
+      "cards": ["Humility", "Opalescence"],
+      "frame_docs": ["effects.md"],
+      "question": "Humility (an enchantment: all creatures lose all abilities and have base power and toughness 1/1) and Opalescence (each other non-Aura enchantment is a creature with power and toughness each equal to its mana value, in addition to its other types) are both on the battlefield, and Humility entered the battlefield after Opalescence. What are the affected creatures' final power and toughness — including Humility's own — and which layers, sublayers, and rules decide it? Would the answer change if Opalescence had the later timestamp?",
+      "expected_citations": ["613.4b", "613.6", "613.7"],
+      "expected_verdict_keywords": ["1/1", "7b", "timestamp", "layer"],
+      "notes": "Both base-P/T setters land in sublayer 7b; 613.6 keeps each applying even after L6 strips the source's ability; later timestamp applies last and wins. Humility-later: everything 1/1. Opalescence-later: 4/4. Official ruling [2009-10-01]."
+    },
+    {
+      "id": 2,
+      "cards": ["Blood Moon", "Urborg, Tomb of Yawgmoth"],
+      "frame_docs": ["effects.md"],
+      "question": "Blood Moon (nonbasic lands are Mountains) and Urborg, Tomb of Yawgmoth (each land is a Swamp in addition to its other land types) are on the battlefield at the same time. Does the order in which they entered the battlefield matter? Are nonbasic lands Swamps, Mountains, or both — and why? Explain whether this is decided by timestamps or by dependency, citing the specific rules.",
+      "expected_citations": ["613.8a", "613.8c", "305.7"],
+      "expected_verdict_keywords": ["Mountain", "depend", "timestamp"],
+      "notes": "One-directional dependency: Blood Moon (via 305.7 ability-stripping) deletes Urborg's land-typing ability, so Urborg depends on Blood Moon and timestamps are irrelevant. Lands are Mountains, not Swamps. Official ruling [2021-03-19]."
+    },
+    {
+      "id": 3,
+      "cards": ["Clone"],
+      "frame_docs": ["effects.md"],
+      "question": "Clone enters the battlefield as a copy of a creature that is currently tapped, has two +1/+1 counters on it, and is getting +3/+3 from a resolved pump spell. What values does Clone actually copy, and what is deliberately not copied? Do the original creature's enters-the-battlefield triggered abilities and 'enters with counters' abilities apply to Clone? Cite the rules on copiable values.",
+      "expected_citations": ["707.2", "707.2a", "614.1c"],
+      "expected_verdict_keywords": ["copiable", "printed", "counter", "tapped"],
+      "notes": "Copiable values = printed text as modified only by other copy effects / face-down / as-enters P/T setters; not counters, status, or other continuous effects. ETB and enters-with abilities are part of the copied text and do apply. Official ruling [2025-10-02]."
+    },
+    {
+      "id": 4,
+      "cards": ["Yixlid Jailer", "Tarmogoyf"],
+      "frame_docs": ["abilities.md"],
+      "question": "Yixlid Jailer says cards in graveyards lose all abilities. (a) Tarmogoyf's printed power/toughness is */1+* where * is defined by a characteristic-defining ability counting card types among cards in graveyards — what are a Tarmogoyf's power and toughness while it is in a graveyard with Yixlid Jailer on the battlefield? (b) Does an ability that triggers 'when this card is put into a graveyard from anywhere' still trigger? (c) Does an ability that triggers when a creature dies (is put into a graveyard from the battlefield) still trigger? Cite rules.",
+      "expected_citations": ["113.6a", "113.6c", "113.6k", "603.2g"],
+      "expected_verdict_keywords": ["0/1", "battlefield", "trigger"],
+      "notes": "CDAs normally function everywhere (113.6a) but Yixlid strips them: undefined * = 0, so Tarmogoyf is 0/1. From-anywhere graveyard triggers are removed; dies-triggers fire from the battlefield and are unaffected. Official ruling [2021-03-19]."
+    },
+    {
+      "id": 5,
+      "cards": ["Panharmonicon", "Torpor Orb"],
+      "frame_docs": ["actions.md"],
+      "question": "Panharmonicon reads: if an artifact or creature entering the battlefield causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time. Torpor Orb reads: creatures entering the battlefield don't cause abilities to trigger. Are these replacement effects? Which rules framework actually governs each of them, and does either one affect 'this creature enters the battlefield with counters' effects?",
+      "expected_citations": ["603.2d", "603.2g", "603.6b"],
+      "expected_verdict_keywords": ["replacement", "additional time", "counter"],
+      "notes": "Neither is a replacement effect (614 wording absent): Panharmonicon is a 603.2d trigger-count modifier, Torpor Orb removes the trigger match (nothing triggers, 603.2g). ETB replacement effects like enters-with-counters are untouched by both. Official rulings [2021-03-19], [2024-04-12]."
+    },
+    {
+      "id": 6,
+      "cards": ["Doubling Season"],
+      "frame_docs": ["effects.md"],
+      "question": "You control Doubling Season (if an effect would create tokens or put counters on a permanent you control, it creates twice that many or puts twice that many instead). (a) A planeswalker you cast enters the battlefield — how many loyalty counters does it enter with relative to its printed loyalty, and why? (b) You activate that planeswalker's +1 loyalty ability — how many loyalty counters do you actually put on it, and why? Cite rules.",
+      "expected_citations": ["614.16", "614.1c", "306.5b", "606.2"],
+      "expected_verdict_keywords": ["double", "cost", "effect"],
+      "notes": "Entering loyalty arrives via a 614.1c replacement effect, so Doubling Season (614.16) doubles it to 2N. Loyalty-ability counters are paid as a cost (606.2), not applied as an effect, so they are not doubled. Official ruling [2024-11-08]."
+    },
+    {
+      "id": 7,
+      "cards": ["Teferi's Protection"],
+      "frame_docs": ["actions.md"],
+      "question": "You cast Teferi's Protection: until your next turn your life total can't change, and all permanents you control phase out. (a) Do your permanents' leave-the-battlefield triggered abilities trigger when they phase out, and do counters on them and attached Auras survive? (b) While your life total can't change, an opponent's spell resolves that says you lose 3 life and that opponent gains 3 life — what actually happens? Cite rules.",
+      "expected_citations": ["702.26b", "702.26d", "609.3"],
+      "expected_verdict_keywords": ["zone", "counter", "resolve", "trigger"],
+      "notes": "Phasing is not a zone change: no LTB/ETB triggers; counters and attachments ride along. The opponent's spell still resolves and does as much as possible (609.3): your life-loss part does nothing, the opponent still gains 3. Official ruling [2017-08-25]."
+    },
+    {
+      "id": 8,
+      "cards": ["Valki, God of Lies // Tibalt, Cosmic Impostor"],
+      "frame_docs": [],
+      "question": "Valki, God of Lies // Tibalt, Cosmic Impostor is a modal double-faced card: the front face is a {1}{B} creature and the back face is a {5}{B}{R} planeswalker. While the card is in a player's hand, library, or graveyard, what are its characteristics and its mana value? Which face's characteristics apply while it is on the stack or battlefield? Can a modal double-faced card transform or enter the battlefield transformed? Cite rules.",
+      "expected_citations": ["712.8a", "712.8c", "712.9"],
+      "expected_verdict_keywords": ["front face", "transform", "creature"],
+      "notes": "Frame is CR 712 directly (no sibling doc). Off stack/battlefield an MDFC has only the front face's characteristics (mana value 1, creature); face-up face governs on stack/battlefield; MDFCs can't transform — contrast transforming DFCs (712.8c). Official ruling [2021-02-05]."
+    },
+    {
+      "id": 9,
+      "cards": ["Mirror Room // Fractured Realm"],
+      "frame_docs": ["designations.md", "actions.md"],
+      "question": "Mirror Room // Fractured Realm is a Room enchantment with two doors. (a) While only one door is unlocked, which half's name, mana cost, and rules text does the permanent have? (b) After the Room is on the battlefield, how do you unlock the other door — is doing so a spell, an ability, or something else, and when can you do it? (c) Fractured Realm's unlocked text causes a triggered ability of a permanent you control to trigger an additional time. If you cast the Mirror Room half so that its door becomes unlocked as the Room enters the battlefield, does an effect like Fractured Realm's (or Panharmonicon's) make the 'when you unlock this door' trigger happen an additional time? Cite rules.",
+      "expected_citations": ["709.5d", "709.5e", "709.5h", "603.2d"],
+      "expected_verdict_keywords": ["special action", "unlock", "additional time"],
+      "notes": "Locked half's name/cost/text are absent; paying a locked door's cost is a special action (709.5e, sorcery-speed, empty stack); unlock-on-entry triggers are caused by the door unlocking as the Room enters, so 603.2d enters-keyed doublers don't apply. Official ruling [2024-09-20]."
+    },
+    {
+      "id": 10,
+      "cards": ["Invasion of Alara"],
+      "frame_docs": [],
+      "question": "Invasion of Alara is a Siege battle with printed defense 7. How many defense counters does it enter the battlefield with, and through what rules mechanism? Who is chosen as its protector and by whom? Can the Siege's own controller attack it? What is the Siege's intrinsic triggered ability when the last defense counter is removed, and what happens to a battle at 0 defense when that trigger isn't pending? Cite rules.",
+      "expected_citations": ["310.4b", "310.8b", "310.11a", "310.11b", "310.7"],
+      "expected_verdict_keywords": ["protector", "opponent", "exile", "transformed"],
+      "notes": "Frame is CR 310 directly (no sibling doc). Enters with 7 defense counters via a 614.1c replacement (310.4b); controller chooses an opponent as protector and can itself attack the Siege; last-counter trigger exiles it and allows casting transformed for free; otherwise 0 defense puts it in the graveyard as an SBA. Official ruling [2023-04-14]."
+    },
+    {
+      "id": 11,
+      "cards": ["Trinisphere"],
+      "frame_docs": ["costs.md"],
+      "question": "Trinisphere reads: as long as it's untapped, each spell that would cost less than three mana to cast costs three mana to cast. At which stage of the cost-determination pipeline does this apply, relative to cost increases and cost reductions? Once the total cost is determined, can anything change it — for example, if Trinisphere itself becomes tapped while the spell's costs are being paid? Does Trinisphere change a spell's mana value? Cite rules.",
+      "expected_citations": ["601.2f", "601.2h", "202.3"],
+      "expected_verdict_keywords": ["lock", "mana value", "after"],
+      "notes": "Trinisphere is the effects-that-directly-affect-the-total stage: applied after all increases and reductions, last before the 601.2f lock. Tapping/leaving during the 601.2g-h payment window changes nothing; mana value is never affected (202.3). Official ruling [2020-08-07]."
+    },
+    {
+      "id": 12,
+      "cards": ["Guerrilla Tactics"],
+      "frame_docs": ["events.md"],
+      "question": "Guerrilla Tactics has an ability that triggers when a spell or ability an opponent controls causes you to discard it. (a) You discard Guerrilla Tactics to pay a cost — for example, a cost that says 'discard a card'. Does the ability trigger? (b) An opponent's resolving spell gives you the option to discard a card, and you choose to discard Guerrilla Tactics. Does the ability trigger? Cite rules.",
+      "expected_citations": ["701.9a", "701.9b", "601.2h"],
+      "expected_verdict_keywords": ["cost", "effect", "trigger"],
+      "notes": "Cause-tag discrimination: cost discards have no spell/ability as causing agent (601.2h) and never match; effect discards match even when optional — optionality and who picks the card (701.9b) are not coordinates. Official rulings [2004-10-04]."
+    },
+    {
+      "id": 13,
+      "cards": ["Krark's Thumb"],
+      "frame_docs": ["choices.md"],
+      "question": "You control Krark's Thumb (if you would flip a coin, instead flip two coins and ignore one). An effect instructs you to flip two coins. How many coins do you flip in total, how are the flips grouped, and how many do you ignore? Do you get to see the results of all simultaneous flips before deciding which ones to ignore? Cite rules.",
+      "expected_citations": ["614.5", "705.3", "700.1"],
+      "expected_verdict_keywords": ["pair", "ignore", "results"],
+      "notes": "Each would-flip event is replaced separately (no self-re-invocation, 614.5): flip two coins twice — four total — ignoring one per pair. All simultaneous results are visible before choosing which to ignore. Official rulings [2019-01-25], [2004-10-04]."
+    },
+    {
+      "id": 14,
+      "cards": ["Ixidron"],
+      "frame_docs": ["information.md"],
+      "question": "Ixidron enters the battlefield and turns all other creatures face down. (a) What are those face-down creatures' name, types, power, and toughness? (b) May the controller of one of those face-down creatures look at it even though it has no morph ability? May other players? (c) If another creature becomes a copy of one of those face-down creatures, what characteristics does the copy have? Cite rules.",
+      "expected_citations": ["708.2a", "708.5", "708.6", "707.2"],
+      "expected_verdict_keywords": ["2/2", "controller", "copiable"],
+      "notes": "708.2a defaults: blank 2/2 with no name/text/types/mana cost — and those defaults are the copiable values, so a copy is the blank 2/2, not the hidden card. Controller may look anytime (morph not required, 708.5); others never; differentiation duty (708.6) applies. Official rulings [2006-09-25], [2018-04-27]."
+    },
+    {
+      "id": 15,
+      "cards": ["Abyssal Persecutor"],
+      "frame_docs": ["outcomes.md"],
+      "question": "Abyssal Persecutor says your opponents can't lose the game and you can't win the game. (a) An opponent is at -5 life while it is on the battlefield; Abyssal Persecutor then dies. What happens to that opponent, and can any player respond before it happens? (b) While it is on the battlefield, can an opponent still lose by conceding? (c) Are effects that say the game is a draw affected? Cite rules.",
+      "expected_citations": ["704.5a", "704.3", "104.3a", "104.4c"],
+      "expected_verdict_keywords": ["state-based", "concede", "respond", "draw"],
+      "notes": "'Has 0 or less life' is a standing state predicate: still true at the first SBA check after Persecutor leaves, and SBAs run before anyone gets priority — no response window. Concession pierces (104.3a, the one exception), as do judge penalties; draws are neither wins nor losses. Official ruling [2017-11-17]."
+    },
+    {
+      "id": 16,
+      "cards": ["Exotic Orchard"],
+      "frame_docs": ["mana.md"],
+      "question": "Exotic Orchard taps for one mana of any color that a land an opponent controls could produce. (a) Does it matter whether the opponent's land is tapped, or is missing the charge counters its mana ability needs? (b) Can Exotic Orchard be tapped for colorless mana if an opponent's land could produce colorless? (c) You control a Forest and an Exotic Orchard; your opponent controls an Exotic Orchard and a Reflecting Pool. Can your opponent's Exotic Orchard be tapped for green mana? Cite rules.",
+      "expected_citations": ["106.7", "106.1b", "105.1"],
+      "expected_verdict_keywords": ["colorless", "tapped", "green"],
+      "notes": "106.7 could-produce ignores costs and state entirely (tapped status, counters: invisible); colorless is a mana type, not a color, so never producible here; a real Forest anywhere in a could-produce web gives every chained land {G}. Official rulings [2009-02-01]."
+    },
+    {
+      "id": 17,
+      "cards": ["Phyrexian Fleshgorger"],
+      "frame_docs": ["temporal.md", "queries.md"],
+      "question": "An opponent casts a spell targeting your Phyrexian Fleshgorger, which has 'Ward — Pay life equal to this creature's power.' (a) Is the amount of life to pay determined when the ward ability triggers or when it resolves — what if Fleshgorger's power changes in response to the ward trigger? (b) If Fleshgorger leaves the battlefield before the ward ability resolves, how is the payment amount determined? (c) If Fleshgorger was the spell's only target and it has left the battlefield, does the spell do anything even if the ward cost is paid? Cite rules.",
+      "expected_citations": ["702.21b", "608.2h", "113.7a", "608.2b"],
+      "expected_verdict_keywords": ["resolv", "last known", "power"],
+      "notes": "Ward's variable amount is read as the ward ability resolves (702.21b, 608.2h), not when it triggers; a vanished source supplies last known information; with its only target gone the spell doesn't resolve regardless of payment (608.2b). Official ruling [2022-10-14]."
+    },
+    {
+      "id": 18,
+      "cards": ["Cone of Flame"],
+      "frame_docs": ["queries.md"],
+      "question": "Cone of Flame deals 1 damage to any target, 2 damage to another target, and 3 damage to a third target. (a) Must the three targets all be different from each other, and can you cast it if only two legal targets exist? (b) If one of the targets is illegal when Cone of Flame resolves, can the damage amounts be moved or redistributed among the remaining legal targets? Cite rules.",
+      "expected_citations": ["115.7e", "601.2c", "608.2b"],
+      "expected_verdict_keywords": ["different", "remaining", "can't"],
+      "notes": "'Another'/'a third' compile to set-distinctness over the final target set (115.7e): three distinct legal targets required at announcement or the cast rewinds. Amounts are bound per target instance — an illegal target is simply unaffected, nothing reflows (608.2b). Official ruling [2014-07-18]."
+    }
+  ]
+}
