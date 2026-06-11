@@ -51,6 +51,7 @@ All paths below are relative to this skill's directory.
 | `references/casting.md` | the 601.2 casting pipeline, costs, activation, resolution, spell copies |
 | `references/turn.md` | turn structure, priority, combat step by step, cleanup |
 | `references/grammar.md` | oracle-text grammar for parsing card text |
+| `references/rulings-check.md` | the model validated against official card rulings — imitate its derivation patterns |
 
 ## Staleness
 
