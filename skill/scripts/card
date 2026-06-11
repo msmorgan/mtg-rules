@@ -20,7 +20,9 @@ set -l fmt '
 '
 
 if not test -f $idx
-    echo >&2 "card: note: derived index missing — run scripts/build_derived.fish for fast lookups; using slow path"
+    test -r $atomic
+    or die "card: no card data found ($atomic missing). Populate it with: scripts/setup-data --cards (plugin install) or scripts/fetch_data.fish + scripts/build_derived.fish (repo checkout)"
+    echo >&2 "card: note: derived index missing — run scripts/setup-data --cards (plugin) or scripts/build_derived.fish (repo) for fast lookups; using slow path"
     jq -r --arg n $name '
         ( .data[$n]
           // [ .data | to_entries[]

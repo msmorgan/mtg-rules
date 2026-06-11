@@ -112,6 +112,10 @@ t "lib honors MTG_RULES_DATA" '/tmp/mtg-data-test/rules$' fish -c "set -x MTG_RU
 t "lib ignores invalid MTG_RULES_DATA" 'data/rules$' fish -c "set -x MTG_RULES_DATA /nonexistent; source $scripts/lib.fish; or exit 1; echo \$rules_dir"
 rm -rf /tmp/mtg-data-test
 
+# --- setup-data ---
+t "setup-data shows usage" '(?i)usage' fish -c "$scripts/setup-data --help; true"
+t_fails "setup-data rejects bogus flag" $scripts/setup-data --bogus
+
 # (tests appended by later tasks above this line)
 
 echo

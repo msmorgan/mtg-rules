@@ -1,0 +1,226 @@
+#!/usr/bin/env fish
+# setup-data — self-contained data fetcher for the mtg-rules skill.
+#
+# SELF-CONTAINED BY DESIGN: this script must NOT source lib.fish. lib.fish
+# resolves (and requires) a populated data dir and exits 1 when data is
+# absent — which is exactly the situation setup-data exists to fix.
+# Only external deps: curl + jq (sqlite3 is needed at rulings-USE time, not here).
+#
+# Usage: setup-data [--dest DIR] [--cards] [--rulings] [--help]
+
+# --- upstream endpoints (mirrors scripts/lib/functions/fetch/*) -------------
+set -g academyruins_base 'https://api.academyruins.com'
+set -g scryfall_base 'https://api.scryfall.com'
+set -g mtgjson_base 'https://mtgjson.com/api/v5'
+
+# rules: api-path : output-filename
+set -g rules_map \
+    link/cr:cr.txt \
+    cr:cr.json \
+    cr/keywords:keywords.json \
+    cr/glossary:glossary.json \
+    cr/unofficial-glossary:unofficial-glossary.json \
+    mtr:mtr.json
+
+# scryfall closed-vocabulary catalogs (20)
+set -g catalogs \
+    card-names artist-names word-bank supertypes card-types artifact-types \
+    battle-types creature-types enchantment-types land-types planeswalker-types \
+    spell-types powers toughnesses loyalties keyword-abilities keyword-actions \
+    ability-words flavor-words watermarks
+
+function usage
+    printf '%s\n' "usage: setup-data [--dest DIR] [--cards] [--rulings] [--help]
+
+Populate the mtg-rules data directory for an installed plugin copy.
+
+Default dest: \$MTG_RULES_DATA if set, else ~/.claude/plugins/data/mtg-rules/data
+
+Tiers (idempotent — re-run any time to refresh):
+  base       (always)    rules/* (6 files) + catalogs/* (20 files), ~4 MB
+                         enables: rule, define, keyword, mtr, check-citations
+  --cards                mtgjson AtomicCards.json + derived/cards.jsonl, ~155 MB
+                         enables: card, corpus
+  --rulings              mtgjson AllPrintings.sqlite (large)
+                         enables: rulings
+
+Options:
+  --dest DIR   write data under DIR instead of the default location
+  --cards      also fetch card data (slow, large)
+  --rulings    also fetch the official-rulings database (slow, large)
+  --help       show this help and exit"
+end
+
+# fetch one URL to <out> atomically: curl -fL to a .tmp, then mv. Loud on failure.
+function fetch_to
+    set -l url $argv[1]
+    set -l out $argv[2]
+    set -l tmp $out.tmp
+    printf '  %s\n' $url >&2
+    if not curl -fsSL --retry 2 -o $tmp -- $url
+        echo >&2 "setup-data: ERROR: failed to download $url"
+        rm -f $tmp
+        return 1
+    end
+    mv -f $tmp $out
+    or begin
+        echo >&2 "setup-data: ERROR: failed to write $out"
+        return 1
+    end
+end
+
+# fetch an xz-compressed mtgjson file and decompress it atomically to <out>.
+function fetch_xz_to
+    set -l url $argv[1]
+    set -l out $argv[2]
+    set -l tmp $out.xz.tmp
+    printf '  %s\n' $url >&2
+    if not curl -fsSL --retry 2 -o $tmp -- $url
+        echo >&2 "setup-data: ERROR: failed to download $url"
+        rm -f $tmp
+        return 1
+    end
+    if not xzcat $tmp >$out.tmp
+        echo >&2 "setup-data: ERROR: failed to decompress $url (need 'xz')"
+        rm -f $tmp $out.tmp
+        return 1
+    end
+    rm -f $tmp
+    mv -f $out.tmp $out
+    or begin
+        echo >&2 "setup-data: ERROR: failed to write $out"
+        return 1
+    end
+end
+
+# --- arg parsing ------------------------------------------------------------
+argparse h/help dest= cards rulings -- $argv
+or begin
+    usage >&2
+    exit 1
+end
+
+if set -q _flag_help
+    usage
+    exit 0
+end
+
+if test (count $argv) -gt 0
+    echo >&2 "setup-data: unexpected argument: $argv[1]"
+    usage >&2
+    exit 1
+end
+
+# --- dependency checks (curl + jq required up front) ------------------------
+for program in curl jq
+    if not command -q $program
+        echo >&2 "setup-data: missing required program: $program"
+        exit 1
+    end
+end
+
+# --cards needs xz to decompress AtomicCards.json
+if set -q _flag_cards; and not command -q xz
+    echo >&2 "setup-data: --cards needs 'xz' to decompress mtgjson data"
+    exit 1
+end
+if set -q _flag_rulings; and not command -q xz
+    echo >&2 "setup-data: --rulings needs 'xz' to decompress mtgjson data"
+    exit 1
+end
+
+# --- destination ------------------------------------------------------------
+if set -q _flag_dest
+    set -g dest $_flag_dest
+else if set -q MTG_RULES_DATA
+    set -g dest $MTG_RULES_DATA
+else
+    set -g dest $HOME/.claude/plugins/data/mtg-rules/data
+end
+set -g dest (path normalize $dest)
+
+set -g rules_dir $dest/rules
+set -g catalogs_dir $dest/catalogs
+set -g mtgjson_dir $dest/mtgjson
+set -g derived_dir $dest/derived
+
+echo >&2 "setup-data: destination $dest"
+
+# --- base tier (always) -----------------------------------------------------
+echo >&2 ""
+echo >&2 "[base] rules + catalogs — enables: rule, define, keyword, mtr, check-citations"
+mkdir -p $rules_dir $catalogs_dir
+or begin
+    echo >&2 "setup-data: ERROR: cannot create $rules_dir / $catalogs_dir"
+    exit 1
+end
+
+for entry in $rules_map
+    string split ':' -- $entry | read -L src out
+    fetch_to $academyruins_base/$src $rules_dir/$out
+    or exit 1
+end
+
+for cat in $catalogs
+    fetch_to $scryfall_base/catalog/$cat $catalogs_dir/$cat.json
+    or exit 1
+    sleep 0.1
+end
+
+# --- --cards tier -----------------------------------------------------------
+if set -q _flag_cards
+    echo >&2 ""
+    echo >&2 "[cards] mtgjson AtomicCards.json + derived/cards.jsonl — enables: card, corpus"
+    mkdir -p $mtgjson_dir $derived_dir
+    or begin
+        echo >&2 "setup-data: ERROR: cannot create $mtgjson_dir / $derived_dir"
+        exit 1
+    end
+
+    fetch_xz_to $mtgjson_base/AtomicCards.json.xz $mtgjson_dir/AtomicCards.json
+    or exit 1
+
+    # Build derived/cards.jsonl — same jq program as scripts/build_derived.fish.
+    echo >&2 "  building derived/cards.jsonl…"
+    set -l out $derived_dir/cards.jsonl
+    if not jq -c '
+        .data | to_entries[] | .value[]
+        | { name, face: .faceName, side, layout,
+            manaCost, manaValue, type, types, supertypes, subtypes,
+            text, power, toughness, loyalty, defense,
+            colors, colorIdentity,
+            supported: (((.legalities.vintage // "Banned") != "Banned")
+                        and .layout != "reversible_card") }
+    ' $mtgjson_dir/AtomicCards.json >$out.tmp
+        echo >&2 "setup-data: ERROR: failed to build $out"
+        rm -f $out.tmp
+        exit 1
+    end
+    mv -f $out.tmp $out
+    or begin
+        echo >&2 "setup-data: ERROR: failed to write $out"
+        exit 1
+    end
+    echo >&2 "  derived/cards.jsonl: "(count < $out)" face records"
+end
+
+# --- --rulings tier ---------------------------------------------------------
+if set -q _flag_rulings
+    echo >&2 ""
+    echo >&2 "[rulings] mtgjson AllPrintings.sqlite — enables: rulings"
+    mkdir -p $mtgjson_dir
+    or begin
+        echo >&2 "setup-data: ERROR: cannot create $mtgjson_dir"
+        exit 1
+    end
+    fetch_xz_to $mtgjson_base/AllPrintings.sqlite.xz $mtgjson_dir/AllPrintings.sqlite
+    or exit 1
+end
+
+# --- summary ----------------------------------------------------------------
+echo >&2 ""
+echo >&2 "setup-data: done. Data in $dest"
+set -l tiers base
+set -q _flag_cards; and set -a tiers cards
+set -q _flag_rulings; and set -a tiers rulings
+echo >&2 "setup-data: tiers fetched: "(string join ', ' $tiers)

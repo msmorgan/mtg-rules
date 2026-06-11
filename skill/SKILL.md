@@ -68,3 +68,7 @@ doc claims, trust the CR text, answer from it, and flag the doc for re-sync.
 - `catalogs/*.json` — Scryfall closed vocabularies (types, keywords, word-bank)
 - `mtgjson/` — card data; `derived/cards.jsonl` built by repo-root
   `scripts/build_derived.fish` (rebuild after refreshes)
+
+Installed plugin copies resolve data via `$MTG_RULES_DATA` →
+`~/.claude/plugins/data/mtg-rules/data` → repo layout; populate with
+`scripts/setup-data [--cards] [--rulings]`.
