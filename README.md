@@ -1,15 +1,15 @@
-# mtg-rules-skill
+# mtg-rules
 
 Marketplace and development repository for the **mtg-rules** Claude Code plugin — a judge-grade Magic: The Gathering rules skill grounded in the Comprehensive Rules, with verified citations and synthesized engine/grammar taxonomies.
 
 ## Install via Plugin Marketplace
 
 ```
-/plugin marketplace add /path/to/mtg-rules-skill
+/plugin marketplace add /path/to/mtg-rules
 # or a repo URL:
-/plugin marketplace add https://github.com/msmorgan/mtg-rules-skill
+/plugin marketplace add https://github.com/msmorgan/mtg-rules
 
-/plugin install mtg-rules@mtg
+/plugin install mtg-rules@mtg-rules
 ```
 
 ### First-Run Data Setup
@@ -45,8 +45,8 @@ Data lands in `~/.claude/plugins/data/mtg-rules/data/` by default, or in `$MTG_R
 ## Development Setup (Repo Checkout)
 
 ```bash
-git clone https://github.com/msmorgan/mtg-rules-skill
-cd mtg-rules-skill
+git clone https://github.com/msmorgan/mtg-rules
+cd mtg-rules
 scripts/fetch_data.fish          # populate data/ in-repo
 
 # Optional: symlink skill into your personal skills directory
@@ -94,7 +94,7 @@ skill/scripts/check-citations
 Original content of this repository (scripts, tooling, document structure,
 and synthesis) is licensed under the [MIT License](LICENSE).
 
-**mtg-rules-skill is unofficial Fan Content permitted under the
+**mtg-rules is unofficial Fan Content permitted under the
 [Wizards of the Coast Fan Content Policy](https://company.wizards.com/en/legal/fancontentpolicy).
 Not approved/endorsed by Wizards. Portions of the materials used are property
 of Wizards of the Coast. ©Wizards of the Coast LLC.** Quoted excerpts from
