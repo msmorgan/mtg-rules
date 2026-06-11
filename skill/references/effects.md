@@ -294,3 +294,67 @@ that effect as **used for this event** so it can't fire again (614.5,
 616.2) and repeat until none apply; then perform the final modified event
 (614.6). Inner events created mid-replacement are their own sub-pipelines but
 gated by 616.1g.
+
+## 10. Worked stacks
+
+Two canonical layer puzzles, derived by the §4 algorithm and confirmed
+against WotC's own rulings. Quotes verbatim with `[date]` attribution.
+
+### Humility + Opalescence (timestamp order decides P/T)
+
+Oracle: **Humility** "All creatures lose all abilities and have base power
+and toughness 1/1." **Opalescence** "Each other non-Aura enchantment is a
+creature in addition to its other types and has base power and base toughness
+each equal to its mana value." Both are statics; both are {2}{W}{W} (mana
+value 4). They touch three layers: **L4** type (Opalescence only), **L6**
+ability removal (Humility only), **L7b** base-P/T *set* (both — "base P/T"
+sets land in 7b per 613.4b). 613.6 is the crux: once an effect starts
+applying it keeps applying to its locked object set **in every later layer
+even after L6 strips the source's ability**. So Humility's 7b set survives
+Humility losing its own ability, and likewise Opalescence's.
+
+Trace both timestamp orders (earlier timestamp applies first within 7b,
+613.7):
+
+| (sub)layer | Opalescence earlier | Humility earlier |
+|---|---|---|
+| **L4** type | Humility becomes a creature-enchantment (Opal.) | same |
+| **L6** abilities | Humility (and other enchantments) lose all abilities (Hum.) | same |
+| **L7b** set | Opal. → 4/4, then Hum. → **1/1** | Hum. → 1/1, then Opal. → **4/4** |
+| **final** | creatures **1/1**, no abilities | enchantment-creatures **4/4**, no abilities |
+
+Ruling `[2009-10-01]`: "The type-changing effect applies at layer 4, but the
+rest happens in the applicable layers. The rest of it will apply even if the
+permanent loses its ability before it's finished applying… [Opalescence
+earlier] Layer 7b: Humility becomes 4/4 and Worship becomes 4/4.
+(Opalescence). Humility becomes 1/1 and Worship becomes 1/1 (Humility). But
+if Humility entered before Opalescence… Layer 7b: Humility becomes 1/1 and
+Worship becomes 1/1 (Humility). Humility becomes 4/4 and Worship becomes 4/4
+(Opalescence)." Final state = last 7b set to apply = **1/1 vs 4/4**. MATCH.
+
+### Blood Moon + Urborg (dependency beats timestamp)
+
+Oracle: **Blood Moon** "Nonbasic lands are Mountains." **Urborg, Tomb of
+Yawgmoth** "Each land is a Swamp in addition to its other land types." Both
+are type-changing statics in **L4**, neither a CDA — so 613.8a (a) same
+(sub)layer and (c) CDA-parity are both met; the dependency turns on (b).
+Blood Moon *sets* a nonbasic land's subtype to the basic type Mountain, which
+by **305.7** strips all abilities generated from that land's rules text **in
+L4 as part of the set** (not waiting for L6). Urborg is itself a nonbasic
+land, so applying Blood Moon to it removes Urborg's "Each land is a Swamp"
+ability — changing the **existence** of Urborg's effect. That satisfies
+613.8a(b): **Urborg depends on Blood Moon.** The reverse fails: Urborg merely
+*adds* Swamp to lands' types; it changes neither which lands are nonbasic nor
+Blood Moon's text/what-it-does — so **Blood Moon does not depend on Urborg.**
+
+Dependency is one-directional, so timestamps are irrelevant (613.8): the
+independent effect (Blood Moon) applies first; reevaluating afterward
+(613.8c), Urborg's effect no longer exists and contributes nothing. **Final
+state: every nonbasic land is a Mountain with "{T}: Add {R}" and no Swamp
+type; names/supertypes unchanged (Blood Moon ruling `[2020-08-07]`).**
+
+Ruling `[2021-03-19]`: "If an effect such as that of Magus of the Moon causes
+Urborg to lose its abilities by setting it to a basic land type not in
+addition to its other types, it won't turn lands into Swamps, no matter in
+what order those effects started to apply." (Magus of the Moon = Blood Moon's
+effect on a creature.) MATCH.
