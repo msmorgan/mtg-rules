@@ -146,9 +146,9 @@ counters? **Frame:** `effects.md` §6 (614.16 doublers).
   replacement created by its intrinsic ability (306.5b). That is an *effect*
   putting counters on entry, so Doubling Season replaces it → enters with 2N
   (614.16). Same for battle defense counters (310.4b).
-- A loyalty *ability* puts/removes counters as a **cost** (606.5), not as an
-  effect — Doubling Season keys on effects, so activation costs are **not**
-  doubled.
+- A loyalty *ability* puts/removes counters as a **cost** (606.2 — the loyalty
+  symbol is *in the cost*), not as an effect — 614.16 keys doublers on effects,
+  so activation costs are **not** doubled.
 
 Official `[2024-11-08]`: "Planeswalkers will enter with double the normal
 number of loyalty counters. However, if you activate an ability whose cost has
