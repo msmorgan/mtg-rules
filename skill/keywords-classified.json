@@ -10,10 +10,10 @@
     ],
     "given_vocabulary": {
       "cause-tagged-events": "Events carry a tag for what caused them (e.g. \"tapped because it was declared as an attacker\"), so statics/replacements can match on cause rather than the CR hardcoding the case.",
-      "damage-result-rewrite": "A stage that rewrites the RESULT of a damage event (substitute or augment what damage does) instead of the amount — the slot CR 120.3 hardcodes for lifelink/wither/infect/toxic.",
+      "damage-result-rewrite": "A stage that rewrites the RESULT of a damage event (substitute or augment what damage does) instead of the amount \u2014 the slot CR 120.3 hardcodes for lifelink/wither/infect/toxic.",
       "progress-track": "A game-maintained monotonic value with thresholds (day/night, speed) advanced by turn-based actions or inherent triggers; statics read it.",
       "attachment-relation": "A first-class attached-to edge between an object and a legal host (object or player) with legality predicate and violation policy.",
-      "cost-modification-hook": "A permission that edits how the generic/colored mana of an already-determined total cost is paid (601.2f-h) — neither an additional nor an alternative cost.",
+      "cost-modification-hook": "A permission that edits how the generic/colored mana of an already-determined total cost is paid (601.2f-h) \u2014 neither an additional nor an alternative cost.",
       "face-down-objects": "A primitive for objects existing face down (708): put/cast face down as a 2/2, secret-identity memory, and a special action to turn face up."
     }
   },
@@ -174,7 +174,7 @@
       "rule": "702.165",
       "class": "composite",
       "given": null,
-      "how": "ETB triggered ability: put N +1/+1 counters on target creature and, if another creature, grant it this card's printed non-backup abilities until end of turn — trigger + place-counters + ability-grant.",
+      "how": "ETB triggered ability: put N +1/+1 counters on target creature and, if another creature, grant it this card's printed non-backup abilities until end of turn \u2014 trigger + place-counters + ability-grant.",
       "cites": [
         "702.165a",
         "702.165c"
@@ -204,7 +204,7 @@
       "rule": "702.166",
       "class": "composite",
       "given": null,
-      "how": "Static on the stack: optional additional cost to sacrifice an artifact/enchantment/token, with linked 'was bargained' memory referenced by other abilities — additional-cost choice plus a was-X flag.",
+      "how": "Static on the stack: optional additional cost to sacrifice an artifact/enchantment/token, with linked 'was bargained' memory referenced by other abilities \u2014 additional-cost choice plus a was-X flag.",
       "cites": [
         "702.166a",
         "702.166b",
@@ -370,7 +370,7 @@
       "rule": "702.99",
       "class": "composite",
       "given": null,
-      "how": "Spell ability that exiles the card encoded on a creature, plus a granted triggered ability (on combat damage to a player, copy and optionally cast the encoded card for free) — all statics/triggers + keyword actions (exile/copy/cast).",
+      "how": "Spell ability that exiles the card encoded on a creature, plus a granted triggered ability (on combat damage to a player, copy and optionally cast the encoded card for free) \u2014 all statics/triggers + keyword actions (exile/copy/cast).",
       "cites": [
         "702.99a",
         "702.99b"
@@ -454,7 +454,7 @@
       "rule": "702.167",
       "class": "composite",
       "given": null,
-      "how": "Activated sorcery-speed ability: cost + exile this permanent + exile materials: return this card to the battlefield transformed — composes a cost (with exile components) and a return-transformed action.",
+      "how": "Activated sorcery-speed ability: cost + exile this permanent + exile materials: return this card to the battlefield transformed \u2014 composes a cost (with exile components) and a return-transformed action.",
       "cites": [
         "702.167a"
       ],
@@ -493,7 +493,7 @@
       "rule": "702.29",
       "class": "composite",
       "given": null,
-      "how": "Activated ability functioning from hand: '[Cost], Discard this card: Draw a card' — a cost (incl. discard keyword action) producing a draw.",
+      "how": "Activated ability functioning from hand: '[Cost], Discard this card: Draw a card' \u2014 a cost (incl. discard keyword action) producing a draw.",
       "cites": [
         "702.29a"
       ],
@@ -519,7 +519,7 @@
       "rule": "702.145",
       "class": "composite-given",
       "given": "progress-track",
-      "how": "Three statics that read the game day/night designation (a game-maintained state track advanced by the untap-step turn-based action, rule 731): enters transformed if night, transforms as it becomes night, can’t otherwise transform; given the day/night track these are statics + forced transforms.",
+      "how": "Three statics that read the game day/night designation (a game-maintained state track advanced by the untap-step turn-based action, rule 731): enters transformed if night, transforms as it becomes night, can\u2019t otherwise transform; given the day/night track these are statics + forced transforms.",
       "cites": [
         "702.145b",
         "702.145c",
@@ -564,7 +564,7 @@
       "rule": "702.3",
       "class": "composite",
       "given": null,
-      "how": "Static attack restriction: the creature can't attack, which is just an entry checked by the declare-attackers restriction step (508.1c).",
+      "how": "Cant(Attack(This)) \u2014 removes the declare-attackers permission, checked by the restriction step (702.3b, 508.1c).",
       "cites": [
         "702.3b",
         "508.1c"
@@ -815,7 +815,7 @@
       "rule": "702.6",
       "class": "composite",
       "given": null,
-      "how": "Defined as an activated ability '[Cost]: Attach this permanent to target creature you control, activate only as a sorcery' — a cost + attach keyword action with a sorcery-speed timing restriction.",
+      "how": "Defined as an activated ability '[Cost]: Attach this permanent to target creature you control, activate only as a sorcery' \u2014 a cost + attach keyword action with a sorcery-speed timing restriction.",
       "cites": [
         "702.6a",
         "702.6c"
@@ -910,7 +910,7 @@
       "rule": "702.177",
       "class": "composite",
       "given": null,
-      "how": "An activated ability with an 'activate only once' (per game) usage restriction — the existing activated-ability template plus an activation-count restriction.",
+      "how": "An activated ability with an 'activate only once' (per game) usage restriction \u2014 the existing activated-ability template plus an activation-count restriction.",
       "cites": [
         "702.177a",
         "702.177b"
@@ -976,7 +976,7 @@
       "rule": "702.36",
       "class": "composite",
       "given": null,
-      "how": "A static blocking restriction predicated on blocker characteristics (can't be blocked except by artifact/black creatures), the same shape as flying/menace evasion.",
+      "how": "Cant(Block(b, This) where \u00ac(Artifact(b) \u2228 Black(b))) \u2014 evasion restriction predicated on blocker characteristics (702.36b).",
       "cites": [
         "702.36b"
       ],
@@ -989,7 +989,7 @@
       "rule": "702.189",
       "class": "composite",
       "given": null,
-      "how": "Attack-triggered ability adding N {R} that doesn't empty as steps/phases end until end of combat — combat trigger + mana addition + a don't-lose-this-mana effect.",
+      "how": "Attack-triggered ability adding N {R} that doesn't empty as steps/phases end until end of combat \u2014 combat trigger + mana addition + a don't-lose-this-mana effect.",
       "cites": [
         "702.189a"
       ],
@@ -1030,7 +1030,7 @@
       "rule": "702.8",
       "class": "composite",
       "given": null,
-      "how": "Timing permission: 'you may play this card any time you could cast an instant' — a static modifying when the casting/playing action is legal.",
+      "how": "May(Cast(This, window: instant-speed)) \u2014 widens the default 117.1a sorcery window (702.8a).",
       "cites": [
         "702.8a"
       ],
@@ -1057,7 +1057,7 @@
       "rule": "702.9",
       "class": "composite",
       "given": null,
-      "how": "Blocking restriction predicated on blocker keywords: can't be blocked except by creatures with flying and/or reach (a declare-blockers legality predicate).",
+      "how": "Cant(Block(b, This) where \u00ac(Flying(b) \u2228 Reach(b))) \u2014 evasion restriction over blocker abilities (702.9b).",
       "cites": [
         "702.9b"
       ],
@@ -1070,7 +1070,7 @@
       "rule": "702.163",
       "class": "composite",
       "given": null,
-      "how": "Triggered ability: 'when this Equipment enters, create a 2/2 Rebel token then attach this Equipment to it' — ETB trigger composing a create-token action and an attach action.",
+      "how": "Triggered ability: 'when this Equipment enters, create a 2/2 Rebel token then attach this Equipment to it' \u2014 ETB trigger composing a create-token action and an attach action.",
       "cites": [
         "702.163a"
       ],
@@ -1126,7 +1126,7 @@
       "rule": "702.173",
       "class": "composite",
       "given": null,
-      "how": "Static alternative-cost permission predicated on a combat-damage condition (a player was dealt combat damage by your Assassin/commander this turn) — conditional alt-cost casting.",
+      "how": "Static alternative-cost permission predicated on a combat-damage condition (a player was dealt combat damage by your Assassin/commander this turn) \u2014 conditional alt-cost casting.",
       "cites": [
         "702.173a"
       ],
@@ -1152,7 +1152,7 @@
       "rule": "702.102",
       "class": "composite",
       "given": null,
-      "how": "Static casting permission letting you cast both halves of a split card as one spell with the combined cost and sequential resolution — a casting-mode choice plus cost composition, no new pipeline opcode.",
+      "how": "Static casting permission letting you cast both halves of a split card as one spell with the combined cost and sequential resolution \u2014 a casting-mode choice plus cost composition, no new pipeline opcode.",
       "cites": [
         "702.102a",
         "702.102c",
@@ -1167,7 +1167,7 @@
       "rule": "702.174",
       "class": "composite",
       "given": null,
-      "how": "Optional additional cost (choose an opponent) plus a triggered/spell ability whose effect (token, draw, etc.) happens if the gift cost was paid — additional-cost choice + conditional effect + was-paid memory.",
+      "how": "Optional additional cost (choose an opponent) plus a triggered/spell ability whose effect (token, draw, etc.) happens if the gift cost was paid \u2014 additional-cost choice + conditional effect + was-paid memory.",
       "cites": [
         "702.174a",
         "702.174b"
@@ -1207,7 +1207,7 @@
       "rule": "702.180",
       "class": "composite",
       "given": null,
-      "how": "Alternative-cost cast from graveyard (pay cost + tap a creature) with a generic cost reduction by the tapped creature's power and an exile-instead replacement when it leaves the stack — alt-cost + cost-reduction + replacement.",
+      "how": "Alternative-cost cast from graveyard (pay cost + tap a creature) with a generic cost reduction by the tapped creature's power and an exile-instead replacement when it leaves the stack \u2014 alt-cost + cost-reduction + replacement.",
       "cites": [
         "702.180a",
         "702.180b"
@@ -1251,7 +1251,7 @@
       "rule": "702.11",
       "class": "composite",
       "given": null,
-      "how": "Static targeting restriction: can't be the target of spells or abilities opponents control; a target-legality predicate.",
+      "how": "Cant(Target(x, This) where Opponent(controller(x))) \u2014 asymmetric targeting restriction gated on source controller (702.11b).",
       "cites": [
         "702.11b",
         "702.11c"
@@ -1294,7 +1294,7 @@
       "rule": "702.31",
       "class": "composite",
       "given": null,
-      "how": "Evasion blocking restriction predicated on the horsemanship keyword: can't be blocked by creatures without horsemanship; a declare-blockers legality predicate.",
+      "how": "Cant(Block(b, This) where \u00acHorsemanship(b)) \u2014 evasion restriction predicated on the horsemanship keyword (702.31b).",
       "cites": [
         "702.31b"
       ],
@@ -1307,7 +1307,7 @@
       "rule": "702.176",
       "class": "composite",
       "given": null,
-      "how": "Alternative-cost cast + ETB replacement adding N time counters + static 'not a creature while it has a time counter' + end-step triggered counter removal — alt-cost + replacement + conditional static + trigger.",
+      "how": "Alternative-cost cast + ETB replacement adding N time counters + static 'not a creature while it has a time counter' + end-step triggered counter removal \u2014 alt-cost + replacement + conditional static + trigger.",
       "cites": [
         "702.176a"
       ],
@@ -1334,7 +1334,7 @@
       "rule": "702.191",
       "class": "composite",
       "given": null,
-      "how": "Cast-triggered ability: when you cast a spell, if mana spent exceeds this creature's power or toughness, put a +1/+1 counter on it — spell-cast trigger with an intervening-if condition + place-counter.",
+      "how": "Cast-triggered ability: when you cast a spell, if mana spent exceeds this creature's power or toughness, put a +1/+1 counter on it \u2014 spell-cast trigger with an intervening-if condition + place-counter.",
       "cites": [
         "702.191a"
       ],
@@ -1347,7 +1347,7 @@
       "rule": "702.12",
       "class": "composite",
       "given": null,
-      "how": "Static “can’t be destroyed” restriction (702.12a/b): a “can’t” effect (614.17) that nulls the destroy keyword action for this permanent and exempts it from the lethal-damage SBA (704.5g). “Can’t” effects are statics in the rubric basis, so it composes as a static rule-modification rather than its own prospective machinery.",
+      "how": "Static \u201ccan\u2019t be destroyed\u201d restriction (702.12a/b): a \u201ccan\u2019t\u201d effect (614.17) that nulls the destroy keyword action for this permanent and exempts it from the lethal-damage SBA (704.5g). \u201cCan\u2019t\u201d effects are statics in the rubric basis, so it composes as a static rule-modification rather than its own prospective machinery.",
       "cites": [
         "702.12a",
         "702.12b",
@@ -1392,7 +1392,7 @@
       "rule": "702.13",
       "class": "composite",
       "given": null,
-      "how": "Evasion blocking restriction predicated on blocker characteristics: can't be blocked except by artifact creatures and/or creatures sharing a color; a declare-blockers legality predicate.",
+      "how": "Cant(Block(b, This) where \u00ac(Artifact(b) \u2228 SharesColor(b, This))) \u2014 evasion restriction predicated on blocker characteristics (702.13b).",
       "cites": [
         "702.13b"
       ],
@@ -1405,7 +1405,7 @@
       "rule": "702.182",
       "class": "composite",
       "given": null,
-      "how": "ETB triggered ability: create a 1/1 Hero token then attach this Equipment to it — ETB trigger composing create-token and attach actions.",
+      "how": "ETB triggered ability: create a 1/1 Hero token then attach this Equipment to it \u2014 ETB trigger composing create-token and attach actions.",
       "cites": [
         "702.182a"
       ],
@@ -1448,7 +1448,7 @@
       "rule": "702.14",
       "class": "composite",
       "given": null,
-      "how": "Conditional evasion blocking restriction: can't be blocked while the defending player controls a land of the specified type; a declare-blockers legality predicate over board state.",
+      "how": "Cant(Block(b, This) where Controls(DefendingPlayer, Land[type])) \u2014 conditional evasion restriction gated on the defending player's board state (702.14c).",
       "cites": [
         "702.14c"
       ],
@@ -1489,7 +1489,7 @@
       "rule": "702.161",
       "class": "composite",
       "given": null,
-      "how": "Conditional characteristic-defining static: 'during your turn this is an artifact creature in addition to its other types' — a type-adding CDA gated on the active-player turn, expressible as a static type-modification effect.",
+      "how": "Conditional characteristic-defining static: 'during your turn this is an artifact creature in addition to its other types' \u2014 a type-adding CDA gated on the active-player turn, expressible as a static type-modification effect.",
       "cites": [
         "702.161a"
       ],
@@ -1530,7 +1530,7 @@
       "rule": "702.178",
       "class": "composite-given",
       "given": "progress-track",
-      "how": "Conditional static: 'as long as your speed is 4, this object has [ability]' — grants an ability gated on reading the player's speed progress track.",
+      "how": "Conditional static: 'as long as your speed is 4, this object has [ability]' \u2014 grants an ability gated on reading the player's speed progress track.",
       "cites": [
         "702.178a",
         "702.178b"
@@ -1544,7 +1544,7 @@
       "rule": "702.187",
       "class": "composite",
       "given": null,
-      "how": "Static in the graveyard: alternative-cost cast (or play) from the graveyard if you discarded this card this turn — conditional alt-cost casting from graveyard.",
+      "how": "Static in the graveyard: alternative-cost cast (or play) from the graveyard if you discarded this card this turn \u2014 conditional alt-cost casting from graveyard.",
       "cites": [
         "702.187a",
         "702.187b"
@@ -1571,7 +1571,7 @@
       "rule": "702.111",
       "class": "composite",
       "given": null,
-      "how": "Evasion ability = blocking restriction (can't be blocked except by two or more creatures) enforced by the 509.1b restriction check, like flying.",
+      "how": "Cant(BlockSet(S, This) where |S| < 2) \u2014 set-level evasion restriction; evaluated over the whole blocker declaration set (702.111b).",
       "cites": [
         "702.111b",
         "509.1b"
@@ -1612,7 +1612,7 @@
       "rule": "702.181",
       "class": "composite",
       "given": null,
-      "how": "Attack-triggered ability creating N 1/1 Warrior tokens tapped and attacking, sacrificed at the next end step — combat trigger + create-token (entering attacking) + delayed sacrifice.",
+      "how": "Attack-triggered ability creating N 1/1 Warrior tokens tapped and attacking, sacrificed at the next end step \u2014 combat trigger + create-token (entering attacking) + delayed sacrifice.",
       "cites": [
         "702.181a"
       ],
@@ -1638,7 +1638,7 @@
       "rule": "702.162",
       "class": "composite",
       "given": null,
-      "how": "Static alternative-cost permission to cast the card converted rather than for its mana cost; follows the alternative-cost casting rules (601.2b/f–h) plus a convert action.",
+      "how": "Static alternative-cost permission to cast the card converted rather than for its mana cost; follows the alternative-cost casting rules (601.2b/f\u2013h) plus a convert action.",
       "cites": [
         "702.162a",
         "701.28a"
@@ -1696,7 +1696,7 @@
       "rule": "702.145",
       "class": "composite-given",
       "given": "progress-track",
-      "how": "Two statics that read the game day/night designation (game-maintained track, rule 731): transform as it becomes day, can’t otherwise transform; given the day/night track these are statics + forced transforms.",
+      "how": "Two statics that read the game day/night designation (game-maintained track, rule 731): transform as it becomes day, can\u2019t otherwise transform; given the day/night track these are statics + forced transforms.",
       "cites": [
         "702.145e",
         "702.145f",
@@ -1739,7 +1739,7 @@
       "rule": "702.175",
       "class": "composite",
       "given": null,
-      "how": "Optional additional cost plus an ETB triggered ability that creates a 1/1 token copy if the offspring cost was paid — additional-cost choice + conditional ETB token-copy.",
+      "how": "Optional additional cost plus an ETB triggered ability that creates a 1/1 token copy if the offspring cost was paid \u2014 additional-cost choice + conditional ETB token-copy.",
       "cites": [
         "702.175a"
       ],
@@ -1779,7 +1779,7 @@
       "rule": "702.192",
       "class": "composite",
       "given": null,
-      "how": "Spell abilities creating a delayed triggered ability that, on first resolution of a same-named spell, makes castable free copies each precombat main phase, plus exiling this spell — spell ability + delayed trigger + create-copy-in-exile.",
+      "how": "Spell abilities creating a delayed triggered ability that, on first resolution of a same-named spell, makes castable free copies each precombat main phase, plus exiling this spell \u2014 spell ability + delayed trigger + create-copy-in-exile.",
       "cites": [
         "702.192a"
       ],
@@ -1835,7 +1835,7 @@
       "rule": "702.170",
       "class": "composite",
       "given": null,
-      "how": "Special action to exile a card from hand paying a cost (becoming plotted), then later alternative-cost casting from exile without paying mana — special action + alt-cost cast + a plotted marker.",
+      "how": "Special action to exile a card from hand paying a cost (becoming plotted), then later alternative-cost casting from exile without paying mana \u2014 special action + alt-cost cast + a plotted marker.",
       "cites": [
         "702.170a",
         "702.170b",
@@ -1863,7 +1863,7 @@
       "rule": "702.16",
       "class": "composite",
       "given": null,
-      "how": "Bundle of restrictions/prevention: can't be targeted by qualified spells/abilities, can't be enchanted/equipped (with SBA detachment), damage from qualified sources is prevented, and can't be blocked by qualified creatures — all from target restrictions + prevention + SBA + blocking restrictions.",
+      "how": "Cant(Target(x, This) where Q(x)) \u2227 Cant(Enchant/Equip(x, This) where Q(x)) \u2227 Cant(Block(b, This) where Q(b)) \u2227 Damage from Q-sources prevented (event-edit leg) \u2014 DEBT bundle (702.16b\u2013f).",
       "cites": [
         "702.16b",
         "702.16c",
@@ -1893,7 +1893,7 @@
       "rule": "702.39",
       "class": "composite",
       "given": null,
-      "how": "An attack-trigger that imposes a must-block requirement on a target defender's creature and untaps it (block requirement + untap action).",
+      "how": "Must(Block(t, This)) via triggered ability: when This attacks, may choose target defender creature; if chosen, that creature must block This if able and is untapped \u2014 block requirement installed by trigger resolution (702.39a).",
       "cites": [
         "702.39a"
       ],
@@ -2108,7 +2108,7 @@
       "rule": "702.171",
       "class": "composite",
       "given": null,
-      "how": "Activated sorcery-speed ability: tap other untapped creatures with total power N+ to make this permanent 'saddled' until end of turn — cost (tap components) producing a marker designation.",
+      "how": "Activated sorcery-speed ability: tap other untapped creatures with total power N+ to make this permanent 'saddled' until end of turn \u2014 cost (tap components) producing a marker designation.",
       "cites": [
         "702.171a",
         "702.171b"
@@ -2135,7 +2135,7 @@
       "rule": "702.28",
       "class": "composite",
       "given": null,
-      "how": "Bidirectional evasion blocking restriction predicated on the shadow keyword: shadow can't be blocked by non-shadow and vice versa; a declare-blockers legality predicate.",
+      "how": "Cant(Block(b, This) where \u00acShadow(b)) \u2227 Cant(Block(This, a) where Shadow(a) \u2227 \u00acShadow(This)) \u2014 bidirectional evasion restriction over the shadow keyword (702.28b).",
       "cites": [
         "702.28b"
       ],
@@ -2148,7 +2148,7 @@
       "rule": "702.18",
       "class": "composite",
       "given": null,
-      "how": "Static targeting restriction: can't be the target of any spells or abilities; a target-legality predicate.",
+      "how": "Cant(Target(x, This)) for all sources \u2014 symmetric targeting restriction (702.18a).",
       "cites": [
         "702.18a"
       ],
@@ -2161,7 +2161,7 @@
       "rule": "702.118",
       "class": "composite",
       "given": null,
-      "how": "Evasion ability = blocking restriction (can't be blocked by creatures with greater power) enforced by the 509.1b restriction check.",
+      "how": "Cant(Block(b, This) where Power(b) > Power(This)) \u2014 evasion restriction over blocker power (702.118b).",
       "cites": [
         "702.118b",
         "509.1b"
@@ -2175,7 +2175,7 @@
       "rule": "702.190",
       "class": "composite",
       "given": null,
-      "how": "Static on the stack: alternative-cost cast at instant timing during declare-blockers, paying [cost] and returning an unblocked creature; the spell enters tapped and attacking per 506.3a — alt-cost casting + bounce + enters-attacking.",
+      "how": "Static on the stack: alternative-cost cast at instant timing during declare-blockers, paying [cost] and returning an unblocked creature; the spell enters tapped and attacking per 506.3a \u2014 alt-cost casting + bounce + enters-attacking.",
       "cites": [
         "702.190a",
         "702.190b",
@@ -2190,7 +2190,7 @@
       "rule": "702.169",
       "class": "composite",
       "given": null,
-      "how": "Meta-keyword wrapping a static, triggered, or activated ability gated on the Case being solved ('as long as solved' / 'triggers only if solved' / 'activate only if solved') — a condition-gate over the existing ability templates.",
+      "how": "Meta-keyword wrapping a static, triggered, or activated ability gated on the Case being solved ('as long as solved' / 'triggers only if solved' / 'activate only if solved') \u2014 a condition-gate over the existing ability templates.",
       "cites": [
         "702.169a",
         "702.169b",
@@ -2292,7 +2292,7 @@
       "rule": "702.172",
       "class": "composite",
       "given": null,
-      "how": "Static on the stack: choose one or more modes and pay their associated costs as additional costs — modal selection plus additional-cost payment.",
+      "how": "Static on the stack: choose one or more modes and pay their associated costs as additional costs \u2014 modal selection plus additional-cost payment.",
       "cites": [
         "702.172a"
       ],
@@ -2319,7 +2319,7 @@
       "rule": "702.179",
       "class": "composite-given",
       "given": "progress-track",
-      "how": "Static SBA that sets a player's speed to 1 plus an inherent triggered ability increasing speed when opponents lose life — initializes and advances the speed progress track given native player-speed state.",
+      "how": "Static SBA that sets a player's speed to 1 plus an inherent triggered ability increasing speed when opponents lose life \u2014 initializes and advances the speed progress track given native player-speed state.",
       "cites": [
         "702.179a",
         "702.179d"
@@ -2333,7 +2333,7 @@
       "rule": "702.184",
       "class": "composite",
       "given": null,
-      "how": "Activated sorcery-speed ability: tap another untapped creature to put charge counters equal to its power on this permanent — cost (tap) + place-counters action.",
+      "how": "Activated sorcery-speed ability: tap another untapped creature to put charge counters equal to its power on this permanent \u2014 cost (tap) + place-counters action.",
       "cites": [
         "702.184a"
       ],
@@ -2402,7 +2402,7 @@
       "rule": "702.183",
       "class": "composite",
       "given": null,
-      "how": "Static on the stack: choose one mode and pay its cost as an additional cost — modal selection plus additional-cost payment.",
+      "how": "Static on the stack: choose one mode and pay its cost as an additional cost \u2014 modal selection plus additional-cost payment.",
       "cites": [
         "702.183a"
       ],
@@ -2415,7 +2415,7 @@
       "rule": "702.164",
       "class": "composite-given",
       "given": "damage-result-rewrite",
-      "how": "Augments the result of combat damage to a player: in addition to damage's other results, give poison counters equal to total toxic value (120.3g) — a damage-result augmentation at the damage-result stage, like lifelink/infect.",
+      "how": "Augments the result of combat damage to a player: in addition to damage's other results, give poison counters equal to total toxic value (120.3g) \u2014 a damage-result augmentation at the damage-result stage, like lifelink/infect.",
       "cites": [
         "702.164c",
         "120.3g"
@@ -2442,7 +2442,7 @@
       "rule": "702.19",
       "class": "intrinsic",
       "given": null,
-      "how": "Modifies the prospective combat damage assignment rules (510.1c–d): controller must assign lethal to blockers first, then may assign excess to the defending player/planeswalker.",
+      "how": "Modifies the prospective combat damage assignment rules (510.1c\u2013d): controller must assign lethal to blockers first, then may assign excess to the defending player/planeswalker.",
       "cites": [
         "702.19a",
         "702.19b",
@@ -2604,7 +2604,7 @@
       "rule": "702.21",
       "class": "composite",
       "given": null,
-      "how": "Triggered toll: whenever this becomes the target of an opponent's spell/ability, counter it unless they pay the cost; a trigger + counter keyword action with a cost gate.",
+      "how": "MayIf(resolve(spell/ability targeting This), pay {N}) \u2014 resolution-stage toll via triggered counter-unless-pays (702.21a).",
       "cites": [
         "702.21a"
       ],
@@ -2617,7 +2617,7 @@
       "rule": "702.185",
       "class": "composite",
       "given": null,
-      "how": "Alternative-cost cast from hand plus a delayed triggered ability exiling the permanent at the next end step with a recast permission — alt-cost casting + delayed-trigger exile + cast-from-exile.",
+      "how": "Alternative-cost cast from hand plus a delayed triggered ability exiling the permanent at the next end step with a recast permission \u2014 alt-cost casting + delayed-trigger exile + cast-from-exile.",
       "cites": [
         "702.185a"
       ],
@@ -2630,7 +2630,7 @@
       "rule": "702.188",
       "class": "composite",
       "given": null,
-      "how": "Static on the stack: alternative-cost cast paying [cost] and returning a tapped creature you control to hand rather than the mana cost — alt-cost casting with a bounce cost component.",
+      "how": "Static on the stack: alternative-cost cast paying [cost] and returning a tapped creature you control to hand rather than the mana cost \u2014 alt-cost casting with a bounce cost component.",
       "cites": [
         "702.188a"
       ],
@@ -2653,12 +2653,12 @@
       "confidence": "high"
     },
     {
-      "name": "∞ (Infinity)",
+      "name": "\u221e (Infinity)",
       "kind": "ability",
       "rule": "702.186",
       "class": "composite",
       "given": null,
-      "how": "Conditional static: 'as long as this permanent is harnessed, it has [ability]' — grants an ability gated on the harnessed designation marker (701.64).",
+      "how": "Conditional static: 'as long as this permanent is harnessed, it has [ability]' \u2014 grants an ability gated on the harnessed designation marker (701.64).",
       "cites": [
         "702.186b",
         "701.64b"
@@ -3142,7 +3142,7 @@
       "rule": "701.15",
       "class": "composite",
       "given": null,
-      "how": "Applies the 'goaded' designation = an attack requirement (must attack each combat if able) plus an attack-direction restriction (must attack a player other than the goader). Compiles to combat requirements/restrictions plus a decider constraint.",
+      "how": "Must(Attack(This)) \u2227 Must(Attack-target(This, \u00acgoader)) \u2014 stacked attack requirements arbitrated by 508.1d maximization (701.15b\u2013c).",
       "cites": [
         "701.15a",
         "701.15b",
@@ -3360,7 +3360,7 @@
       "rule": "701.19",
       "class": "composite",
       "given": null,
-      "how": "CR 614.8 states regeneration IS a destruction-replacement effect: “the next time this would be destroyed, instead remove all marked damage, its controller taps it, and remove it from combat.” Replacement/prevention effects are in the rubric basis, so this composes from a destroy-event replacement + remove-damage + tap + remove-from-combat.",
+      "how": "CR 614.8 states regeneration IS a destruction-replacement effect: \u201cthe next time this would be destroyed, instead remove all marked damage, its controller taps it, and remove it from combat.\u201d Replacement/prevention effects are in the rubric basis, so this composes from a destroy-event replacement + remove-damage + tap + remove-from-combat.",
       "cites": [
         "701.19a",
         "701.19b",
@@ -3632,7 +3632,7 @@
       "rule": "701.67",
       "class": "composite-given",
       "given": "cost-modification-hook",
-      "how": "Pay [cost]; for each generic mana in that cost, may tap an untapped artifact/creature rather than pay that mana (701.67b limits the substitution to the waterbend cost’s generic component). Same pay-substitution hook as Delve/Convoke/Improvise.",
+      "how": "Pay [cost]; for each generic mana in that cost, may tap an untapped artifact/creature rather than pay that mana (701.67b limits the substitution to the waterbend cost\u2019s generic component). Same pay-substitution hook as Delve/Convoke/Improvise.",
       "cites": [
         "701.67a",
         "701.67b",
