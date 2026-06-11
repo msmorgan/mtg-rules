@@ -1,6 +1,6 @@
 ---
 name: mtg-rules
-description: Use for ANY Magic: The Gathering rules question, card interaction or ruling, judge call, tournament-policy (MTR) question, MTG engine design (game-state modeling, action/effect taxonomy), oracle-text grammar/parsing work, and mechanic design-space analysis (asymmetric rule families, generalization feasibility). Provides authoritative local lookups (Comprehensive Rules, glossaries, MTR, exact card oracle text) plus synthesized taxonomies of game state, actions, abilities, effects, and designations. Never answer MTG specifics from memory — verify with this skill's scripts.
+description: Use for ANY Magic: The Gathering rules question, card interaction or ruling, judge call, tournament-policy (MTR) question, MTG engine design (game-state modeling, action/effect taxonomy), oracle-text grammar/parsing work, and mechanic design-space analysis (asymmetric rule families, generalization feasibility, keyword intrinsic/composite classification). Provides authoritative local lookups (Comprehensive Rules, glossaries, MTR, exact card oracle text) plus synthesized taxonomies of game state, actions, abilities, effects, and designations. Never answer MTG specifics from memory — verify with this skill's scripts.
 ---
 
 # MTG Rules
@@ -19,7 +19,10 @@ All paths below are relative to this skill's directory.
    questions start from `references/state.md` + `references/actions.md`.
    Mechanic design-space questions (generalizing/unifying mechanics,
    custom-mechanic feasibility) start from `references/generalizations.md`
-   + `references/engine.md`.
+   + `references/engine.md`. "Is keyword X intrinsic or composite?" and
+   engine instruction-set questions start from
+   `references/keyword-classification.md`; per-keyword data is queryable:
+   `jq '.keywords[] | select(.name=="Cascade")' keywords-classified.json`.
 3. **Verify every load-bearing specific with the scripts before asserting
    it.** Quote rule text with rule numbers. For card questions, fetch exact
    oracle text first (`scripts/card`) — never trust memory of a card's
