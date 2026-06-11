@@ -204,6 +204,11 @@ Caution: `"As [an additional cost to cast] …"` is a casting/cost clause, not
 a replacement effect — disambiguate `As ~ enters` (614.1c) from `As an
 additional cost …` by what follows "As".
 
+Deontic markers are the *other* layer (choice-legality, not event-edit):
+`"can't … except"`, `"only as a sorcery"`, `"as though"`, `"… if able"`,
+`"unless … pays"` parse into the May/Cant/Must/toll algebra in
+`deontics.md` — not into replacement effects (the 614.17 boundary).
+
 ## 5. Reference grammar
 
 How text names the objects and players it acts on:

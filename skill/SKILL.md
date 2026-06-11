@@ -19,7 +19,10 @@ All paths below are relative to this skill's directory.
    questions start from `references/state.md` + `references/actions.md`.
    Mechanic design-space questions (generalizing/unifying mechanics,
    custom-mechanic feasibility) start from `references/generalizations.md`
-   + `references/engine.md`. "Is keyword X intrinsic or composite?" and
+   + `references/engine.md`. Capability/restriction/permission questions
+   (what "can't", "only", "as though", "if able", or ward-style tolls mean,
+   and how they compose) start from `references/deontics.md`. "Is keyword X
+   intrinsic or composite?" and
    engine instruction-set questions start from
    `references/keyword-classification.md`; per-keyword data is queryable:
    `jq '.keywords[] | select(.name=="Cascade")' keywords-classified.json`.
@@ -52,6 +55,7 @@ All paths below are relative to this skill's directory.
 | `references/engine.md` | pseudo-code game-state model + the damage pipeline (CR 120) |
 | `references/generalizations.md` | asymmetric rule families, the generalized mechanic each implies, and 12 engine modeling directives |
 | `references/keyword-classification.md` | every keyword classified intrinsic / composite / composite-given(P) / marker, + the 6-primitive engine basis (full data: skill/keywords-classified.json) |
+| `references/deontics.md` | the deontic layer: May/Cant/Must/toll algebra over action legality — "can't", "only", "as though", "if able" unified |
 | `references/actions.md` | everything the game can do: events; turn-based, state-based, special, and keyword actions; the priority→stack→resolve loop |
 | `references/designations.md` | the scattered global flags, unified: monarch, initiative, day/night, city's blessing, ring-bearer, goaded, suspected, … |
 | `references/abilities.md` | ability kinds + sub-kinds (mana, loyalty, linked, CDA, delayed/state/reflexive triggers), where abilities function |
