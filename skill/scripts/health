@@ -37,7 +37,7 @@ if test (count $cats) -eq 0
     set cat_mark "absent"
     set base_ok 0
 end
-echo "tier base:    rules ✓, catalogs $cat_mark — rule, rule-search, define, keyword, mtr, lookup, classify, check-citations"
+echo "tier base:    rules ✓, catalogs $cat_mark — rule, rule-search, define, keyword, mtr, lookup, classify, cite"
 
 set -l idx_mark "absent"
 test -r $derived_dir/cards.jsonl; and set idx_mark "✓"
@@ -54,7 +54,7 @@ echo "keywords-classified: "(jq -r '.keywords | length' $skill_dir/keywords-clas
 echo "plugin version: "(jq -r '.version' $skill_dir/.claude-plugin/plugin.json)
 
 # citations
-set -l cite_out ($selfdir/check-citations 2>&1)
+set -l cite_out ($selfdir/cite --config "$skill_dir/cite-config.json" check 2>&1)
 set -l cite_status $status
 echo "citations: $cite_out[-1]"
 

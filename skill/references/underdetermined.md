@@ -2,7 +2,7 @@
 
 *Synthesized from the Comprehensive Rules effective 2026-04-17
 (`data/rules/cr.json`). Orientation only — verify load-bearing specifics
-with `scripts/rule` before citing. Run `scripts/check-citations` after CR
+with `scripts/rule` before citing. Run `scripts/cite check` after CR
 refreshes.*
 
 Points where the CR underdetermines semantics: a rules-correct engine must
@@ -304,5 +304,5 @@ On every CR refresh:
 4. If a "Docs assume" doc changes its commitment, flip the status
    (`assumed` ↔ `open`) in the same change; `representation-only` retires
    only when a printed card makes the divergence observable.
-5. `scripts/check-citations skill/references/underdetermined.md` must
+5. `scripts/cite check` (this doc is covered by its source globs) must
    exit 0.

@@ -2,7 +2,7 @@
 
 *Synthesized from the Comprehensive Rules effective 2026-04-17
 (`data/rules/cr.json`). Orientation only — verify load-bearing specifics
-with `scripts/rule` before citing. Run `scripts/check-citations` after CR
+with `scripts/rule` before citing. Run `scripts/cite check` after CR
 refreshes.*
 
 A game ends immediately when a player wins, when the game is a draw, or when

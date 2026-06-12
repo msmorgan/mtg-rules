@@ -2,7 +2,7 @@
 
 *Synthesized from the Comprehensive Rules effective 2026-04-17
 (`data/rules/cr.json`). Orientation only — verify load-bearing specifics
-with `scripts/rule` before citing. Run `scripts/check-citations` after CR
+with `scripts/rule` before citing. Run `scripts/cite check` after CR
 refreshes.*
 
 How to slice an Oracle-text string into abilities and recognize each one's

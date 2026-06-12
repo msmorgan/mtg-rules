@@ -38,7 +38,7 @@ Default dest: \$MTG_RULES_DATA if set, else ~/.claude/plugins/data/mtg-rules/dat
 
 Tiers (idempotent — re-run any time to refresh):
   base       (always)    rules/* (6 files) + catalogs/* (20 files), ~4 MB
-                         enables: rule, define, keyword, mtr, check-citations
+                         enables: rule, define, keyword, mtr, cite
   --cards                mtgjson AtomicCards.json + derived/cards.jsonl, ~155 MB
                          enables: card, corpus
   --rulings              mtgjson AllPrintings.sqlite (large)
@@ -148,7 +148,7 @@ echo >&2 "setup-data: destination $dest"
 
 # --- base tier (always) -----------------------------------------------------
 echo >&2 ""
-echo >&2 "[base] rules + catalogs — enables: rule, define, keyword, mtr, check-citations"
+echo >&2 "[base] rules + catalogs — enables: rule, define, keyword, mtr, cite"
 mkdir -p $rules_dir $catalogs_dir
 or begin
     echo >&2 "setup-data: ERROR: cannot create $rules_dir / $catalogs_dir"

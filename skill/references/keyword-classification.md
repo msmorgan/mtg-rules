@@ -2,7 +2,7 @@
 
 *Synthesized from the Comprehensive Rules effective 2026-04-17
 (`data/rules/cr.json`). Orientation only — verify load-bearing specifics
-with `scripts/rule` before citing. Run `scripts/check-citations` after CR
+with `scripts/rule` before citing. Run `scripts/cite check` after CR
 refreshes.*
 
 Every keyword ability (CR 702) and keyword action (CR 701) is classified by
@@ -171,5 +171,5 @@ classify it against `rubric_version` (try to decompose to statics + triggers
 intrinsic set is minimal**: attack each intrinsic with a decomposition
 attempt; if a new primitive would collapse several into composite-given,
 add the primitive to the `given` vocabulary rather than minting intrinsics.
-Run `scripts/check-citations` (it now also guards the JSON's cites) and
+Run `scripts/cite check` (it now also guards the JSON's cites) and
 `fish tests/test_skill_scripts.fish` after edits.

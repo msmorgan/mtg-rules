@@ -24,7 +24,7 @@ scripts/setup-data
 
 | Tier | Flag | Size | Enables |
 |------|------|------|---------|
-| Base rules + catalogs | *(default)* | ~4 MB | `rule`, `define`, `keyword`, `mtr`, `check-citations` |
+| Base rules + catalogs | *(default)* | ~4 MB | `rule`, `define`, `keyword`, `mtr`, `cite` |
 | Card lookups + corpus | `--cards` | ~155 MB | `card`, `corpus` |
 | Official rulings DB | `--rulings` | large | `rulings` |
 
@@ -65,11 +65,12 @@ After WotC publishes updated rules or card data:
 
 1. `scripts/fetch_data.fish` — re-fetch upstream sources
 2. `scripts/build_derived.fish` — rebuild the derived card index (`data/derived/cards.jsonl`)
-3. `skill/scripts/check-citations` — verify every in-skill citation resolves; fix flagged docs
-4. Re-derive the validation probes in `skill/references/rulings-check.md` against fresh `skill/scripts/rulings` output; fix any doc that drifted
-5. Re-test `skill/references/underdetermined.md` entries — a new rule may settle one
-6. Re-examine `skill/references/generalizations.md` empty cells — a newly printed instance is a finding
-7. Classify any new keywords — they land unclassified in `skill/keywords-classified.json`
+3. `cd skill && scripts/cite check` — verify every in-skill citation still resolves and its rule text matches the lockfile
+4. Review CHANGED diffs via `scripts/cite diff <rule>`; fix docs that drifted (or accept the rewording), then `scripts/cite bless` to re-pin the lockfile
+5. Re-derive the validation probes in `skill/references/rulings-check.md` against fresh `skill/scripts/rulings` output; fix any doc that drifted
+6. Re-test `skill/references/underdetermined.md` entries — a new rule may settle one
+7. Re-examine `skill/references/generalizations.md` empty cells — a newly printed instance is a finding
+8. Classify any new keywords — they land unclassified in `skill/keywords-classified.json`
 
 ## Lookup Scripts
 
@@ -83,7 +84,7 @@ After WotC publishes updated rules or card data:
 | `card` | `skill/scripts/card "Lightning Bolt"` |
 | `corpus` | `skill/scripts/corpus --type Creature --match 'deals damage'` |
 | `rulings` | `skill/scripts/rulings Humility` |
-| `check-citations` | `skill/scripts/check-citations` |
+| `cite` | `cd skill && scripts/cite check` |
 
 ## License & Fan Content Notice
 

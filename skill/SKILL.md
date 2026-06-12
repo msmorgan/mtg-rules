@@ -56,7 +56,7 @@ All paths below are relative to this skill's directory.
 | `scripts/mtr 1.7` / `--list` / `--search <re>` | Magic Tournament Rules sections |
 | `scripts/corpus [--type T] [--keyword K] [--match RE] [--all]` | distinct oracle-text lines (grammar corpus) |
 | `scripts/classify <keyword>` | a keyword's intrinsic/composite classification record (class, given, how, cites) from keywords-classified.json |
-| `scripts/check-citations` | verify reference-doc citations still exist in the CR |
+| `scripts/cite check` / `bless` / `show <citation>` / `diff <rule>` | citation staleness guard with text-drift lockfile |
 | `scripts/health` | self-diagnosis: data resolution, CR date, data tiers, citation check |
 
 ## Reference docs
@@ -91,8 +91,11 @@ All paths below are relative to this skill's directory.
 
 Reference docs state the CR effective date they were synthesized from; the
 live data's date is in line 3 of `../data/rules/cr.txt`. If
-`scripts/check-citations` fails, or a cited rule reads differently than a
+`scripts/cite check` fails, or a cited rule reads differently than a
 doc claims, trust the CR text, answer from it, and flag the doc for re-sync.
+For a CHANGED citation: inspect the drift with `scripts/cite diff <rule>`,
+fix the doc (or accept the rewording), then `scripts/cite bless` to re-pin
+the lockfile.
 
 ## Data (repo `data/`, refreshed by repo-root `scripts/fetch_data.fish`)
 

@@ -2,7 +2,7 @@
 
 *Synthesized from the Comprehensive Rules effective 2026-04-17
 (`data/rules/cr.json`). Orientation only — verify load-bearing specifics
-with `scripts/rule` before citing. Run `scripts/check-citations` after CR
+with `scripts/rule` before citing. Run `scripts/cite check` after CR
 refreshes.*
 
 This doc validates the skill's model against WotC's own answer key. For
@@ -450,4 +450,4 @@ disagrees with a current-CR reading, fix the sibling reference doc and commit
 that fix separately before updating this doc. If a *ruling* now looks stale
 relative to a CR change, record `RULING STALE` with the current rule proving
 it — do not edit docs to match a stale ruling. Finish with
-`scripts/check-citations` (exit 0).
+`scripts/cite check` (exit 0).

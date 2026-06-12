@@ -94,11 +94,6 @@ t "corpus --all reaches un-set lines" '[Gg]otcha' $scripts/corpus --all --match 
 t "corpus type filter is case-insensitive" '.' $scripts/corpus --type battle --match defeat
 t_fails "corpus rejects invalid regex" $scripts/corpus --match '['
 
-# --- check-citations ---
-t "check-citations passes good fixture" 'citations OK|cited rules exist' $scripts/check-citations $fixtures/cite-good.md
-t_fails "check-citations fails bad fixture" $scripts/check-citations $fixtures/cite-bad.md
-t "check-citations names the missing rules" '999\.99' fish -c "$scripts/check-citations $fixtures/cite-bad.md 2>&1; true"
-
 # --- rulings ---
 t "rulings humility has dated entries" '\[\d{4}-\d{2}-\d{2}\]' $scripts/rulings Humility
 t "rulings face name resolves to full card" 'Fire // Ice' $scripts/rulings Fire
