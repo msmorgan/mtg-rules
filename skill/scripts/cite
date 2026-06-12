@@ -1,0 +1,323 @@
+#!/usr/bin/env fish
+# cite — CR citation checker shared by the skill and consumer repos.
+#
+#   cite [--config FILE] check [--list-noncompliant]   # validate citations (default command)
+#   cite [--config FILE] bless                         # rebuild the lockfile from current CR text
+#   cite [--config FILE] list                          # every citation site with expanded members
+#   cite [--config FILE] show <citation> [--plain]     # print the rule(s) a citation resolves to
+#   cite [--config FILE] diff <rule>                   # old-vs-current text for one rule
+#
+# Config (JSON, default ./cite-config.json; relative paths resolve against the
+# config file's directory):
+#   {
+#     "format": "bracketed" | "bare",     // [CR#601.2g,704.5k..704.5n] tokens vs bare dotted numbers
+#     "lockfile": "cr-citations.lock",
+#     "sources": {
+#       "tracked": true,                  // jj file list (fallback: git ls-files) in the config dir
+#       "extensions": ["rs", "md", "ron"],// keep only these extensions (tracked mode)
+#       "exclude": ["crates/xtask/"],     // path-prefix excludes (tracked mode)
+#       "globs": ["references/*.md"]      // OR explicit `find -path` globs (non-tracked mode)
+#     },
+#     "noncompliant_exempt": ["src/data/foo.rs"]  // path-suffix exemptions, --list-noncompliant only
+#   }
+#
+# Lockfile (JSON, committed; rule numbers + checksums only — never rule text):
+#   { "cr_date": "YYYY-MM-DD", "wizards_url": "…", "checksums": { "<rule>": "<16 hex>" } }
+# Checksum = first 16 hex chars of sha256 over the whitespace-normalized rule text.
+# Staleness classes: GONE (rule vanished / range endpoint unresolvable), CHANGED
+# (text differs from the blessed baseline), UNLOCKED (cited but absent from the
+# lock — run bless).
+#
+# Leaf rules resolve against cr.json (document-ordered keys; range expansion
+# rides that order, so the CR's missing letters l/o fall out naturally).
+# Bare-section citations ([CR#702]) resolve against cr.txt section headers.
+# Malformed bracketed tokens are SKIPPED by check/list/bless — format policing
+# is `check --list-noncompliant`'s job (bracketed mode only).
+#
+# Env: MTG_RULES_CITE_WIZARDS_URL overrides bless's network URL resolution
+# (offline use, tests). MTG_RULES_DATA picks the data dir (see lib.fish).
+
+source (path resolve (status dirname))/lib.fish; or exit 1
+set -g jq_lib (path resolve (status dirname))/cite-lib
+
+# ---------- config ----------
+argparse --stop-nonopt 'config=' -- $argv; or exit 2
+set -l config_arg ./cite-config.json
+set -q _flag_config; and set config_arg $_flag_config
+test -r "$config_arg"; or die "cite: config not readable: $config_arg"
+set -g config_path (path resolve $config_arg)
+set -g config_dir (path dirname $config_path)
+
+set -g cite_format (jq -r '.format // "bracketed"' $config_path)
+contains -- $cite_format bracketed bare; or die "cite: bad format in config: $cite_format"
+set -g lock_path $config_dir/(jq -r '.lockfile // "cr-citations.lock"' $config_path)
+
+# ---------- shared plumbing ----------
+
+set -g work ""
+function _cite_cleanup --on-event fish_exit
+    test -n "$work"; and rm -rf $work
+end
+
+# $work/keys.json   cr.json keys, document order
+# $work/idx.json    rule -> position in that order
+# $work/sections.json  cr.txt "NNN. Title" headers ({num: title}; body wins over TOC)
+function cite_prepare
+    set -g work (mktemp -d)
+    jq -c 'keys_unsorted' $rules_dir/cr.json > $work/keys.json
+    jq -c 'keys_unsorted | . as $k | reduce range(0; $k | length) as $i ({}; .[$k[$i]] = $i)' \
+        $rules_dir/cr.json > $work/idx.json
+    awk '{ gsub(/\r$/, "") }
+         /^[0-9]{1,3}\. / { i = index($0, ". "); print substr($0, 1, i - 1) "\t" substr($0, i + 2) }' \
+        $rules_dir/cr.txt \
+        | jq -Rcs 'split("\n") | map(select(length > 0) | split("\t") | {(.[0]): .[1]}) | add // {}' \
+        > $work/sections.json
+    set -g cr_effective (cite_effective_date)
+end
+
+function cite_effective_date
+    set -l line (grep -m1 'effective as of' $rules_dir/cr.txt | string trim)
+    set -l m (string match -r 'effective as of ([A-Z][a-z]+) ([0-9]+), ([0-9]+)' -- $line)
+    test (count $m) -eq 4; or die "cite: cannot parse the effective date from cr.txt"
+    set -l months January February March April May June July August September October November December
+    set -l mi (contains -i -- $m[2] $months)
+    test -n "$mi"; or die "cite: unknown month in effective date: $m[2]"
+    printf '%04d-%02d-%02d\n' $m[4] $mi $m[3]
+end
+
+function cite_sources # absolute paths of the files to scan
+    if test (jq -r '.sources.tracked // false' $config_path) = true
+        set -l listing (jj -R $config_dir file list 2>/dev/null)
+        test (count $listing) -gt 0; or set listing (git -C $config_dir ls-files 2>/dev/null)
+        test (count $listing) -gt 0; or die "cite: no tracked files (neither jj nor git answered in $config_dir)"
+        set -l exts (jq -r '(.sources.extensions // [])[]' $config_path)
+        set -l excl (jq -r '(.sources.exclude // [])[]' $config_path)
+        for f in $listing
+            set -l skipped 0
+            for e in $excl
+                string match -q -- "$e*" $f; and set skipped 1; and break
+            end
+            test $skipped -eq 1; and continue
+            if test (count $exts) -gt 0
+                set -l x (string replace -r '^\.' '' -- (path extension -- $f))
+                contains -- "$x" $exts; or continue
+            end
+            echo $config_dir/$f
+        end
+    else
+        for g in (jq -r '(.sources.globs // [])[]' $config_path)
+            find $config_dir -path "$config_dir/$g" -type f 2>/dev/null
+        end
+    end
+end
+
+function cite_scan # sites jsonl: {file, line, ctx, refs[]}
+    set -l files (cite_sources)
+    test (count $files) -gt 0; or die "cite: no source files matched the config"
+    set -l pat '\[CR#[^\]]*\]'
+    test $cite_format = bare; and set pat '\b[1-9][0-9]{2}\.[0-9]+[a-z]?\b'
+    rg --json -e $pat -- $files \
+        | jq -c --arg fmt $cite_format --arg root $config_dir -f $jq_lib/sites.jq
+end
+
+function cite_tokens # resolve sites into $work/tokens.jsonl
+    cite_scan | jq -c -f $jq_lib/resolve.jq \
+        --slurpfile keys $work/keys.json --slurpfile idx $work/idx.json \
+        > $work/tokens.jsonl
+end
+
+# {rule: 16-hex} for the members (one per line in $members) that exist in the CR.
+# One temp file per rule, ONE sha256sum invocation — fish never loops per rule.
+function cite_hashes --argument-names members out
+    set -l td (mktemp -d)
+    jq -r -f $jq_lib/texts.jq --rawfile mem $members --slurpfile sec $work/sections.json \
+        $rules_dir/cr.json \
+        | awk -F'\t' -v d=$td '{ f = d "/" $1; printf "%s", $2 > f; close(f) }'
+    set -l entries $td/*
+    if test (count $entries) -gt 0
+        sha256sum $entries \
+            | awk -v n=(string length $td) '{ printf "%s\t%s\n", substr($2, n + 2), substr($1, 1, 16) }' \
+            | jq -Rcn '[inputs | split("\t") | {(.[0]): .[1]}] | add // {}' > $out
+    else
+        echo '{}' > $out
+    end
+    rm -rf $td
+end
+
+function cite_members_and_hashes
+    jq -r 'select(.status == "ok") | .members[]' $work/tokens.jsonl | sort -u > $work/members.txt
+    cite_hashes $work/members.txt $work/cur.json
+end
+
+# ---------- subcommands ----------
+
+function cmd_check
+    argparse list-noncompliant -- $argv; or exit 2
+    if set -q _flag_list_noncompliant
+        cmd_noncompliant
+        return
+    end
+    test -r $lock_path; or die "cite check: lockfile missing: $lock_path (run: cite bless)"
+    head -c 1 $lock_path | string match -q '{'
+    or die "cite check: $lock_path is not JSON (legacy TOML lock?) — regenerate with: cite bless"
+    cite_prepare
+    cite_tokens
+    cite_members_and_hashes
+    jq -r -f $jq_lib/classify.jq \
+        --slurpfile cur $work/cur.json --slurpfile lock $lock_path \
+        $work/tokens.jsonl > $work/stale.txt
+    set -l checked (jq -s '([.[] | select(.status == "gone")] | length)
+                           + ([.[] | select(.status == "ok") | .members | length] | add // 0)' \
+        $work/tokens.jsonl)
+    set -l stale_n (wc -l < $work/stale.txt | string trim)
+    cat $work/stale.txt
+    echo "checked $checked citations against cr.json (eff. $cr_effective); $stale_n stale"
+    test $stale_n -eq 0; or exit 1
+end
+
+function cmd_noncompliant
+    test $cite_format = bracketed; or die "cite: --list-noncompliant applies to the bracketed format only"
+    set -l files (cite_sources)
+    test (count $files) -gt 0; or die "cite: no source files matched the config"
+    set -l hits (rg --json -e 'CR ?[0-9]{1,3}|\brule [0-9]{1,3}|\b[0-9]{3}\.[0-9]+' -- $files \
+        | jq -c --arg root $config_dir 'select(.type == "match") | .data
+            | {file: (.path.text | ltrimstr($root + "/")), line: .line_number,
+               text: (.lines.text | rtrimstr("\n"))}' \
+        | jq -r -f $jq_lib/noncompliant.jq --slurpfile cfg $config_path)
+    set -l n (count $hits)
+    test $n -gt 0; and printf '%s\n' $hits
+    echo "$n non-compliant citation-looking string(s)"
+    test $n -eq 0; or exit 1
+end
+
+function cmd_list
+    cite_prepare
+    cite_tokens
+    jq -r --arg fmt $cite_format 'select(.status == "ok")
+        | (if $fmt == "bracketed" then "[CR#\(.raw)]" else .raw end) as $r
+        | "\(.file):\(.line)  \($r)  -> \(.members | join(", "))"' \
+        $work/tokens.jsonl
+end
+
+function cmd_bless
+    cite_prepare
+    cite_tokens
+    cite_members_and_hashes
+    # wizards URL: env override > live redirect resolution > existing lock (JSON or legacy TOML)
+    set -l url ""
+    if set -q MTG_RULES_CITE_WIZARDS_URL
+        set url $MTG_RULES_CITE_WIZARDS_URL
+    else
+        set url (curl -fsSIL -o /dev/null -w '%{url_effective}' --max-time 15 \
+            https://academyruins.com/link/cr 2>/dev/null)
+    end
+    if test -z "$url"; and test -r $lock_path
+        set url (jq -r '.wizards_url // empty' $lock_path 2>/dev/null)
+        if test -z "$url"
+            set -l m (string match -r 'wizards_url = "([^"]*)"' < $lock_path)
+            test (count $m) -eq 2; and set url $m[2]
+        end
+    end
+    test -n "$url"; or die "cite bless: cannot resolve the wizards URL (offline?) and no existing lock to reuse"
+    jq -nS --arg d $cr_effective --arg u $url --slurpfile h $work/cur.json \
+        '{cr_date: $d, wizards_url: $u, checksums: $h[0]}' > $lock_path
+    echo "blessed "(jq -r '.checksums | length' $lock_path)" rules at cr_date $cr_effective -> $lock_path"
+end
+
+function cmd_show
+    argparse plain -- $argv; or exit 2
+    set -l arg "$argv[1]"
+    test -n "$arg"; or die "cite show: missing citation argument"
+    cite_prepare
+    set -l inner (string trim -- $arg)
+    set -l m (string match -r '^\[(.*)\]$' -- $inner)
+    test (count $m) -eq 2; and set inner $m[2]
+    set inner (string replace -r '^CR#' '' -- $inner | string trim)
+    jq -nc --arg r $inner '{file: "", line: 0, ctx: "", refs: [$r]}' \
+        | jq -c -f $jq_lib/resolve.jq \
+            --slurpfile keys $work/keys.json --slurpfile idx $work/idx.json \
+        > $work/show.jsonl
+    set -l kind (jq -r '.status' $work/show.jsonl)
+    test "$kind" = skip; and die "cite show: malformed citation: $arg"
+    test "$kind" = gone; and die "cite show: range endpoint not found: $arg"
+    set -l members (jq -r '.members[]' $work/show.jsonl)
+    set -l width 80
+    set -q COLUMNS; and test "$COLUMNS" -gt 20 2>/dev/null; and set width $COLUMNS
+    set -l missing 0
+    for mref in $members
+        set -l t (jq -r --arg m $mref --slurpfile sec $work/sections.json \
+            '.[$m].ruleText? // $sec[0][$m] // empty' $rules_dir/cr.json | string collect)
+        if test -z "$t"
+            echo >&2 "[CR#$mref]  (not found in the CR)"
+            set missing (math $missing + 1)
+            continue
+        end
+        if set -q _flag_plain
+            echo "$mref  $t"
+        else
+            echo "[CR#$mref]"
+            printf '%s\n' $t | fmt -w (math $width - 4) | sed 's/^/    /'
+        end
+    end
+    test $missing -eq 0; or exit 1
+end
+
+# Last body occurrence of "RULE text" / "RULE. text" in a raw cr.txt (TOC lines
+# precede the body, so last wins), prefix stripped.
+function cite_rule_from_txt --argument-names rule file
+    awk -v r=$rule 'BEGIN { p1 = r " "; p2 = r ". " }
+        { gsub(/\r$/, "") }
+        index($0, p1) == 1 { t = substr($0, length(p1) + 1) }
+        index($0, p2) == 1 { t = substr($0, length(p2) + 1) }
+        END { if (t != "") print t }' $file
+end
+
+function cmd_diff
+    set -l rule "$argv[1]"
+    test -n "$rule"; or die "cite diff: missing rule number"
+    test -r $lock_path; or die "cite diff: lockfile missing: $lock_path (run: cite bless)"
+    cite_prepare
+    set -l url (jq -r '.wizards_url // empty' $lock_path 2>/dev/null)
+    test -n "$url"; or die "cite diff: no wizards_url in the lockfile (legacy lock? re-bless)"
+    set -l old (mktemp)
+    if not curl -fsL --max-time 60 -o $old $url
+        rm -f $old
+        die "cite diff: failed to fetch $url"
+    end
+    set -l oldtext (cite_rule_from_txt $rule $old)
+    rm -f $old
+    set -l newtext (jq -r --arg m $rule --slurpfile sec $work/sections.json \
+        '.[$m].ruleText? // $sec[0][$m] // empty' $rules_dir/cr.json)
+    echo "[CR#$rule]"
+    if test -n "$oldtext"
+        echo "- $oldtext"
+    else
+        echo "- (absent in old version)"
+    end
+    if test -n "$newtext"
+        echo "+ $newtext"
+    else
+        echo "+ (absent in current CR)"
+    end
+end
+
+# ---------- dispatch ----------
+set -l cmd check
+if test (count $argv) -gt 0
+    set cmd $argv[1]
+    set -e argv[1]
+end
+switch $cmd
+    case check
+        cmd_check $argv
+    case bless
+        cmd_bless
+    case list
+        cmd_list
+    case show
+        cmd_show $argv
+    case diff
+        cmd_diff $argv
+    case '*'
+        die "cite: unknown subcommand: $cmd (expected check|bless|list|show|diff)"
+end

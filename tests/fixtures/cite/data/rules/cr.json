@@ -1,0 +1,8 @@
+{
+  "100.1": {"ruleNumber": "100.1", "ruleText": "Placeholder first rule."},
+  "100.1a": {"ruleNumber": "100.1a", "ruleText": "Placeholder subrule a."},
+  "702.22a": {"ruleNumber": "702.22a", "ruleText": "Banding is a static ability that modifies the rules for combat."},
+  "704.5k": {"ruleNumber": "704.5k", "ruleText": "Placeholder k."},
+  "704.5m": {"ruleNumber": "704.5m", "ruleText": "Placeholder m."},
+  "704.5n": {"ruleNumber": "704.5n", "ruleText": "Placeholder n."}
+}

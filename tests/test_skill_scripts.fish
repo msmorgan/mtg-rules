@@ -129,6 +129,64 @@ t "classify Cascade is composite" 'Cascade.*composite' $scripts/classify Cascade
 t_fails "classify bogus keyword" $scripts/classify zzgrok
 t "health reports effective date and exits 0" '(?s)effective.*HEALTH_OK' fish -c "$scripts/health; and echo HEALTH_OK"
 
+# --- cite (fixtures copied to a tmp dir; locks are created there by bless) ---
+set -l citetmp (mktemp -d)
+cp -r $fixtures/cite/. $citetmp/
+set -l cite $scripts/cite
+set -l cdat MTG_RULES_DATA=$citetmp/data
+set -l cdat2 MTG_RULES_DATA=$citetmp/data-v2
+set -l cdat3 MTG_RULES_DATA=$citetmp/data-v3
+set -l curlenv MTG_RULES_CITE_WIZARDS_URL=file://$citetmp/old-cr.txt
+
+t_fails "cite check before bless demands a lock" env $cdat $cite --config $citetmp/cfg-good.json check
+t "cite bless writes the lock" 'blessed 6 rules at cr_date 2026-04-17' \
+    env $cdat $curlenv $cite --config $citetmp/cfg-good.json bless
+t "cite lock entries are 16-hex" '"100\.1a": "[0-9a-f]{16}"' cat $citetmp/lock-good.json
+t "cite lock records the wizards url" 'file://' cat $citetmp/lock-good.json
+t "cite check green after bless" 'checked 6 citations against cr\.json \(eff\. 2026-04-17\); 0 stale' \
+    env $cdat $cite --config $citetmp/cfg-good.json check
+t "cite list expands ranges in document order (l-skip)" '704\.5k, 704\.5m, 704\.5n' \
+    env $cdat $cite --config $citetmp/cfg-good.json list
+t "cite list resolves leaf+section comma list" '\[CR#100\.1a,702\]  -> 100\.1a, 702' \
+    env $cdat $cite --config $citetmp/cfg-good.json list
+t "cite skips malformed tokens silently" '^0$' \
+    fish -c "env $cdat $cite --config $citetmp/cfg-good.json list | grep -c xyz; true"
+t "cite flags UNLOCKED for an unblessed cite" 'UNLOCKED  100\.1  src/more\.md:1' \
+    env $cdat $cite --config $citetmp/cfg-unlocked.json check
+t_fails "cite exits nonzero on stale" env $cdat $cite --config $citetmp/cfg-unlocked.json check
+t "cite flags GONE for a vanished rule" 'GONE  999\.9z' \
+    env $cdat $cite --config $citetmp/cfg-gone.json check
+t "cite flags GONE for a reversed range" 'GONE  704\.5n\.\.704\.5k' \
+    env $cdat $cite --config $citetmp/cfg-gone.json check
+t "cite flags CHANGED on a reworded rule" 'CHANGED  702\.22a' \
+    env $cdat2 $cite --config $citetmp/cfg-good.json check
+t "cite checksum ignores whitespace churn" '0 stale' \
+    env $cdat3 $cite --config $citetmp/cfg-good.json check
+t "cite diff prints old vs new" '(?s)- Banding once was different\..*\+ Banding is a static' \
+    env $cdat $cite --config $citetmp/cfg-good.json diff 702.22a
+t "cite diff marks absent-in-old" '- \(absent in old version\)' \
+    env $cdat $cite --config $citetmp/cfg-good.json diff 100.1a
+t "cite noncompliant flags all three legacy forms" '(?s)CR 107\.3.*rule 602.*509\.1h' \
+    env $cdat $cite --config $citetmp/cfg-nc.json check --list-noncompliant
+t "cite noncompliant count respects exemption" '4 non-compliant' \
+    env $cdat $cite --config $citetmp/cfg-nc.json check --list-noncompliant
+t "cite noncompliant ignores canonical citations" '^0$' \
+    fish -c "env $cdat $cite --config $citetmp/cfg-nc.json check --list-noncompliant | grep -c '702\.22a'; true"
+t_fails "cite noncompliant exits nonzero" env $cdat $cite --config $citetmp/cfg-nc.json check --list-noncompliant
+t "cite bare-mode bless" 'blessed 2 rules' \
+    env $cdat $curlenv $cite --config $citetmp/cfg-bare.json bless
+t "cite bare-mode check green" '0 stale' env $cdat $cite --config $citetmp/cfg-bare.json check
+t "cite bare-mode flags a missing rule" 'GONE  999\.9x' \
+    env $cdat $cite --config $citetmp/cfg-bare-missing.json check
+t "cite show prints wrapped rule text" 'Banding is a static ability' \
+    env $cdat $cite --config $citetmp/cfg-good.json show '[CR#702.22a]'
+t "cite show --plain prints number-prefixed line" '^702\.22a  Banding' \
+    env $cdat $cite --config $citetmp/cfg-good.json show --plain 702.22a
+t "cite show resolves a section title" 'Keyword Abilities' \
+    env $cdat $cite --config $citetmp/cfg-good.json show 702
+t_fails "cite show rejects a malformed citation" env $cdat $cite --config $citetmp/cfg-good.json show xyz
+rm -rf $citetmp
+
 # (tests appended by later tasks above this line)
 
 echo

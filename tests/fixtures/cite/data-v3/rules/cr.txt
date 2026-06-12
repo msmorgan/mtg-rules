@@ -1,0 +1,29 @@
+Magic: The Gathering Comprehensive Rules
+
+These rules are effective as of April 17, 2026.
+
+Contents
+
+1. Game Concepts
+
+100. General
+
+702. Keyword Abilities
+
+Credits
+
+1. Game Concepts
+
+100. General
+
+100.1. Placeholder first rule.
+100.1a Placeholder subrule a.
+
+702. Keyword Abilities
+
+702.22a Banding is a static ability that modifies the rules for combat.
+704.5k Placeholder k.
+704.5m Placeholder m.
+704.5n Placeholder n.
+
+Glossary

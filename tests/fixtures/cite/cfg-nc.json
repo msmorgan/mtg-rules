@@ -1,0 +1,6 @@
+{
+  "format": "bracketed",
+  "lockfile": "lock-good.json",
+  "sources": {"globs": ["src/noncomp.rs", "src/exempt.rs"]},
+  "noncompliant_exempt": ["src/exempt.rs"]
+}

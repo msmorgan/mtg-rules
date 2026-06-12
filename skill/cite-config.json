@@ -1,0 +1,7 @@
+{
+  "format": "bare",
+  "lockfile": "cr-citations.lock",
+  "sources": {
+    "globs": ["references/*.md", "keywords-classified.json"]
+  }
+}

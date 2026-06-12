@@ -1,0 +1,5 @@
+{
+  "format": "bracketed",
+  "lockfile": "lock-good.json",
+  "sources": {"globs": ["src/good.md"]}
+}

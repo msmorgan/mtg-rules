@@ -1,0 +1,5 @@
+{
+  "format": "bare",
+  "lockfile": "lock-bare.json",
+  "sources": {"globs": ["refs/*.md"]}
+}
