@@ -6,6 +6,15 @@
 #   cite [--config FILE] list                          # every citation site with expanded members
 #   cite [--config FILE] show <citation> [--plain]     # print the rule(s) a citation resolves to
 #   cite [--config FILE] diff <rule>                   # old-vs-current text for one rule
+#   cite [--config FILE] audit [--diff] [files…]       # claim-vs-rule-text report (semantic audit)
+#
+# audit: prints each citation site's claim line next to the FULL official
+# text of every rule it cites — the checker proves a rule EXISTS; whether it
+# is the rule the claim names needs a reader. `--diff` audits only the
+# lines ADDED in a unified diff (stdin if piped, else `jj diff --git` /
+# `git diff` in the config dir) — run it before every commit that touches
+# citations. With file arguments, audits those files; bare, the whole repo
+# (CR-refresh re-audits).
 #
 # Config (JSON, default ./cite-config.json; relative paths resolve against the
 # config file's directory):
@@ -224,6 +233,20 @@ function cmd_bless
         end
     end
     test -n "$url"; or die "cite bless: cannot resolve the wizards URL (offline?) and no existing lock to reuse"
+    # One forced glance per rule ENTERING the lock: a wrong-topic rule is
+    # cheapest to catch at introduction (the hash can never catch it later).
+    if test -r $lock_path
+        jq -r --slurpfile lock $lock_path \
+            '($lock[0].checksums // {}) as $old | keys[] | select($old[.] | not)' \
+            $work/cur.json > $work/new_rules.txt
+        if test -s $work/new_rules.txt
+            echo "newly registered rule(s) — eyeball each against its citing claim:"
+            jq -r --rawfile add $work/new_rules.txt --slurpfile sec $work/sections.json \
+                '. as $cr | ($add | split("\n") | map(select(length > 0)))[]
+                 | "  \(.): \(($cr[.].ruleText? // $sec[0][.] // "(?)")[0:110])"' \
+                $rules_dir/cr.json
+        end
+    end
     jq -nS --arg d $cr_effective --arg u $url --slurpfile h $work/cur.json \
         '{cr_date: $d, wizards_url: $u, checksums: $h[0]}' > $lock_path
     echo "blessed "(jq -r '.checksums | length' $lock_path)" rules at cr_date $cr_effective -> $lock_path"
@@ -306,6 +329,53 @@ function cmd_diff
     end
 end
 
+function cmd_audit
+    argparse diff -- $argv; or exit 2
+    cite_prepare
+    cite_tokens
+    set -l selector $work/sel.jsonl
+    if set -q _flag_diff
+        set -l difftext $work/diff.txt
+        if isatty stdin
+            jj -R $config_dir diff --git > $difftext 2>/dev/null
+            or git -C $config_dir diff > $difftext 2>/dev/null
+            or die "cite audit: no diff on stdin and neither jj nor git produced one in $config_dir"
+        else
+            cat > $difftext
+        end
+        # (file, new-line-number) of every ADDED line in the unified diff
+        awk '/^\+\+\+ / { f = $2; sub(/^b\//, "", f); next }
+             /^@@ / { split($0, a, "+"); split(a[2], b, ","); n = b[1] + 0 - 1; next }
+             /^\+/ { n++; if (f != "/dev/null") print f "\t" n; next }
+             /^-/ { next }
+             /^ / { n++ }' $difftext > $work/added.tsv
+        jq -c --rawfile added $work/added.tsv \
+            '($added | split("\n") | map(select(length > 0))) as $a
+             | (.file + "\t" + (.line | tostring)) as $key
+             | select($a | index($key))' \
+            $work/tokens.jsonl > $selector
+    else if test (count $argv) -gt 0
+        # restrict to the given files (paths relative to the config dir, or absolute)
+        printf '%s\n' $argv | string replace -r "^$config_dir/" '' > $work/files.txt
+        jq -c --rawfile files $work/files.txt \
+            '($files | split("\n") | map(select(length > 0))) as $f
+             | .file as $site_file
+             | select($f | index($site_file))' \
+            $work/tokens.jsonl > $selector
+    else
+        cp $work/tokens.jsonl $selector
+    end
+    set -l n (wc -l < $selector | string trim)
+    if test $n -eq 0
+        echo "audited 0 citation site(s) — nothing selected"
+        return 0
+    end
+    jq -r -f $jq_lib/audit.jq --arg fmt $cite_format \
+        --slurpfile toks $selector --slurpfile sec $work/sections.json \
+        $rules_dir/cr.json
+    echo "audited $n citation site(s) — read each rule text against its claim"
+end
+
 # ---------- dispatch ----------
 set -l cmd check
 if test (count $argv) -gt 0
@@ -323,6 +393,8 @@ switch $cmd
         cmd_show $argv
     case diff
         cmd_diff $argv
+    case audit
+        cmd_audit $argv
     case '*'
-        die "cite: unknown subcommand: $cmd (expected check|bless|list|show|diff)"
+        die "cite: unknown subcommand: $cmd (expected check|bless|list|show|diff|audit)"
 end
