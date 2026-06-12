@@ -189,6 +189,33 @@ t "cite show resolves a section title" 'Keyword Abilities' \
 t_fails "cite show rejects a malformed citation" env $cdat $cite --config $citetmp/cfg-good.json show xyz
 rm -rf $citetmp
 
+# --- version (conformance manifest) ---
+t "version emits the plugin version" '"plugin_version": "1\.7\.0"' $scripts/version
+t "version manifest parses with all four keys" '^true$' \
+    fish -c "$scripts/version | jq -e 'has(\"plugin_version\") and has(\"git_commit\") and has(\"cr_effective\") and has(\"keywords_classified_sha\")'"
+
+# --- keyword idents (machine enum spellings) ---
+t "idents: all 260 records carry a string ident" '^260$' \
+    jq -r '[.keywords[].ident | select(type == "string")] | length' $repo/skill/keywords-classified.json
+t "idents: all 260 unique" '^260$' \
+    jq -r '[.keywords[].ident] | unique | length' $repo/skill/keywords-classified.json
+t "idents: all match ^[A-Z][A-Za-z0-9]*\$" '^0$' \
+    jq -r '[.keywords[].ident | select(test("^[A-Z][A-Za-z0-9]*$") | not)] | length' $repo/skill/keywords-classified.json
+t "ident spot checks (First Strike, For Mirrodin!, ∞)" '^FirstStrike ForMirrodin Infinity$' \
+    jq -r '[.keywords[] | select(.name == "First Strike" or .name == "For Mirrodin!" or .name == "∞ (Infinity)") | .ident] | join(" ")' $repo/skill/keywords-classified.json
+t "classify prints the ident" 'ident: FirstStrike' $scripts/classify first strike
+
+# --- underdetermined (durable UD ids) ---
+t "underdetermined lists entry lines with categories" 'UD-7 — Concession granularity — category: open' $scripts/underdetermined
+t "underdetermined prints an entry by id" '(?s)UD-12.*Intra-batch.*704\.3' $scripts/underdetermined UD-12
+t "underdetermined resolves a bare number" 'Concession granularity' $scripts/underdetermined 7
+t "underdetermined retired ids still resolve" '(?s)U3.*settled-by-policy' $scripts/underdetermined U3
+t_fails "underdetermined bogus id" $scripts/underdetermined UD-999
+t_fails "underdetermined garbage arg" $scripts/underdetermined xyz
+
+# --- health per-doc staleness summary ---
+t "health reports reference-doc sync state" 'reference docs: \d+' fish -c "$scripts/health; true"
+
 # (tests appended by later tasks above this line)
 
 echo

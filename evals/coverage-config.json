@@ -1,0 +1,108 @@
+{
+  "meta": {
+    "description": "Taxonomy kind -> list of case-insensitive ERE patterns (grep -iE) over distinct supported oracle-text lines. A line counts for a kind if ANY of its patterns match. Honest v1: structural proxies derived from the reference docs; kinds may overlap (the union dedups); refine patterns to push union coverage toward 100%.",
+    "corpus": "same extraction as skill/scripts/corpus default scope: supported (vintage-legal, non-reversible) cards, text split on newlines, distinct lines"
+  },
+  "kinds": {
+    "keyword-line": {
+      "doc": "keyword-classification.md",
+      "patterns": [
+        "^[a-z][a-z' -]*(, ?[a-z][a-z' -]*)*$",
+        "^[a-z][a-z' -]*( [0-9x]+| \\{[^}]+\\})+([,;] ?[a-z][a-z' -]*( [0-9x]+| \\{[^}]+\\})*)*$",
+        "^[a-z][a-z' -]*( [0-9x]+| \\{[^}]+\\})* ?\\(",
+        "^ward—",
+        "^(hexproof|protection) from "
+      ]
+    },
+    "activated": {
+      "doc": "abilities.md",
+      "patterns": [
+        "^[^.:•]{1,100}: ",
+        "^[+−-][0-9x]+:",
+        "^0:"
+      ]
+    },
+    "triggered": {
+      "doc": "events.md",
+      "patterns": [
+        "^(when|whenever|at) ",
+        "^[a-z' -]+ — (when|whenever|at) ",
+        "^(i|ii|iii|iv|v|vi|vii|viii)(, (i|ii|iii|iv|v|vi|vii|viii))* — "
+      ]
+    },
+    "static": {
+      "doc": "effects.md",
+      "patterns": [
+        " (get|gets|have|has) [+-][0-9x]",
+        "^(all|each|other|creatures?|artifacts?|enchantments?|lands?|spells?|permanents?|players?)[^.]*(have|has|get|gets|can't|cost|costs) ",
+        " as long as ",
+        "^(this|equipped|enchanted|fortified) [a-z]+ (gets?|has|have|is|isn't|can|can't|doesn't|don't|enters) "
+      ]
+    },
+    "modal": {
+      "doc": "choices.md / grammar.md",
+      "patterns": [
+        "^choose (one|two|three|four|up to)",
+        "^• ",
+        "choose one —"
+      ]
+    },
+    "replacement-markers": {
+      "doc": "effects.md (614/615)",
+      "patterns": [
+        " instead",
+        "would",
+        "^as [^.]* enters",
+        " enters (the battlefield )?with ",
+        "enters (the battlefield )?tapped",
+        "skips? (your|that|the|all|each|their)",
+        "^prevent |prevent (all|that|the next)"
+      ]
+    },
+    "gate-toll-markers": {
+      "doc": "deontics.md (Gate = declaration-gating, Toll = resolution-stage)",
+      "patterns": [
+        " unless ",
+        " only if ",
+        " only during ",
+        " if able"
+      ]
+    },
+    "cost-lines": {
+      "doc": "costs.md",
+      "patterns": [
+        "^as an additional cost",
+        "additional cost",
+        " (more|less) to cast",
+        " rather than pay",
+        "without paying (its|their) mana cost",
+        "^you may pay ",
+        " costs? \\{"
+      ]
+    },
+    "one-shot-actions": {
+      "doc": "actions.md",
+      "patterns": [
+        "^(destroy|exile|counter|return|draw|discard|create|put|search|shuffle|reveal|look at|tap|untap|sacrifice|mill|exchange|proliferate|populate|investigate|amass|goad|surveil|scry|explore|venture|manifest|cloak|regenerate|fight|double|copy) ",
+        " deals? [0-9x]+ damage",
+        " deals? damage equal",
+        "^(you|target player|each player|each opponent|its controller|that player) (gains?|loses?|draws?|discards?|sacrifices?|mills?|creates?|reveals?|may) "
+      ]
+    },
+    "mana-production": {
+      "doc": "mana.md",
+      "patterns": [
+        "add \\{[wubrgcs0-9]",
+        "add [a-z]+ mana",
+        "add that much",
+        "add an amount of"
+      ]
+    },
+    "condition-prefix": {
+      "doc": "queries.md",
+      "patterns": [
+        "^if [^.]*, "
+      ]
+    }
+  }
+}

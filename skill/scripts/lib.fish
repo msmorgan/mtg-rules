@@ -43,3 +43,15 @@ function die
     printf '%s\n' "$argv" >&2
     exit 1
 end
+
+# ISO (YYYY-MM-DD) CR effective date from cr.txt; fails silently if absent.
+function cr_effective_iso
+    test -r $rules_dir/cr.txt; or return 1
+    set -l line (grep -m1 'effective as of' $rules_dir/cr.txt | string trim)
+    set -l m (string match -r 'effective as of ([A-Z][a-z]+) ([0-9]+), ([0-9]+)' -- $line)
+    test (count $m) -eq 4; or return 1
+    set -l months January February March April May June July August September October November December
+    set -l mi (contains -i -- $m[2] $months)
+    test -n "$mi"; or return 1
+    printf '%04d-%02d-%02d\n' $m[4] $mi $m[3]
+end

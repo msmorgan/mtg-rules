@@ -1,0 +1,31 @@
+#!/usr/bin/env fish
+# underdetermined [<id>] — the CR-underdetermined-semantics registry
+# (references/underdetermined.md) by durable entry id.
+#   underdetermined            # list every entry line (id — title — category)
+#   underdetermined UD-7       # print one entry (bare "7" works too)
+#   underdetermined U3         # pre-rename retired ids (S1, U2, U3, U5) work
+# Convention: consumers ADR-key their engine choices by UD id (see the doc).
+
+source (path resolve (status dirname))/lib.fish; or exit 1
+
+set -l doc $skill_dir/references/underdetermined.md
+test -r $doc; or die "underdetermined: $doc missing"
+
+if test (count $argv) -eq 0
+    grep -E '^### ' $doc | string replace -r '^### ' ''
+    exit 0
+end
+test (count $argv) -eq 1; or die "usage: underdetermined [<id>]   (underdetermined UD-7)"
+
+set -l id (string upper -- $argv[1])
+string match -rq '^[0-9]+$' -- $id; and set id "UD-$id"
+string match -rq '^(UD-|U|S)[0-9]+$' -- $id
+or die "underdetermined: bad id '$argv[1]' — want UD-N (or a retired S/U id); list with: underdetermined"
+
+awk -v id="$id" '
+    /^#/      { p = 0 }
+    /^### /   { p = (substr($0, 5, length(id) + 1) == id " ") }
+    p         { print; n++ }
+    END       { exit n ? 0 : 1 }
+' $doc
+or die "underdetermined: no entry '$id' — list ids with: scripts/underdetermined"

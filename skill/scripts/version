@@ -1,0 +1,30 @@
+#!/usr/bin/env fish
+# version — machine-readable conformance manifest:
+#   { plugin_version, git_commit, cr_effective, keywords_classified_sha }
+# Consumers pin this manifest as their conformance baseline; any field
+# changing is their re-sync trigger (see repo-root CHANGELOG.md for what
+# changed, taxonomy-meaning changes called out explicitly).
+#
+# git_commit is the repo HEAD (read-only lookup; null for plugin installs
+# that aren't a checkout). keywords_classified_sha is the sha256 of
+# keywords-classified.json. cr_effective is the live data's CR date
+# (null if cr.txt is absent).
+
+source (path resolve (status dirname))/lib.fish; or exit 1
+
+set -l plugin_version (jq -r '.version' $skill_dir/.claude-plugin/plugin.json)
+or die "version: cannot read $skill_dir/.claude-plugin/plugin.json"
+
+set -l git_commit (git -C $skill_dir rev-parse HEAD 2>/dev/null)
+
+set -l cr_effective (cr_effective_iso 2>/dev/null)
+
+set -l kc_sha (sha256sum $skill_dir/keywords-classified.json | string split -f1 ' ')
+or die "version: cannot hash $skill_dir/keywords-classified.json"
+
+jq -n --arg pv "$plugin_version" --arg gc "$git_commit" \
+    --arg eff "$cr_effective" --arg sha "$kc_sha" '
+    { plugin_version: $pv,
+      git_commit: (if $gc == "" then null else $gc end),
+      cr_effective: (if $eff == "" then null else $eff end),
+      keywords_classified_sha: $sha }'

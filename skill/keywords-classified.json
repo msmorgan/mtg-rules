@@ -14,11 +14,13 @@
       "attachment-relation": "A first-class attached-to edge between an object and a legal host (object or player) with legality predicate and violation policy.",
       "cost-modification-hook": "A permission that edits how the generic/colored mana of an already-determined total cost is paid (601.2f-h) \u2014 neither an additional nor an alternative cost.",
       "face-down-objects": "A primitive for objects existing face down (708): put/cast face down as a 2/2, secret-identity memory, and a special action to turn face up."
-    }
+    },
+    "ident_rule": "ident = PascalCase engine-enum spelling derived from name: drop apostrophes, treat every other non-alphanumeric run (spaces, hyphens, punctuation, symbols like \u221e) as a word break, uppercase each word's first letter, keep the rest as printed, join. First Strike\u2192FirstStrike; Jump-Start\u2192JumpStart; For Mirrodin!\u2192ForMirrodin; \u221e (Infinity)\u2192Infinity. Idents are unique across all 260 records and match ^[A-Z][A-Za-z0-9]*$ (harness-pinned); consumers drift-guard their keyword enums against them."
   },
   "keywords": [
     {
       "name": "Absorb",
+      "ident": "Absorb",
       "kind": "ability",
       "rule": "702.64",
       "class": "composite",
@@ -33,6 +35,7 @@
     },
     {
       "name": "Affinity",
+      "ident": "Affinity",
       "kind": "ability",
       "rule": "702.41",
       "class": "composite",
@@ -46,6 +49,7 @@
     },
     {
       "name": "Afflict",
+      "ident": "Afflict",
       "kind": "ability",
       "rule": "702.130",
       "class": "composite",
@@ -59,6 +63,7 @@
     },
     {
       "name": "Afterlife",
+      "ident": "Afterlife",
       "kind": "ability",
       "rule": "702.135",
       "class": "composite",
@@ -72,6 +77,7 @@
     },
     {
       "name": "Aftermath",
+      "ident": "Aftermath",
       "kind": "ability",
       "rule": "702.127",
       "class": "composite",
@@ -85,6 +91,7 @@
     },
     {
       "name": "Amplify",
+      "ident": "Amplify",
       "kind": "ability",
       "rule": "702.38",
       "class": "composite",
@@ -98,6 +105,7 @@
     },
     {
       "name": "Annihilator",
+      "ident": "Annihilator",
       "kind": "ability",
       "rule": "702.86",
       "class": "composite",
@@ -111,6 +119,7 @@
     },
     {
       "name": "Ascend",
+      "ident": "Ascend",
       "kind": "ability",
       "rule": "702.131",
       "class": "composite",
@@ -126,6 +135,7 @@
     },
     {
       "name": "Assist",
+      "ident": "Assist",
       "kind": "ability",
       "rule": "702.132",
       "class": "composite-given",
@@ -141,6 +151,7 @@
     },
     {
       "name": "Aura Swap",
+      "ident": "AuraSwap",
       "kind": "ability",
       "rule": "702.65",
       "class": "composite",
@@ -155,6 +166,7 @@
     },
     {
       "name": "Awaken",
+      "ident": "Awaken",
       "kind": "ability",
       "rule": "702.113",
       "class": "composite",
@@ -169,6 +181,7 @@
     },
     {
       "name": "Backup",
+      "ident": "Backup",
       "kind": "ability",
       "rule": "702.165",
       "class": "composite",
@@ -183,6 +196,7 @@
     },
     {
       "name": "Banding",
+      "ident": "Banding",
       "kind": "ability",
       "rule": "702.22",
       "class": "intrinsic",
@@ -199,6 +213,7 @@
     },
     {
       "name": "Bargain",
+      "ident": "Bargain",
       "kind": "ability",
       "rule": "702.166",
       "class": "composite",
@@ -214,6 +229,7 @@
     },
     {
       "name": "Battle Cry",
+      "ident": "BattleCry",
       "kind": "ability",
       "rule": "702.91",
       "class": "composite",
@@ -227,6 +243,7 @@
     },
     {
       "name": "Bestow",
+      "ident": "Bestow",
       "kind": "ability",
       "rule": "702.103",
       "class": "composite",
@@ -242,6 +259,7 @@
     },
     {
       "name": "Blitz",
+      "ident": "Blitz",
       "kind": "ability",
       "rule": "702.152",
       "class": "composite",
@@ -257,6 +275,7 @@
     },
     {
       "name": "Bloodthirst",
+      "ident": "Bloodthirst",
       "kind": "ability",
       "rule": "702.54",
       "class": "composite",
@@ -271,6 +290,7 @@
     },
     {
       "name": "Boast",
+      "ident": "Boast",
       "kind": "ability",
       "rule": "702.142",
       "class": "composite",
@@ -284,6 +304,7 @@
     },
     {
       "name": "Bushido",
+      "ident": "Bushido",
       "kind": "ability",
       "rule": "702.45",
       "class": "composite",
@@ -297,6 +318,7 @@
     },
     {
       "name": "Buyback",
+      "ident": "Buyback",
       "kind": "ability",
       "rule": "702.27",
       "class": "composite",
@@ -310,6 +332,7 @@
     },
     {
       "name": "Cascade",
+      "ident": "Cascade",
       "kind": "ability",
       "rule": "702.85",
       "class": "composite",
@@ -323,6 +346,7 @@
     },
     {
       "name": "Casualty",
+      "ident": "Casualty",
       "kind": "ability",
       "rule": "702.153",
       "class": "composite",
@@ -337,6 +361,7 @@
     },
     {
       "name": "Champion",
+      "ident": "Champion",
       "kind": "ability",
       "rule": "702.72",
       "class": "composite",
@@ -352,6 +377,7 @@
     },
     {
       "name": "Changeling",
+      "ident": "Changeling",
       "kind": "ability",
       "rule": "702.73",
       "class": "composite",
@@ -365,6 +391,7 @@
     },
     {
       "name": "Cipher",
+      "ident": "Cipher",
       "kind": "ability",
       "rule": "702.99",
       "class": "composite",
@@ -379,6 +406,7 @@
     },
     {
       "name": "Cleave",
+      "ident": "Cleave",
       "kind": "ability",
       "rule": "702.148",
       "class": "composite",
@@ -394,6 +422,7 @@
     },
     {
       "name": "Companion",
+      "ident": "Companion",
       "kind": "ability",
       "rule": "702.139",
       "class": "intrinsic",
@@ -409,6 +438,7 @@
     },
     {
       "name": "Compleated",
+      "ident": "Compleated",
       "kind": "ability",
       "rule": "702.150",
       "class": "composite",
@@ -422,6 +452,7 @@
     },
     {
       "name": "Conspire",
+      "ident": "Conspire",
       "kind": "ability",
       "rule": "702.78",
       "class": "composite",
@@ -435,6 +466,7 @@
     },
     {
       "name": "Convoke",
+      "ident": "Convoke",
       "kind": "ability",
       "rule": "702.51",
       "class": "composite-given",
@@ -449,6 +481,7 @@
     },
     {
       "name": "Craft",
+      "ident": "Craft",
       "kind": "ability",
       "rule": "702.167",
       "class": "composite",
@@ -462,6 +495,7 @@
     },
     {
       "name": "Crew",
+      "ident": "Crew",
       "kind": "ability",
       "rule": "702.122",
       "class": "composite",
@@ -475,6 +509,7 @@
     },
     {
       "name": "Cumulative Upkeep",
+      "ident": "CumulativeUpkeep",
       "kind": "ability",
       "rule": "702.24",
       "class": "composite",
@@ -488,6 +523,7 @@
     },
     {
       "name": "Cycling",
+      "ident": "Cycling",
       "kind": "ability",
       "rule": "702.29",
       "class": "composite",
@@ -501,6 +537,7 @@
     },
     {
       "name": "Dash",
+      "ident": "Dash",
       "kind": "ability",
       "rule": "702.109",
       "class": "composite",
@@ -514,6 +551,7 @@
     },
     {
       "name": "Daybound",
+      "ident": "Daybound",
       "kind": "ability",
       "rule": "702.145",
       "class": "composite-given",
@@ -529,6 +567,7 @@
     },
     {
       "name": "Deathtouch",
+      "ident": "Deathtouch",
       "kind": "ability",
       "rule": "702.2",
       "class": "intrinsic",
@@ -545,6 +584,7 @@
     },
     {
       "name": "Decayed",
+      "ident": "Decayed",
       "kind": "ability",
       "rule": "702.147",
       "class": "composite",
@@ -559,6 +599,7 @@
     },
     {
       "name": "Defender",
+      "ident": "Defender",
       "kind": "ability",
       "rule": "702.3",
       "class": "composite",
@@ -573,6 +614,7 @@
     },
     {
       "name": "Delve",
+      "ident": "Delve",
       "kind": "ability",
       "rule": "702.66",
       "class": "composite-given",
@@ -587,6 +629,7 @@
     },
     {
       "name": "Demonstrate",
+      "ident": "Demonstrate",
       "kind": "ability",
       "rule": "702.144",
       "class": "composite",
@@ -600,6 +643,7 @@
     },
     {
       "name": "Dethrone",
+      "ident": "Dethrone",
       "kind": "ability",
       "rule": "702.105",
       "class": "composite",
@@ -613,6 +657,7 @@
     },
     {
       "name": "Devoid",
+      "ident": "Devoid",
       "kind": "ability",
       "rule": "702.114",
       "class": "composite",
@@ -627,6 +672,7 @@
     },
     {
       "name": "Devour",
+      "ident": "Devour",
       "kind": "ability",
       "rule": "702.82",
       "class": "composite",
@@ -641,6 +687,7 @@
     },
     {
       "name": "Disguise",
+      "ident": "Disguise",
       "kind": "ability",
       "rule": "702.168",
       "class": "composite-given",
@@ -656,6 +703,7 @@
     },
     {
       "name": "Disturb",
+      "ident": "Disturb",
       "kind": "ability",
       "rule": "702.146",
       "class": "composite",
@@ -671,6 +719,7 @@
     },
     {
       "name": "Double Strike",
+      "ident": "DoubleStrike",
       "kind": "ability",
       "rule": "702.4",
       "class": "intrinsic",
@@ -686,6 +735,7 @@
     },
     {
       "name": "Dredge",
+      "ident": "Dredge",
       "kind": "ability",
       "rule": "702.52",
       "class": "composite",
@@ -699,6 +749,7 @@
     },
     {
       "name": "Echo",
+      "ident": "Echo",
       "kind": "ability",
       "rule": "702.30",
       "class": "composite",
@@ -712,6 +763,7 @@
     },
     {
       "name": "Embalm",
+      "ident": "Embalm",
       "kind": "ability",
       "rule": "702.128",
       "class": "composite",
@@ -725,6 +777,7 @@
     },
     {
       "name": "Emerge",
+      "ident": "Emerge",
       "kind": "ability",
       "rule": "702.119",
       "class": "composite",
@@ -739,6 +792,7 @@
     },
     {
       "name": "Enchant",
+      "ident": "Enchant",
       "kind": "ability",
       "rule": "702.5",
       "class": "composite",
@@ -753,6 +807,7 @@
     },
     {
       "name": "Encore",
+      "ident": "Encore",
       "kind": "ability",
       "rule": "702.141",
       "class": "composite",
@@ -766,11 +821,12 @@
     },
     {
       "name": "Enlist",
+      "ident": "Enlist",
       "kind": "ability",
       "rule": "702.154",
       "class": "composite",
       "given": null,
-      "how": "Optional cost to attack (508.1g) tapping an eligible creature, with a linked triggered ability (607.2h) granting +X/+0 — same template as exert (701.43d); 702.154b names both rules-native hooks explicitly.",
+      "how": "Optional cost to attack (508.1g) tapping an eligible creature, with a linked triggered ability (607.2h) granting +X/+0 \u2014 same template as exert (701.43d); 702.154b names both rules-native hooks explicitly.",
       "cites": [
         "702.154a",
         "702.154b",
@@ -782,6 +838,7 @@
     },
     {
       "name": "Entwine",
+      "ident": "Entwine",
       "kind": "ability",
       "rule": "702.42",
       "class": "composite",
@@ -797,6 +854,7 @@
     },
     {
       "name": "Epic",
+      "ident": "Epic",
       "kind": "ability",
       "rule": "702.50",
       "class": "composite",
@@ -811,6 +869,7 @@
     },
     {
       "name": "Equip",
+      "ident": "Equip",
       "kind": "ability",
       "rule": "702.6",
       "class": "composite",
@@ -825,6 +884,7 @@
     },
     {
       "name": "Escalate",
+      "ident": "Escalate",
       "kind": "ability",
       "rule": "702.120",
       "class": "composite",
@@ -838,6 +898,7 @@
     },
     {
       "name": "Escape",
+      "ident": "Escape",
       "kind": "ability",
       "rule": "702.138",
       "class": "composite",
@@ -853,6 +914,7 @@
     },
     {
       "name": "Eternalize",
+      "ident": "Eternalize",
       "kind": "ability",
       "rule": "702.129",
       "class": "composite",
@@ -866,6 +928,7 @@
     },
     {
       "name": "Evoke",
+      "ident": "Evoke",
       "kind": "ability",
       "rule": "702.74",
       "class": "composite",
@@ -879,6 +942,7 @@
     },
     {
       "name": "Evolve",
+      "ident": "Evolve",
       "kind": "ability",
       "rule": "702.100",
       "class": "composite",
@@ -892,6 +956,7 @@
     },
     {
       "name": "Exalted",
+      "ident": "Exalted",
       "kind": "ability",
       "rule": "702.83",
       "class": "composite",
@@ -906,6 +971,7 @@
     },
     {
       "name": "Exhaust",
+      "ident": "Exhaust",
       "kind": "ability",
       "rule": "702.177",
       "class": "composite",
@@ -920,6 +986,7 @@
     },
     {
       "name": "Exploit",
+      "ident": "Exploit",
       "kind": "ability",
       "rule": "702.110",
       "class": "composite",
@@ -933,6 +1000,7 @@
     },
     {
       "name": "Extort",
+      "ident": "Extort",
       "kind": "ability",
       "rule": "702.101",
       "class": "composite",
@@ -946,6 +1014,7 @@
     },
     {
       "name": "Fabricate",
+      "ident": "Fabricate",
       "kind": "ability",
       "rule": "702.123",
       "class": "composite",
@@ -959,6 +1028,7 @@
     },
     {
       "name": "Fading",
+      "ident": "Fading",
       "kind": "ability",
       "rule": "702.32",
       "class": "composite",
@@ -972,6 +1042,7 @@
     },
     {
       "name": "Fear",
+      "ident": "Fear",
       "kind": "ability",
       "rule": "702.36",
       "class": "composite",
@@ -985,6 +1056,7 @@
     },
     {
       "name": "Firebending",
+      "ident": "Firebending",
       "kind": "ability",
       "rule": "702.189",
       "class": "composite",
@@ -998,6 +1070,7 @@
     },
     {
       "name": "First Strike",
+      "ident": "FirstStrike",
       "kind": "ability",
       "rule": "702.7",
       "class": "intrinsic",
@@ -1013,6 +1086,7 @@
     },
     {
       "name": "Flanking",
+      "ident": "Flanking",
       "kind": "ability",
       "rule": "702.25",
       "class": "composite",
@@ -1026,6 +1100,7 @@
     },
     {
       "name": "Flash",
+      "ident": "Flash",
       "kind": "ability",
       "rule": "702.8",
       "class": "composite",
@@ -1039,6 +1114,7 @@
     },
     {
       "name": "Flashback",
+      "ident": "Flashback",
       "kind": "ability",
       "rule": "702.34",
       "class": "composite",
@@ -1053,6 +1129,7 @@
     },
     {
       "name": "Flying",
+      "ident": "Flying",
       "kind": "ability",
       "rule": "702.9",
       "class": "composite",
@@ -1066,6 +1143,7 @@
     },
     {
       "name": "For Mirrodin!",
+      "ident": "ForMirrodin",
       "kind": "ability",
       "rule": "702.163",
       "class": "composite",
@@ -1079,6 +1157,7 @@
     },
     {
       "name": "Forecast",
+      "ident": "Forecast",
       "kind": "ability",
       "rule": "702.57",
       "class": "composite",
@@ -1093,6 +1172,7 @@
     },
     {
       "name": "Foretell",
+      "ident": "Foretell",
       "kind": "ability",
       "rule": "702.143",
       "class": "composite",
@@ -1110,6 +1190,7 @@
     },
     {
       "name": "Fortify",
+      "ident": "Fortify",
       "kind": "ability",
       "rule": "702.67",
       "class": "composite",
@@ -1123,6 +1204,7 @@
     },
     {
       "name": "Freerunning",
+      "ident": "Freerunning",
       "kind": "ability",
       "rule": "702.173",
       "class": "composite",
@@ -1136,6 +1218,7 @@
     },
     {
       "name": "Frenzy",
+      "ident": "Frenzy",
       "kind": "ability",
       "rule": "702.68",
       "class": "composite",
@@ -1149,6 +1232,7 @@
     },
     {
       "name": "Fuse",
+      "ident": "Fuse",
       "kind": "ability",
       "rule": "702.102",
       "class": "composite",
@@ -1164,6 +1248,7 @@
     },
     {
       "name": "Gift",
+      "ident": "Gift",
       "kind": "ability",
       "rule": "702.174",
       "class": "composite",
@@ -1178,6 +1263,7 @@
     },
     {
       "name": "Graft",
+      "ident": "Graft",
       "kind": "ability",
       "rule": "702.58",
       "class": "composite",
@@ -1191,6 +1277,7 @@
     },
     {
       "name": "Gravestorm",
+      "ident": "Gravestorm",
       "kind": "ability",
       "rule": "702.69",
       "class": "composite",
@@ -1204,6 +1291,7 @@
     },
     {
       "name": "Harmonize",
+      "ident": "Harmonize",
       "kind": "ability",
       "rule": "702.180",
       "class": "composite",
@@ -1218,6 +1306,7 @@
     },
     {
       "name": "Haste",
+      "ident": "Haste",
       "kind": "ability",
       "rule": "702.10",
       "class": "composite",
@@ -1233,6 +1322,7 @@
     },
     {
       "name": "Haunt",
+      "ident": "Haunt",
       "kind": "ability",
       "rule": "702.55",
       "class": "composite",
@@ -1248,6 +1338,7 @@
     },
     {
       "name": "Hexproof",
+      "ident": "Hexproof",
       "kind": "ability",
       "rule": "702.11",
       "class": "composite",
@@ -1262,11 +1353,12 @@
     },
     {
       "name": "Hidden Agenda",
+      "ident": "HiddenAgenda",
       "kind": "ability",
       "rule": "702.106",
       "class": "composite",
       "given": null,
-      "how": "As the conspiracy is put into the command zone it is turned face down (variant-native, 905.4a — command zone, not 708) and a card name is secretly chosen as linked-ability memory (607.2d); a special action (116.2j) turns it face up. Every component is a rules-native hook the CR names explicitly.",
+      "how": "As the conspiracy is put into the command zone it is turned face down (variant-native, 905.4a \u2014 command zone, not 708) and a card name is secretly chosen as linked-ability memory (607.2d); a special action (116.2j) turns it face up. Every component is a rules-native hook the CR names explicitly.",
       "cites": [
         "702.106a",
         "702.106c",
@@ -1280,6 +1372,7 @@
     },
     {
       "name": "Hideaway",
+      "ident": "Hideaway",
       "kind": "ability",
       "rule": "702.75",
       "class": "composite",
@@ -1293,6 +1386,7 @@
     },
     {
       "name": "Horsemanship",
+      "ident": "Horsemanship",
       "kind": "ability",
       "rule": "702.31",
       "class": "composite",
@@ -1306,6 +1400,7 @@
     },
     {
       "name": "Impending",
+      "ident": "Impending",
       "kind": "ability",
       "rule": "702.176",
       "class": "composite",
@@ -1319,6 +1414,7 @@
     },
     {
       "name": "Improvise",
+      "ident": "Improvise",
       "kind": "ability",
       "rule": "702.126",
       "class": "composite-given",
@@ -1333,6 +1429,7 @@
     },
     {
       "name": "Increment",
+      "ident": "Increment",
       "kind": "ability",
       "rule": "702.191",
       "class": "composite",
@@ -1346,6 +1443,7 @@
     },
     {
       "name": "Indestructible",
+      "ident": "Indestructible",
       "kind": "ability",
       "rule": "702.12",
       "class": "composite",
@@ -1362,6 +1460,7 @@
     },
     {
       "name": "Infect",
+      "ident": "Infect",
       "kind": "ability",
       "rule": "702.90",
       "class": "composite-given",
@@ -1378,6 +1477,7 @@
     },
     {
       "name": "Ingest",
+      "ident": "Ingest",
       "kind": "ability",
       "rule": "702.115",
       "class": "composite",
@@ -1391,6 +1491,7 @@
     },
     {
       "name": "Intimidate",
+      "ident": "Intimidate",
       "kind": "ability",
       "rule": "702.13",
       "class": "composite",
@@ -1404,6 +1505,7 @@
     },
     {
       "name": "Job Select",
+      "ident": "JobSelect",
       "kind": "ability",
       "rule": "702.182",
       "class": "composite",
@@ -1417,6 +1519,7 @@
     },
     {
       "name": "Jump-Start",
+      "ident": "JumpStart",
       "kind": "ability",
       "rule": "702.133",
       "class": "composite",
@@ -1432,6 +1535,7 @@
     },
     {
       "name": "Kicker",
+      "ident": "Kicker",
       "kind": "ability",
       "rule": "702.33",
       "class": "composite",
@@ -1447,6 +1551,7 @@
     },
     {
       "name": "Landwalk",
+      "ident": "Landwalk",
       "kind": "ability",
       "rule": "702.14",
       "class": "composite",
@@ -1460,6 +1565,7 @@
     },
     {
       "name": "Level Up",
+      "ident": "LevelUp",
       "kind": "ability",
       "rule": "702.87",
       "class": "composite",
@@ -1474,6 +1580,7 @@
     },
     {
       "name": "Lifelink",
+      "ident": "Lifelink",
       "kind": "ability",
       "rule": "702.15",
       "class": "composite-given",
@@ -1488,6 +1595,7 @@
     },
     {
       "name": "Living Metal",
+      "ident": "LivingMetal",
       "kind": "ability",
       "rule": "702.161",
       "class": "composite",
@@ -1501,6 +1609,7 @@
     },
     {
       "name": "Living Weapon",
+      "ident": "LivingWeapon",
       "kind": "ability",
       "rule": "702.92",
       "class": "composite",
@@ -1514,6 +1623,7 @@
     },
     {
       "name": "Madness",
+      "ident": "Madness",
       "kind": "ability",
       "rule": "702.35",
       "class": "composite",
@@ -1529,6 +1639,7 @@
     },
     {
       "name": "Max Speed",
+      "ident": "MaxSpeed",
       "kind": "ability",
       "rule": "702.178",
       "class": "composite-given",
@@ -1543,6 +1654,7 @@
     },
     {
       "name": "Mayhem",
+      "ident": "Mayhem",
       "kind": "ability",
       "rule": "702.187",
       "class": "composite",
@@ -1557,6 +1669,7 @@
     },
     {
       "name": "Melee",
+      "ident": "Melee",
       "kind": "ability",
       "rule": "702.121",
       "class": "composite",
@@ -1570,6 +1683,7 @@
     },
     {
       "name": "Menace",
+      "ident": "Menace",
       "kind": "ability",
       "rule": "702.111",
       "class": "composite",
@@ -1584,6 +1698,7 @@
     },
     {
       "name": "Mentor",
+      "ident": "Mentor",
       "kind": "ability",
       "rule": "702.134",
       "class": "composite",
@@ -1597,6 +1712,7 @@
     },
     {
       "name": "Miracle",
+      "ident": "Miracle",
       "kind": "ability",
       "rule": "702.94",
       "class": "composite",
@@ -1611,6 +1727,7 @@
     },
     {
       "name": "Mobilize",
+      "ident": "Mobilize",
       "kind": "ability",
       "rule": "702.181",
       "class": "composite",
@@ -1624,6 +1741,7 @@
     },
     {
       "name": "Modular",
+      "ident": "Modular",
       "kind": "ability",
       "rule": "702.43",
       "class": "composite",
@@ -1637,6 +1755,7 @@
     },
     {
       "name": "More Than Meets the Eye",
+      "ident": "MoreThanMeetsTheEye",
       "kind": "ability",
       "rule": "702.162",
       "class": "composite",
@@ -1651,6 +1770,7 @@
     },
     {
       "name": "Morph",
+      "ident": "Morph",
       "kind": "ability",
       "rule": "702.37",
       "class": "composite-given",
@@ -1667,6 +1787,7 @@
     },
     {
       "name": "Mutate",
+      "ident": "Mutate",
       "kind": "ability",
       "rule": "702.140",
       "class": "intrinsic",
@@ -1682,6 +1803,7 @@
     },
     {
       "name": "Myriad",
+      "ident": "Myriad",
       "kind": "ability",
       "rule": "702.116",
       "class": "composite",
@@ -1695,6 +1817,7 @@
     },
     {
       "name": "Nightbound",
+      "ident": "Nightbound",
       "kind": "ability",
       "rule": "702.145",
       "class": "composite-given",
@@ -1710,6 +1833,7 @@
     },
     {
       "name": "Ninjutsu",
+      "ident": "Ninjutsu",
       "kind": "ability",
       "rule": "702.49",
       "class": "composite",
@@ -1724,6 +1848,7 @@
     },
     {
       "name": "Offering",
+      "ident": "Offering",
       "kind": "ability",
       "rule": "702.48",
       "class": "composite",
@@ -1738,6 +1863,7 @@
     },
     {
       "name": "Offspring",
+      "ident": "Offspring",
       "kind": "ability",
       "rule": "702.175",
       "class": "composite",
@@ -1751,6 +1877,7 @@
     },
     {
       "name": "Outlast",
+      "ident": "Outlast",
       "kind": "ability",
       "rule": "702.107",
       "class": "composite",
@@ -1764,6 +1891,7 @@
     },
     {
       "name": "Overload",
+      "ident": "Overload",
       "kind": "ability",
       "rule": "702.96",
       "class": "composite",
@@ -1778,6 +1906,7 @@
     },
     {
       "name": "Paradigm",
+      "ident": "Paradigm",
       "kind": "ability",
       "rule": "702.192",
       "class": "composite",
@@ -1791,6 +1920,7 @@
     },
     {
       "name": "Partner",
+      "ident": "Partner",
       "kind": "ability",
       "rule": "702.124",
       "class": "composite",
@@ -1806,6 +1936,7 @@
     },
     {
       "name": "Persist",
+      "ident": "Persist",
       "kind": "ability",
       "rule": "702.79",
       "class": "composite",
@@ -1819,6 +1950,7 @@
     },
     {
       "name": "Phasing",
+      "ident": "Phasing",
       "kind": "ability",
       "rule": "702.26",
       "class": "intrinsic",
@@ -1834,6 +1966,7 @@
     },
     {
       "name": "Plot",
+      "ident": "Plot",
       "kind": "ability",
       "rule": "702.170",
       "class": "composite",
@@ -1849,6 +1982,7 @@
     },
     {
       "name": "Poisonous",
+      "ident": "Poisonous",
       "kind": "ability",
       "rule": "702.70",
       "class": "composite",
@@ -1862,6 +1996,7 @@
     },
     {
       "name": "Protection",
+      "ident": "Protection",
       "kind": "ability",
       "rule": "702.16",
       "class": "composite",
@@ -1878,6 +2013,7 @@
     },
     {
       "name": "Prototype",
+      "ident": "Prototype",
       "kind": "ability",
       "rule": "702.160",
       "class": "composite",
@@ -1892,6 +2028,7 @@
     },
     {
       "name": "Provoke",
+      "ident": "Provoke",
       "kind": "ability",
       "rule": "702.39",
       "class": "composite",
@@ -1905,6 +2042,7 @@
     },
     {
       "name": "Prowess",
+      "ident": "Prowess",
       "kind": "ability",
       "rule": "702.108",
       "class": "composite",
@@ -1918,6 +2056,7 @@
     },
     {
       "name": "Prowl",
+      "ident": "Prowl",
       "kind": "ability",
       "rule": "702.76",
       "class": "composite",
@@ -1931,6 +2070,7 @@
     },
     {
       "name": "Rampage",
+      "ident": "Rampage",
       "kind": "ability",
       "rule": "702.23",
       "class": "composite",
@@ -1944,6 +2084,7 @@
     },
     {
       "name": "Ravenous",
+      "ident": "Ravenous",
       "kind": "ability",
       "rule": "702.156",
       "class": "composite",
@@ -1958,6 +2099,7 @@
     },
     {
       "name": "Reach",
+      "ident": "Reach",
       "kind": "ability",
       "rule": "702.17",
       "class": "marker",
@@ -1972,6 +2114,7 @@
     },
     {
       "name": "Read Ahead",
+      "ident": "ReadAhead",
       "kind": "ability",
       "rule": "702.155",
       "class": "composite",
@@ -1987,6 +2130,7 @@
     },
     {
       "name": "Rebound",
+      "ident": "Rebound",
       "kind": "ability",
       "rule": "702.88",
       "class": "composite",
@@ -2000,6 +2144,7 @@
     },
     {
       "name": "Reconfigure",
+      "ident": "Reconfigure",
       "kind": "ability",
       "rule": "702.151",
       "class": "composite",
@@ -2014,6 +2159,7 @@
     },
     {
       "name": "Recover",
+      "ident": "Recover",
       "kind": "ability",
       "rule": "702.59",
       "class": "composite",
@@ -2027,6 +2173,7 @@
     },
     {
       "name": "Reinforce",
+      "ident": "Reinforce",
       "kind": "ability",
       "rule": "702.77",
       "class": "composite",
@@ -2040,6 +2187,7 @@
     },
     {
       "name": "Renown",
+      "ident": "Renown",
       "kind": "ability",
       "rule": "702.112",
       "class": "composite",
@@ -2054,6 +2202,7 @@
     },
     {
       "name": "Replicate",
+      "ident": "Replicate",
       "kind": "ability",
       "rule": "702.56",
       "class": "composite",
@@ -2068,6 +2217,7 @@
     },
     {
       "name": "Retrace",
+      "ident": "Retrace",
       "kind": "ability",
       "rule": "702.81",
       "class": "composite",
@@ -2081,6 +2231,7 @@
     },
     {
       "name": "Riot",
+      "ident": "Riot",
       "kind": "ability",
       "rule": "702.136",
       "class": "composite",
@@ -2094,6 +2245,7 @@
     },
     {
       "name": "Ripple",
+      "ident": "Ripple",
       "kind": "ability",
       "rule": "702.60",
       "class": "composite",
@@ -2107,6 +2259,7 @@
     },
     {
       "name": "Saddle",
+      "ident": "Saddle",
       "kind": "ability",
       "rule": "702.171",
       "class": "composite",
@@ -2121,6 +2274,7 @@
     },
     {
       "name": "Scavenge",
+      "ident": "Scavenge",
       "kind": "ability",
       "rule": "702.97",
       "class": "composite",
@@ -2134,6 +2288,7 @@
     },
     {
       "name": "Shadow",
+      "ident": "Shadow",
       "kind": "ability",
       "rule": "702.28",
       "class": "composite",
@@ -2147,6 +2302,7 @@
     },
     {
       "name": "Shroud",
+      "ident": "Shroud",
       "kind": "ability",
       "rule": "702.18",
       "class": "composite",
@@ -2160,6 +2316,7 @@
     },
     {
       "name": "Skulk",
+      "ident": "Skulk",
       "kind": "ability",
       "rule": "702.118",
       "class": "composite",
@@ -2174,6 +2331,7 @@
     },
     {
       "name": "Sneak",
+      "ident": "Sneak",
       "kind": "ability",
       "rule": "702.190",
       "class": "composite",
@@ -2189,6 +2347,7 @@
     },
     {
       "name": "Solved",
+      "ident": "Solved",
       "kind": "ability",
       "rule": "702.169",
       "class": "composite",
@@ -2205,6 +2364,7 @@
     },
     {
       "name": "Soulbond",
+      "ident": "Soulbond",
       "kind": "ability",
       "rule": "702.95",
       "class": "composite",
@@ -2220,6 +2380,7 @@
     },
     {
       "name": "Soulshift",
+      "ident": "Soulshift",
       "kind": "ability",
       "rule": "702.46",
       "class": "composite",
@@ -2233,6 +2394,7 @@
     },
     {
       "name": "Space Sculptor",
+      "ident": "SpaceSculptor",
       "kind": "ability",
       "rule": "702.158",
       "class": "composite",
@@ -2248,6 +2410,7 @@
     },
     {
       "name": "Spectacle",
+      "ident": "Spectacle",
       "kind": "ability",
       "rule": "702.137",
       "class": "composite",
@@ -2262,6 +2425,7 @@
     },
     {
       "name": "Splice",
+      "ident": "Splice",
       "kind": "ability",
       "rule": "702.47",
       "class": "composite",
@@ -2277,6 +2441,7 @@
     },
     {
       "name": "Split Second",
+      "ident": "SplitSecond",
       "kind": "ability",
       "rule": "702.61",
       "class": "composite",
@@ -2291,6 +2456,7 @@
     },
     {
       "name": "Spree",
+      "ident": "Spree",
       "kind": "ability",
       "rule": "702.172",
       "class": "composite",
@@ -2304,6 +2470,7 @@
     },
     {
       "name": "Squad",
+      "ident": "Squad",
       "kind": "ability",
       "rule": "702.157",
       "class": "composite",
@@ -2318,6 +2485,7 @@
     },
     {
       "name": "Start Your Engines!",
+      "ident": "StartYourEngines",
       "kind": "ability",
       "rule": "702.179",
       "class": "composite-given",
@@ -2332,6 +2500,7 @@
     },
     {
       "name": "Station",
+      "ident": "Station",
       "kind": "ability",
       "rule": "702.184",
       "class": "composite",
@@ -2345,6 +2514,7 @@
     },
     {
       "name": "Storm",
+      "ident": "Storm",
       "kind": "ability",
       "rule": "702.40",
       "class": "composite",
@@ -2359,6 +2529,7 @@
     },
     {
       "name": "Sunburst",
+      "ident": "Sunburst",
       "kind": "ability",
       "rule": "702.44",
       "class": "composite",
@@ -2373,6 +2544,7 @@
     },
     {
       "name": "Surge",
+      "ident": "Surge",
       "kind": "ability",
       "rule": "702.117",
       "class": "composite",
@@ -2386,6 +2558,7 @@
     },
     {
       "name": "Suspend",
+      "ident": "Suspend",
       "kind": "ability",
       "rule": "702.62",
       "class": "composite",
@@ -2401,6 +2574,7 @@
     },
     {
       "name": "Tiered",
+      "ident": "Tiered",
       "kind": "ability",
       "rule": "702.183",
       "class": "composite",
@@ -2414,6 +2588,7 @@
     },
     {
       "name": "Toxic",
+      "ident": "Toxic",
       "kind": "ability",
       "rule": "702.164",
       "class": "composite-given",
@@ -2428,6 +2603,7 @@
     },
     {
       "name": "Training",
+      "ident": "Training",
       "kind": "ability",
       "rule": "702.149",
       "class": "composite",
@@ -2441,6 +2617,7 @@
     },
     {
       "name": "Trample",
+      "ident": "Trample",
       "kind": "ability",
       "rule": "702.19",
       "class": "intrinsic",
@@ -2457,6 +2634,7 @@
     },
     {
       "name": "Transfigure",
+      "ident": "Transfigure",
       "kind": "ability",
       "rule": "702.71",
       "class": "composite",
@@ -2470,6 +2648,7 @@
     },
     {
       "name": "Transmute",
+      "ident": "Transmute",
       "kind": "ability",
       "rule": "702.53",
       "class": "composite",
@@ -2483,6 +2662,7 @@
     },
     {
       "name": "Tribute",
+      "ident": "Tribute",
       "kind": "ability",
       "rule": "702.104",
       "class": "composite",
@@ -2497,6 +2677,7 @@
     },
     {
       "name": "Umbra Armor",
+      "ident": "UmbraArmor",
       "kind": "ability",
       "rule": "702.89",
       "class": "composite",
@@ -2510,6 +2691,7 @@
     },
     {
       "name": "Undaunted",
+      "ident": "Undaunted",
       "kind": "ability",
       "rule": "702.125",
       "class": "composite",
@@ -2523,6 +2705,7 @@
     },
     {
       "name": "Undying",
+      "ident": "Undying",
       "kind": "ability",
       "rule": "702.93",
       "class": "composite",
@@ -2536,6 +2719,7 @@
     },
     {
       "name": "Unearth",
+      "ident": "Unearth",
       "kind": "ability",
       "rule": "702.84",
       "class": "composite",
@@ -2549,6 +2733,7 @@
     },
     {
       "name": "Unleash",
+      "ident": "Unleash",
       "kind": "ability",
       "rule": "702.98",
       "class": "composite",
@@ -2562,6 +2747,7 @@
     },
     {
       "name": "Vanishing",
+      "ident": "Vanishing",
       "kind": "ability",
       "rule": "702.63",
       "class": "composite",
@@ -2575,11 +2761,12 @@
     },
     {
       "name": "Vigilance",
+      "ident": "Vigilance",
       "kind": "ability",
       "rule": "702.20",
       "class": "intrinsic",
       "given": null,
-      "how": "Dedicated rules text inside the attack-declaration procedure: 702.20a names it a static ability that modifies the rules for the declare attackers step, and 702.20b exempts the creature from 508.1f's attack-tap — the same justification shape as trample owning 510.1c-d. Hypothetical decomposition (documented, not adopted): a null-replacement on tap(cause: attack-declaration) given cause-tagged events; that primitive was retired as sole-dependent under the dependents threshold (keyword-classification.md).",
+      "how": "Dedicated rules text inside the attack-declaration procedure: 702.20a names it a static ability that modifies the rules for the declare attackers step, and 702.20b exempts the creature from 508.1f's attack-tap \u2014 the same justification shape as trample owning 510.1c-d. Hypothetical decomposition (documented, not adopted): a null-replacement on tap(cause: attack-declaration) given cause-tagged events; that primitive was retired as sole-dependent under the dependents threshold (keyword-classification.md).",
       "cites": [
         "702.20a",
         "702.20b",
@@ -2590,6 +2777,7 @@
     },
     {
       "name": "Visit",
+      "ident": "Visit",
       "kind": "ability",
       "rule": "702.159",
       "class": "composite",
@@ -2604,6 +2792,7 @@
     },
     {
       "name": "Ward",
+      "ident": "Ward",
       "kind": "ability",
       "rule": "702.21",
       "class": "composite",
@@ -2617,6 +2806,7 @@
     },
     {
       "name": "Warp",
+      "ident": "Warp",
       "kind": "ability",
       "rule": "702.185",
       "class": "composite",
@@ -2630,6 +2820,7 @@
     },
     {
       "name": "Web-slinging",
+      "ident": "WebSlinging",
       "kind": "ability",
       "rule": "702.188",
       "class": "composite",
@@ -2643,6 +2834,7 @@
     },
     {
       "name": "Wither",
+      "ident": "Wither",
       "kind": "ability",
       "rule": "702.80",
       "class": "composite-given",
@@ -2658,6 +2850,7 @@
     },
     {
       "name": "\u221e (Infinity)",
+      "ident": "Infinity",
       "kind": "ability",
       "rule": "702.186",
       "class": "composite",
@@ -2672,6 +2865,7 @@
     },
     {
       "name": "Abandon",
+      "ident": "Abandon",
       "kind": "action",
       "rule": "701.33",
       "class": "composite",
@@ -2686,6 +2880,7 @@
     },
     {
       "name": "Activate",
+      "ident": "Activate",
       "kind": "action",
       "rule": "701.2",
       "class": "intrinsic",
@@ -2699,6 +2894,7 @@
     },
     {
       "name": "Adapt",
+      "ident": "Adapt",
       "kind": "action",
       "rule": "701.46",
       "class": "composite",
@@ -2712,6 +2908,7 @@
     },
     {
       "name": "Airbend",
+      "ident": "Airbend",
       "kind": "action",
       "rule": "701.65",
       "class": "composite",
@@ -2726,6 +2923,7 @@
     },
     {
       "name": "Amass",
+      "ident": "Amass",
       "kind": "action",
       "rule": "701.47",
       "class": "composite",
@@ -2740,6 +2938,7 @@
     },
     {
       "name": "Assemble",
+      "ident": "Assemble",
       "kind": "action",
       "rule": "701.45",
       "class": "composite",
@@ -2753,6 +2952,7 @@
     },
     {
       "name": "Attach",
+      "ident": "Attach",
       "kind": "action",
       "rule": "701.3",
       "class": "composite-given",
@@ -2768,6 +2968,7 @@
     },
     {
       "name": "Behold",
+      "ident": "Behold",
       "kind": "action",
       "rule": "701.4",
       "class": "composite",
@@ -2782,6 +2983,7 @@
     },
     {
       "name": "Blight",
+      "ident": "Blight",
       "kind": "action",
       "rule": "701.68",
       "class": "composite",
@@ -2797,6 +2999,7 @@
     },
     {
       "name": "Bolster",
+      "ident": "Bolster",
       "kind": "action",
       "rule": "701.39",
       "class": "composite",
@@ -2810,6 +3013,7 @@
     },
     {
       "name": "Cast",
+      "ident": "Cast",
       "kind": "action",
       "rule": "701.5",
       "class": "intrinsic",
@@ -2824,6 +3028,7 @@
     },
     {
       "name": "Clash",
+      "ident": "Clash",
       "kind": "action",
       "rule": "701.30",
       "class": "composite",
@@ -2839,6 +3044,7 @@
     },
     {
       "name": "Cloak",
+      "ident": "Cloak",
       "kind": "action",
       "rule": "701.58",
       "class": "composite-given",
@@ -2855,6 +3061,7 @@
     },
     {
       "name": "Collect Evidence",
+      "ident": "CollectEvidence",
       "kind": "action",
       "rule": "701.59",
       "class": "composite",
@@ -2870,6 +3077,7 @@
     },
     {
       "name": "Connive",
+      "ident": "Connive",
       "kind": "action",
       "rule": "701.50",
       "class": "composite",
@@ -2884,6 +3092,7 @@
     },
     {
       "name": "Convert",
+      "ident": "Convert",
       "kind": "action",
       "rule": "701.28",
       "class": "intrinsic",
@@ -2900,6 +3109,7 @@
     },
     {
       "name": "Counter",
+      "ident": "Counter",
       "kind": "action",
       "rule": "701.6",
       "class": "intrinsic",
@@ -2914,6 +3124,7 @@
     },
     {
       "name": "Create",
+      "ident": "Create",
       "kind": "action",
       "rule": "701.7",
       "class": "intrinsic",
@@ -2928,6 +3139,7 @@
     },
     {
       "name": "Destroy",
+      "ident": "Destroy",
       "kind": "action",
       "rule": "701.8",
       "class": "intrinsic",
@@ -2943,6 +3155,7 @@
     },
     {
       "name": "Detain",
+      "ident": "Detain",
       "kind": "action",
       "rule": "701.35",
       "class": "composite",
@@ -2956,6 +3169,7 @@
     },
     {
       "name": "Discard",
+      "ident": "Discard",
       "kind": "action",
       "rule": "701.9",
       "class": "intrinsic",
@@ -2971,6 +3185,7 @@
     },
     {
       "name": "Discover",
+      "ident": "Discover",
       "kind": "action",
       "rule": "701.57",
       "class": "composite",
@@ -2985,6 +3200,7 @@
     },
     {
       "name": "Double",
+      "ident": "Double",
       "kind": "action",
       "rule": "701.10",
       "class": "composite",
@@ -3001,6 +3217,7 @@
     },
     {
       "name": "Earthbend",
+      "ident": "Earthbend",
       "kind": "action",
       "rule": "701.66",
       "class": "composite",
@@ -3015,6 +3232,7 @@
     },
     {
       "name": "Endure",
+      "ident": "Endure",
       "kind": "action",
       "rule": "701.63",
       "class": "composite",
@@ -3029,6 +3247,7 @@
     },
     {
       "name": "Exchange",
+      "ident": "Exchange",
       "kind": "action",
       "rule": "701.12",
       "class": "composite",
@@ -3045,6 +3264,7 @@
     },
     {
       "name": "Exert",
+      "ident": "Exert",
       "kind": "action",
       "rule": "701.43",
       "class": "composite",
@@ -3059,6 +3279,7 @@
     },
     {
       "name": "Exile",
+      "ident": "Exile",
       "kind": "action",
       "rule": "701.13",
       "class": "intrinsic",
@@ -3072,6 +3293,7 @@
     },
     {
       "name": "Explore",
+      "ident": "Explore",
       "kind": "action",
       "rule": "701.44",
       "class": "composite",
@@ -3086,6 +3308,7 @@
     },
     {
       "name": "Face a Villainous Choice",
+      "ident": "FaceAVillainousChoice",
       "kind": "action",
       "rule": "701.55",
       "class": "composite",
@@ -3101,6 +3324,7 @@
     },
     {
       "name": "Fateseal",
+      "ident": "Fateseal",
       "kind": "action",
       "rule": "701.29",
       "class": "composite",
@@ -3114,6 +3338,7 @@
     },
     {
       "name": "Fight",
+      "ident": "Fight",
       "kind": "action",
       "rule": "701.14",
       "class": "composite",
@@ -3129,6 +3354,7 @@
     },
     {
       "name": "Forage",
+      "ident": "Forage",
       "kind": "action",
       "rule": "701.61",
       "class": "composite",
@@ -3142,6 +3368,7 @@
     },
     {
       "name": "Goad",
+      "ident": "Goad",
       "kind": "action",
       "rule": "701.15",
       "class": "composite",
@@ -3157,6 +3384,7 @@
     },
     {
       "name": "Harness",
+      "ident": "Harness",
       "kind": "action",
       "rule": "701.64",
       "class": "composite",
@@ -3171,6 +3399,7 @@
     },
     {
       "name": "Incubate",
+      "ident": "Incubate",
       "kind": "action",
       "rule": "701.53",
       "class": "composite",
@@ -3185,6 +3414,7 @@
     },
     {
       "name": "Investigate",
+      "ident": "Investigate",
       "kind": "action",
       "rule": "701.16",
       "class": "composite",
@@ -3199,6 +3429,7 @@
     },
     {
       "name": "Learn",
+      "ident": "Learn",
       "kind": "action",
       "rule": "701.48",
       "class": "composite",
@@ -3212,6 +3443,7 @@
     },
     {
       "name": "Manifest",
+      "ident": "Manifest",
       "kind": "action",
       "rule": "701.40",
       "class": "composite-given",
@@ -3228,6 +3460,7 @@
     },
     {
       "name": "Manifest Dread",
+      "ident": "ManifestDread",
       "kind": "action",
       "rule": "701.62",
       "class": "composite-given",
@@ -3244,6 +3477,7 @@
     },
     {
       "name": "Meld",
+      "ident": "Meld",
       "kind": "action",
       "rule": "701.42",
       "class": "composite",
@@ -3258,6 +3492,7 @@
     },
     {
       "name": "Mill",
+      "ident": "Mill",
       "kind": "action",
       "rule": "701.17",
       "class": "composite",
@@ -3273,6 +3508,7 @@
     },
     {
       "name": "Monstrosity",
+      "ident": "Monstrosity",
       "kind": "action",
       "rule": "701.37",
       "class": "composite",
@@ -3287,6 +3523,7 @@
     },
     {
       "name": "Open an Attraction",
+      "ident": "OpenAnAttraction",
       "kind": "action",
       "rule": "701.51",
       "class": "composite",
@@ -3301,6 +3538,7 @@
     },
     {
       "name": "Planeswalk",
+      "ident": "Planeswalk",
       "kind": "action",
       "rule": "701.31",
       "class": "composite",
@@ -3316,6 +3554,7 @@
     },
     {
       "name": "Play",
+      "ident": "Play",
       "kind": "action",
       "rule": "701.18",
       "class": "intrinsic",
@@ -3332,6 +3571,7 @@
     },
     {
       "name": "Populate",
+      "ident": "Populate",
       "kind": "action",
       "rule": "701.36",
       "class": "composite",
@@ -3346,6 +3586,7 @@
     },
     {
       "name": "Proliferate",
+      "ident": "Proliferate",
       "kind": "action",
       "rule": "701.34",
       "class": "composite",
@@ -3360,6 +3601,7 @@
     },
     {
       "name": "Regenerate",
+      "ident": "Regenerate",
       "kind": "action",
       "rule": "701.19",
       "class": "composite",
@@ -3375,6 +3617,7 @@
     },
     {
       "name": "Reveal",
+      "ident": "Reveal",
       "kind": "action",
       "rule": "701.20",
       "class": "intrinsic",
@@ -3390,6 +3633,7 @@
     },
     {
       "name": "Roll to Visit Your Attractions",
+      "ident": "RollToVisitYourAttractions",
       "kind": "action",
       "rule": "701.52",
       "class": "composite",
@@ -3403,6 +3647,7 @@
     },
     {
       "name": "Sacrifice",
+      "ident": "Sacrifice",
       "kind": "action",
       "rule": "701.21",
       "class": "intrinsic",
@@ -3416,6 +3661,7 @@
     },
     {
       "name": "Scry",
+      "ident": "Scry",
       "kind": "action",
       "rule": "701.22",
       "class": "composite",
@@ -3431,6 +3677,7 @@
     },
     {
       "name": "Search",
+      "ident": "Search",
       "kind": "action",
       "rule": "701.23",
       "class": "intrinsic",
@@ -3446,6 +3693,7 @@
     },
     {
       "name": "Set in Motion",
+      "ident": "SetInMotion",
       "kind": "action",
       "rule": "701.32",
       "class": "composite",
@@ -3461,6 +3709,7 @@
     },
     {
       "name": "Shuffle",
+      "ident": "Shuffle",
       "kind": "action",
       "rule": "701.24",
       "class": "intrinsic",
@@ -3476,6 +3725,7 @@
     },
     {
       "name": "Support",
+      "ident": "Support",
       "kind": "action",
       "rule": "701.41",
       "class": "composite",
@@ -3489,6 +3739,7 @@
     },
     {
       "name": "Surveil",
+      "ident": "Surveil",
       "kind": "action",
       "rule": "701.25",
       "class": "composite",
@@ -3503,6 +3754,7 @@
     },
     {
       "name": "Suspect",
+      "ident": "Suspect",
       "kind": "action",
       "rule": "701.60",
       "class": "composite",
@@ -3518,6 +3770,7 @@
     },
     {
       "name": "Tap",
+      "ident": "Tap",
       "kind": "action",
       "rule": "701.26",
       "class": "intrinsic",
@@ -3531,6 +3784,7 @@
     },
     {
       "name": "The Ring Tempts You",
+      "ident": "TheRingTemptsYou",
       "kind": "action",
       "rule": "701.54",
       "class": "composite",
@@ -3546,6 +3800,7 @@
     },
     {
       "name": "Time Travel",
+      "ident": "TimeTravel",
       "kind": "action",
       "rule": "701.56",
       "class": "composite",
@@ -3559,6 +3814,7 @@
     },
     {
       "name": "Transform",
+      "ident": "Transform",
       "kind": "action",
       "rule": "701.27",
       "class": "intrinsic",
@@ -3575,6 +3831,7 @@
     },
     {
       "name": "Triple",
+      "ident": "Triple",
       "kind": "action",
       "rule": "701.11",
       "class": "composite",
@@ -3590,6 +3847,7 @@
     },
     {
       "name": "Untap",
+      "ident": "Untap",
       "kind": "action",
       "rule": "701.26",
       "class": "intrinsic",
@@ -3603,6 +3861,7 @@
     },
     {
       "name": "Venture into the Dungeon",
+      "ident": "VentureIntoTheDungeon",
       "kind": "action",
       "rule": "701.49",
       "class": "composite",
@@ -3618,6 +3877,7 @@
     },
     {
       "name": "Vote",
+      "ident": "Vote",
       "kind": "action",
       "rule": "701.38",
       "class": "composite",
@@ -3632,6 +3892,7 @@
     },
     {
       "name": "Waterbend",
+      "ident": "Waterbend",
       "kind": "action",
       "rule": "701.67",
       "class": "composite-given",

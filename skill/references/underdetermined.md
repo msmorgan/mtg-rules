@@ -16,14 +16,26 @@ empty cell is *design space* — no rule or card instantiates the
 combination, so nothing poses the question yet — while an entry here is a
 *semantic gap* in live rules: the rules as written already pose the
 question, or an engine implementing them generically must answer it now.
-Entry IDs (U1…) are stable; cite them from other docs. Status: `assumed`
-= a reference doc commits to a choice; `open` = no doc commitment yet;
+Entry ids are durable (`UD-NNN` — never renumbered, never reused); cite
+them from other docs. Every entry line carries its category: `assumed` =
+a reference doc commits to a choice; `open` = no doc commitment yet;
 `representation-only` = the CR fixes observable behavior, only the
-internal representation is open — still pin it.
+internal representation is open — still pin it; `settled` /
+`settled-by-policy` entries live in the Settled section (entries retired
+before the UD rename keep their original S/U ids). Look entries up with
+`scripts/underdetermined <id>` (no argument lists every entry line);
+`scripts/lookup` also surfaces the entry headings.
+
+**Consumer convention** (the two-way feedback loop's skeleton): this
+registry records *what the CR underdetermines*, engine-agnostically — it
+never picks for you. A consumer repo records *which option it chose* in
+its own ADRs, keyed by UD id (e.g. "ADR-012: UD-7 — concession lands at
+event boundaries"). When a CR refresh settles an entry, the UD id is the
+join key telling each consumer which ADR to revisit.
 
 ## Registry
 
-**U1 — Snow-ness evaluation timing for banked mana** — Status: `assumed`
+### UD-1 — Snow-ness evaluation timing for banked mana — category: assumed
 
 - **CR says:** {S} in a cost is payable with "one mana of any type
   produced by a snow source" (107.4h); the source of mana is the
@@ -42,7 +54,7 @@ internal representation is open — still pin it.
   the producer pointer. Observable only when snow-ness changes between
   production and payment within one step or phase (106.4).
 
-**U4 — Cast-from-stack object identity** — Status: `assumed`
+### UD-4 — Cast-from-stack object identity — category: assumed
 
 - **CR says:** casting moves the card "from where it is to the stack"
   (601.2a); an object changing zones becomes a new object, with a closed
@@ -61,8 +73,7 @@ internal representation is open — still pin it.
   cast that never moved); new-object-in-place (consistent with 400.7's
   spirit; needs invented semantics for "moves from a zone to itself").
 
-**U6 — One undefined value (⊥) behind seven per-case rules** — Status:
-`assumed`
+### UD-6 — One undefined value (⊥) behind seven per-case rules — category: assumed
 
 - **CR says:** per-case handling only — undetermined number → 0 (107.2);
   undefined choice → that part does nothing (607.5a); undefined mana type
@@ -83,7 +94,7 @@ internal representation is open — still pin it.
   needed precisely because 107.2 would otherwise coerce to 0, so novel
   collisions default to 0 and skips exist only where printed. Pick one.
 
-**U7 — Concession granularity** — Status: `open`
+### UD-7 — Concession granularity — category: open
 
 - **CR says:** "A player can concede the game at any time"; they leave
   immediately and lose (104.3a). Leave-game cleanup happens "as soon as
@@ -100,7 +111,7 @@ internal representation is open — still pin it.
   anywhere (honors 104.3a literally; the engine must define
   partially-applied-event semantics 800.4 never anticipated).
 
-**U8 — "Random" means what distribution?** — Status: `open`
+### UD-8 — "Random" means what distribution? — category: open
 
 - **CR says:** dice *are* distribution-fixed: an N-sided die "must have N
   equally likely outcomes" (706.1a); substitute methods need "the same
@@ -123,7 +134,7 @@ internal representation is open — still pin it.
   verifiability story (committed seeds vs. trusted server) the CR cannot
   see.
 
-**U9 — Extent of a last-known-information snapshot** — Status: `open`
+### UD-9 — Extent of a last-known-information snapshot — category: open
 
 - **CR says:** more than it first appears. LKI "captures that object's
   last existence in that zone" (glossary, cross-referencing 113.7a,
@@ -147,7 +158,7 @@ internal representation is open — still pin it.
   *observational equivalence* with the full record: one missed field is
   a silent wrong answer the day a new consumer appears).
 
-**U10 — Knowledge across rewinds and game boundaries** — Status: `assumed`
+### UD-10 — Knowledge across rewinds and game boundaries — category: assumed
 
 - **CR says:** reversing an illegal action may not reverse
   library-touching actions (733.1) — exactly the cases where reversal
@@ -172,7 +183,7 @@ internal representation is open — still pin it.
   replay and AI self-play; models humans as forgetting, contradicting
   the rationale the docs read out of 733.1 and MTR 4.8).
 
-**U11 — Game-state equality** — Status: `open`
+### UD-11 — Game-state equality — category: open
 
 - **CR says:** behavior is predicated on state *identity* in four
   places: a "loop" of mandatory actions "repeating a sequence of events
@@ -197,7 +208,7 @@ internal representation is open — still pin it.
   equality per 104.4b's "sequence of events" framing (detects loops
   without comparing whole states).
 
-**U12 — Intra-batch event ordering** — Status: `assumed`
+### UD-12 — Intra-batch event ordering — category: assumed
 
 - **CR says:** batches are single simultaneous events — all SBAs in a
   check are performed "simultaneously as a single event" (704.3); all
@@ -222,73 +233,80 @@ internal representation is open — still pin it.
 Former candidates refuted by a specific rule — or, where the CR fixes
 behavior but not representation, pinned by a recorded project policy
 (`settled-by-policy`) — kept with the resolving cite or policy so the
-question isn't re-litigated. Retired registry entries keep their
-U-numbers.
+question isn't re-litigated. Entries retired before the UD rename keep
+their original ids (S1, U2, U3, U5); entries retired from the registry
+keep their UD ids.
 
-- **S1 — Oracle paragraph segmentation** (candidate: `grammar.md` §1's
-  one-paragraph-one-ability unit is mere formatting practice). Settled by
-  **113.2c**: "each paragraph break in a card's text marks a separate
-  ability," with the strung-on-one-line keyword carve-out (each keyword
-  still its own ability; 113.2c with rule 702's per-keyword rules), modal
-  bullets as one ability (700.2), rules-inert ability words (207.2c), and
-  an explicit multi-line-one-ability statement for dice — roll
-  instruction, same-paragraph modifiers, result-contingent instructions,
-  and results table "are all part of one ability" (706.3b). Only the data
-  encoding (MTGJSON `\n` ↔ paragraph break) and parsing heuristics remain
-  conventional — corpus-format properties, not CR semantics.
+### S1 — Oracle paragraph segmentation — category: settled
 
-- **U2 — Agent attribution for rules-performed events** (retired; was:
-  does SBA destruction for lethal damage attribute the damage's source
-  as the destroying agent?). Settled by **120.5**: "likewise, the source
-  of that damage doesn't destroy it," and the rule's own example closes
-  it — "Neither Lightning Bolt nor the damage dealt by Lightning Bolt
-  destroyed that creature." Karmic Justice-style "a spell or ability an
-  opponent controls destroys" predicates never see lethal-damage or
-  deathtouch SBA kills (704.5g, 704.5h); TBA/SBA events carry no agent
-  (703.2, 704.2) — `events.md` §3's agent=None commitment and log-join
-  treatment of dies-from-damage wordings were already CR-correct.
-  Residue — nullable field vs. synthetic "game rules" agent — is
-  `representation-only`: behavior fixed, pin it (docs keep nullable).
+(candidate: `grammar.md` §1's one-paragraph-one-ability unit is mere
+formatting practice). Settled by
+**113.2c**: "each paragraph break in a card's text marks a separate
+ability," with the strung-on-one-line keyword carve-out (each keyword
+still its own ability; 113.2c with rule 702's per-keyword rules), modal
+bullets as one ability (700.2), rules-inert ability words (207.2c), and
+an explicit multi-line-one-ability statement for dice — roll
+instruction, same-paragraph modifiers, result-contingent instructions,
+and results table "are all part of one ability" (706.3b). Only the data
+encoding (MTGJSON `\n` ↔ paragraph break) and parsing heuristics remain
+conventional — corpus-format properties, not CR semantics.
 
-- **U3 — Vigilance: procedure carve-out vs. cause-tagged replacement**
-  (retired, `settled-by-policy`; was `representation-only`: the CR fixes
-  behavior — attack-taps aren't a cost, "attacking simply causes
-  creatures to become tapped," 508.1f, and "attacking doesn't cause
-  creatures with vigilance to tap," 702.20b — leaving only the engine
-  representation open: null replacement on
-  tap(cause: attack-declaration) vs. hardcoding in the declare-attackers
-  procedure). No CR rule settles it; the **dependents threshold**
-  (`keyword-classification.md`, Primitive basis) settles it as project
-  policy: with the Enlist record corrected to its CR-named hooks
-  (702.154b), `cause-tagged-events` held exactly one keyword dependent,
-  so the primitive was retired and vigilance classified **intrinsic** —
-  the procedure carve-out reading, mirroring 702.20a's own framing ("a
-  static ability that modifies the rules for the declare attackers
-  step") and 614.1's closed replacement-effect definition, which never
-  admits the exemption. The cause-tagged null replacement is kept as the
-  documented alternative (`events.md` §3 — the hypothetical
-  decomposition). Reopens as a *new* U-number if a printed card makes
-  the divergence observable (a tap-rewrite that must order against the
-  exemption, 616.1, 614.5) or a second cause-tag consumer re-mints the
-  primitive.
+### U2 — Agent attribution for rules-performed events — category: settled
 
-- **U5 — Base semantics of "can't lose" / "can't win"** (retired; was:
-  does "can't lose" gate the outcome while the condition holds, or
-  cancel each loss event?). Settled by **101.2 + 704.3 + per-SBA
-  wording**: a "can't" takes precedence only while applicable (101.2 —
-  precedence, not consumption); the SBA loop re-checks every condition
-  at each would-get-priority, consuming nothing (704.3); so survival
-  past the effect's end is decided by each SBA's own predicate. 704.5a
-  and 704.5c are standing state predicates ("has 0 or less life," "has
-  ten or more poison counters") — still true at the first check after
-  the effect ends, the loss fires then. 704.5b is a *windowed event*
-  predicate ("attempted to draw … since the last time state-based
-  actions were checked") — the window lapses at the next check: no
-  retroactive empty-draw loss once can't-lose ends. Rulings corroborate
-  (`scripts/rulings`): Abyssal Persecutor [2017-11-17] — an opponent at
-  0 or less life when it leaves the battlefield "will lose the game as
-  a state-based action"; Phyrexian Unlife [2011-06-01] says the same of
-  its own controller. `outcomes.md` §2 carries the split.
+(retired; was: does SBA destruction for lethal damage attribute the
+damage's source as the destroying agent?). Settled by **120.5**:
+"likewise, the source of that damage doesn't destroy it," and the
+rule's own example closes
+it — "Neither Lightning Bolt nor the damage dealt by Lightning Bolt
+destroyed that creature." Karmic Justice-style "a spell or ability an
+opponent controls destroys" predicates never see lethal-damage or
+deathtouch SBA kills (704.5g, 704.5h); TBA/SBA events carry no agent
+(703.2, 704.2) — `events.md` §3's agent=None commitment and log-join
+treatment of dies-from-damage wordings were already CR-correct.
+Residue — nullable field vs. synthetic "game rules" agent — is
+`representation-only`: behavior fixed, pin it (docs keep nullable).
+
+### U3 — Vigilance: procedure carve-out vs. cause-tagged replacement — category: settled-by-policy
+
+(retired, `settled-by-policy`; was `representation-only`: the CR fixes
+behavior — attack-taps aren't a cost, "attacking simply causes
+creatures to become tapped," 508.1f, and "attacking doesn't cause
+creatures with vigilance to tap," 702.20b — leaving only the engine
+representation open: null replacement on
+tap(cause: attack-declaration) vs. hardcoding in the declare-attackers
+procedure). No CR rule settles it; the **dependents threshold**
+(`keyword-classification.md`, Primitive basis) settles it as project
+policy: with the Enlist record corrected to its CR-named hooks
+(702.154b), `cause-tagged-events` held exactly one keyword dependent,
+so the primitive was retired and vigilance classified **intrinsic** —
+the procedure carve-out reading, mirroring 702.20a's own framing ("a
+static ability that modifies the rules for the declare attackers
+step") and 614.1's closed replacement-effect definition, which never
+admits the exemption. The cause-tagged null replacement is kept as the
+documented alternative (`events.md` §3 — the hypothetical
+decomposition). Reopens as a *new* UD-number if a printed card makes
+the divergence observable (a tap-rewrite that must order against the
+exemption, 616.1, 614.5) or a second cause-tag consumer re-mints the
+primitive.
+
+### U5 — Base semantics of "can't lose" / "can't win" — category: settled
+
+(retired; was: does "can't lose" gate the outcome while the condition
+holds, or cancel each loss event?). Settled by **101.2 + 704.3 + per-SBA
+wording**: a "can't" takes precedence only while applicable (101.2 —
+precedence, not consumption); the SBA loop re-checks every condition
+at each would-get-priority, consuming nothing (704.3); so survival
+past the effect's end is decided by each SBA's own predicate. 704.5a
+and 704.5c are standing state predicates ("has 0 or less life," "has
+ten or more poison counters") — still true at the first check after
+the effect ends, the loss fires then. 704.5b is a *windowed event*
+predicate ("attempted to draw … since the last time state-based
+actions were checked") — the window lapses at the next check: no
+retroactive empty-draw loss once can't-lose ends. Rulings corroborate
+(`scripts/rulings`): Abyssal Persecutor [2017-11-17] — an opponent at
+0 or less life when it leaves the battlefield "will lose the game as
+a state-based action"; Phyrexian Unlife [2011-06-01] says the same of
+its own controller. `outcomes.md` §2 carries the split.
 
 ## Maintenance
 
@@ -300,12 +318,12 @@ On every CR refresh:
    random", "last known information", "undefined", "game state", "loop").
 2. A new rule that settles an entry **moves it to Settled** with the
    resolving cite — never delete; the ID stays, retired.
-3. New entries take the next U-number; never renumber.
+3. New entries take the next UD-number; never renumber, never reuse.
 4. If a "Docs assume" doc changes its commitment, flip the status
    (`assumed` ↔ `open`) in the same change; `representation-only` retires
    when a printed card makes the divergence observable — or when a
    recorded project policy pins the representation (mark the retirement
    `settled-by-policy`; if the question later becomes observable, it
-   reopens under a new U-number).
+   reopens under a new UD-number).
 5. `scripts/cite check` (this doc is covered by its source globs) must
    exit 0.

@@ -32,7 +32,7 @@ All paths below are relative to this skill's directory.
    | predicate/value language | `references/queries.md` |
    | mana | `references/mana.md` |
    | duration/lock | `references/temporal.md` |
-   | "rules-defined or engine choice?" | `references/underdetermined.md` |
+   | "rules-defined or engine choice?" | `references/underdetermined.md`; per-entry: `scripts/underdetermined UD-7` |
    | variant/multiplayer | `references/variants.md` |
 3. **Verify every load-bearing specific with the scripts before asserting
    it.** Start broad with `scripts/lookup` when unsure where an answer
@@ -56,8 +56,10 @@ All paths below are relative to this skill's directory.
 | `scripts/mtr 1.7` / `--list` / `--search <re>` | Magic Tournament Rules sections |
 | `scripts/corpus [--type T] [--keyword K] [--match RE] [--all]` | distinct oracle-text lines (grammar corpus) |
 | `scripts/classify <keyword>` | a keyword's intrinsic/composite classification record (class, given, how, cites) from keywords-classified.json |
+| `scripts/underdetermined [<id>]` | the CR-underdetermined registry by durable id (`UD-7`); no arg lists every entry |
 | `scripts/cite check` / `bless` / `show <citation>` / `diff <rule>` | citation staleness guard with text-drift lockfile |
-| `scripts/health` | self-diagnosis: data resolution, CR date, data tiers, citation check |
+| `scripts/health` | self-diagnosis: data resolution, CR date, per-doc staleness, data tiers, citation check |
+| `scripts/version` | machine-readable conformance manifest (plugin version, commit, CR date, keywords sha) |
 
 ## Reference docs
 
@@ -76,7 +78,7 @@ All paths below are relative to this skill's directory.
 | `references/queries.md` | the predicate & value language: selectors, bindings/anaphora, stored memory, undefined values — the grammar↔engine contract |
 | `references/mana.md` | the mana subsystem: unit schema, production, payment predicates, pool policy |
 | `references/temporal.md` | durations, windows, and the lock taxonomy |
-| `references/underdetermined.md` | registry of CR-underdetermined semantics — the engine's ADR seed list (assumed/open/representation-only/settled) |
+| `references/underdetermined.md` | registry of CR-underdetermined semantics, durable `UD-NNN` ids — the engine's ADR seed list (assumed/open/representation-only/settled); consumers ADR-key choices by UD id |
 | `references/variants.md` | which multiplayer/variant rules (CR 8xx–9xx) override base-game claims — lookup-first index |
 | `references/actions.md` | everything the game can do: events; turn-based, state-based, special, and keyword actions; the priority→stack→resolve loop |
 | `references/designations.md` | the scattered global flags, unified: monarch, initiative, day/night, city's blessing, ring-bearer, goaded, suspected, … |

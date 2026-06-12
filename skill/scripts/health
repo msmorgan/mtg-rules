@@ -1,6 +1,7 @@
 #!/usr/bin/env fish
 # health — one-shot self-diagnosis: data resolution, CR effective date,
-# data tiers (with the scripts each enables), keyword count, plugin version,
+# per-reference-doc synthesis-date staleness (warning only), data tiers
+# (with the scripts each enables), keyword count, plugin version,
 # citation check. Exit 0 iff base tier + citations are OK.
 
 source (path resolve (status dirname))/lib.fish; or exit 1
@@ -29,6 +30,30 @@ else
     echo "CR effective: date unknown (cr.txt absent; cr.json has $nrules rules)"
 end
 
+# per-doc staleness: every reference doc states the CR date it was
+# synthesized from (italic header); warn per doc lagging the live data.
+# Warning only — never fails the exit (citations are the hard gate).
+set -l live_iso (cr_effective_iso 2>/dev/null)
+if test -n "$live_iso"
+    set -l doc_total 0
+    set -l doc_warns
+    for f in $skill_dir/references/*.md
+        set doc_total (math $doc_total + 1)
+        set -l d (grep -m1 -oE 'effective [0-9]{4}-[0-9]{2}-[0-9]{2}' $f | string replace 'effective ' '')
+        if test -z "$d"
+            set -a doc_warns "warn: "(path basename $f)" — no synthesis-date header"
+        else if test "$d" != "$live_iso"
+            set -a doc_warns "warn: "(path basename $f)" — synthesized from CR $d, live CR is $live_iso (re-sync)"
+        end
+    end
+    if test (count $doc_warns) -eq 0
+        echo "reference docs: $doc_total/$doc_total in sync with CR $live_iso"
+    else
+        echo "reference docs: "(count $doc_warns)" of $doc_total stale vs CR $live_iso (warning only)"
+        printf '  %s\n' $doc_warns
+    end
+end
+
 # tiers
 set -l base_ok 1
 set -l cats $catalogs_dir/*.json
@@ -37,7 +62,7 @@ if test (count $cats) -eq 0
     set cat_mark "absent"
     set base_ok 0
 end
-echo "tier base:    rules ✓, catalogs $cat_mark — rule, rule-search, define, keyword, mtr, lookup, classify, cite"
+echo "tier base:    rules ✓, catalogs $cat_mark — rule, rule-search, define, keyword, mtr, lookup, classify, underdetermined, cite, version"
 
 set -l idx_mark "absent"
 test -r $derived_dir/cards.jsonl; and set idx_mark "✓"

@@ -1,5 +1,34 @@
 # mtg-rules skill evals
 
+Two instruments live here: the **probe eval** (paid, agent-grade) and the
+**corpus coverage report** (free, grep-grade).
+
+## Corpus coverage report (free)
+
+`evals/coverage.fish` measures how much of the oracle-text grammar surface
+the taxonomy docs account for: `coverage-config.json` maps each taxonomy
+kind (keyword lines, activated/triggered/static shapes, modal bullets,
+replacement markers, Gate/Toll markers, cost lines, …) to a list of
+case-insensitive ERE patterns; the report prints, per kind, how many of the
+distinct supported oracle lines (the same extraction as
+`skill/scripts/corpus`) match any of that kind's patterns, plus the union
+coverage across all kinds — the headline number. Needs the cards data tier
+(`derived/cards.jsonl`); no agent calls.
+
+```sh
+evals/coverage.fish               # the report
+evals/coverage.fish --unmatched   # print the gap lines no kind matches
+```
+
+Honest v1: the patterns are structural proxies derived from the reference
+docs, deliberately approximate; kinds overlap (the union dedups), and a
+match means "this kind's surface shape accounts for the line," not "a
+parser exists." "Is the taxonomy done?" becomes: drive union coverage
+toward 100% by refining patterns until every gap line is either covered or
+explained.
+
+## Probe eval (paid)
+
 Regression eval for the **skill**, not the data: each probe asks a headless
 agent one of the eighteen rulings-check questions cold and grades the answer
 against the citations and verdicts derived in

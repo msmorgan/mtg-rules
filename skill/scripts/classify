@@ -13,6 +13,7 @@ jq -r --arg n "$name" '
         $hit[0]
         | "\(.name) (\(.kind)) — \(.class)"
           + (if .given then " given: \(.given)" else "" end)
+          + "\nident: \(.ident)"
           + "\nrule: \(.rule)"
           + "\nhow: \(.how)"
           + "\ncites: \(.cites | join(", "))"
