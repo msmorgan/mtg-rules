@@ -7,6 +7,18 @@ re-run your alignment pass against the new taxonomy and data before
 re-pinning. Taxonomy-meaning changes (reclassifications, primitive
 mints/retirements, notation changes) are always called out explicitly.
 
+## Unreleased
+
+- `scripts/cite check`: new staleness class **MALFORMED** — a token with the
+  bracketed shape (`[CR#…]`) whose contents fail citation parsing is now
+  reported (`MALFORMED <token> <file>:<line>`), counted as stale (non-zero
+  exit), and listed alongside GONE/CHANGED/UNLOCKED. Previously such tokens
+  were silently skipped (inherited from the Rust checker) and invisible to
+  `--list-noncompliant` too (its blanking step removes the whole `[CR#…]`
+  span before the wide-net patterns run). Additive only — no flag or
+  subcommand changes; `list`/`bless` still skip malformed tokens.
+  Consumer-requested (deckmaste.rs alignment pass, 2026-06-11).
+
 ## 1.7.0 — 2026-06-11
 
 Consumer-driven release (first consumer: deckmaste.rs): taxonomy
@@ -22,20 +34,24 @@ landing.
   rationale; the CR names the composition explicitly (702.154a/b: an
   optional cost to attack, 508.1g, plus a linked trigger, 607.2h). The
   composite-given sweep returned Foretell and Hidden Agenda to plain
-  composite on the same standard.
+  composite on the same standard. Counts for this step: composite-given
+  23 → 20, composite 212 → 215.
 - **Vigilance → intrinsic; the `cause-tagged-events` primitive is retired.**
   New dependents discipline, codified in `keyword-classification.md`: a
   `given` primitive must have ≥ 2 keyword dependents; a sole-dependent
   primitive collapses into its keyword as intrinsic. After the Enlist fix,
-  `cause-tagged-events` had exactly one dependent. Counts: intrinsic
-  abilities 8 → 9, composite-given 23 → 21, composite 212 → 213; total
-  stays 260. (`underdetermined.md` U3 records the retirement as
-  settled-by-policy.)
+  `cause-tagged-events` had exactly one dependent. Counts for this step:
+  intrinsic 24 → 25 (abilities 8 → 9, actions stay 16), composite-given
+  20 → 19. Net across both steps: intrinsic 25, composite-given 19,
+  composite 215, marker 1; total stays 260. (`underdetermined.md` U3
+  records the retirement as settled-by-policy.)
 - **Gate vs Toll**: the two "MayIf" flavors get distinct names in
   `deontics.md` — *Gate* (declaration-gating) vs *Toll* (resolution-stage) —
   and the keyword `how`-field deontic notation was swept to use them.
-- **Haste**: worked deontic entry takes a position on its spelling (May-row
-  lift of the summoning-sickness attack/tap limits; 702.10b–c, 302.6).
+- **Haste**: worked deontic entry takes a position on its spelling — a
+  *flag* read by the standing summoning-sickness Cant rows, not a May-row
+  lift (508.1a and 602.5a name haste in their own conditions, so there is
+  no permission row to widen; 702.10b–c and 302.6 are prose mirrors).
 
 ### Conformance plumbing
 

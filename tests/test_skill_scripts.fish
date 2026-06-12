@@ -151,8 +151,15 @@ t "cite list expands ranges in document order (l-skip)" '704\.5k, 704\.5m, 704\.
     env $cdat $cite --config $citetmp/cfg-good.json list
 t "cite list resolves leaf+section comma list" '\[CR#100\.1a,702\]  -> 100\.1a, 702' \
     env $cdat $cite --config $citetmp/cfg-good.json list
-t "cite skips malformed tokens silently" '^0$' \
-    fish -c "env $cdat $cite --config $citetmp/cfg-good.json list | grep -c xyz; true"
+t "cite check flags MALFORMED for a bracketed-shaped token" 'MALFORMED  104\.4b-class  src/malformed\.md:1' \
+    env $cdat $cite --config $citetmp/cfg-malformed.json check
+t "cite check counts malformed as stale" 'checked 8 citations against cr\.json \(eff\. 2026-04-17\); 2 stale' \
+    env $cdat $cite --config $citetmp/cfg-malformed.json check
+t_fails "cite exits nonzero on malformed" env $cdat $cite --config $citetmp/cfg-malformed.json check
+t "cite list still skips malformed tokens" '^0$' \
+    fish -c "env $cdat $cite --config $citetmp/cfg-malformed.json list | grep -c xyz; true"
+t "cite bless still skips malformed tokens" 'blessed 6 rules' \
+    env $cdat $curlenv $cite --config $citetmp/cfg-malformed.json bless
 t "cite flags UNLOCKED for an unblessed cite" 'UNLOCKED  100\.1  src/more\.md:1' \
     env $cdat $cite --config $citetmp/cfg-unlocked.json check
 t_fails "cite exits nonzero on stale" env $cdat $cite --config $citetmp/cfg-unlocked.json check

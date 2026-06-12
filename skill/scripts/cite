@@ -26,13 +26,17 @@
 # Checksum = first 16 hex chars of sha256 over the whitespace-normalized rule text.
 # Staleness classes: GONE (rule vanished / range endpoint unresolvable), CHANGED
 # (text differs from the blessed baseline), UNLOCKED (cited but absent from the
-# lock — run bless).
+# lock — run bless), MALFORMED (bracketed-shaped token whose contents fail
+# citation parsing; bracketed mode only — bare tokens always parse).
 #
 # Leaf rules resolve against cr.json (document-ordered keys; range expansion
 # rides that order, so the CR's missing letters l/o fall out naturally).
 # Bare-section citations ([CR#702]) resolve against cr.txt section headers.
-# Malformed bracketed tokens are SKIPPED by check/list/bless — format policing
-# is `check --list-noncompliant`'s job (bracketed mode only).
+# Malformed bracketed tokens ([CR#…] shape, contents that fail parsing) are
+# reported MALFORMED by check; list and bless still skip them. They are
+# invisible to `check --list-noncompliant` (its blanking step removes the
+# whole [CR#…] span before the wide-net patterns run), so check is the only
+# tripwire for them.
 #
 # Env: MTG_RULES_CITE_WIZARDS_URL overrides bless's network URL resolution
 # (offline use, tests). MTG_RULES_DATA picks the data dir (see lib.fish).
@@ -166,7 +170,8 @@ function cmd_check
     jq -r -f $jq_lib/classify.jq \
         --slurpfile cur $work/cur.json --slurpfile lock $lock_path \
         $work/tokens.jsonl > $work/stale.txt
-    set -l checked (jq -s '([.[] | select(.status == "gone")] | length)
+    # non-ok tokens (gone ranges, malformed brackets) each count once
+    set -l checked (jq -s '([.[] | select(.status != "ok")] | length)
                            + ([.[] | select(.status == "ok") | .members | length] | add // 0)' \
         $work/tokens.jsonl)
     set -l stale_n (wc -l < $work/stale.txt | string trim)

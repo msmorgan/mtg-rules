@@ -1,9 +1,9 @@
 # Sites jsonl -> one token per citation occurrence, with resolved members.
 #   $keys[0]: cr.json keys in document order (leaves)
 #   $idx[0]:  {rule: position} over those keys
-# status: "ok" (members[] expanded), "skip" (malformed — silently ignored
-# downstream, mirroring the Rust checker), "gone" (a range endpoint is not a
-# leaf in the current CR, or the range is reversed).
+# status: "ok" (members[] expanded), "skip" (malformed — `check` reports these
+# as MALFORMED via classify.jq; list/bless still ignore them), "gone" (a range
+# endpoint is not a leaf in the current CR, or the range is reversed).
 def valid_one: test("^[0-9]{1,3}(\\.[0-9]+[a-z]*)?$");
 def parse_part:
   if contains("..") then
