@@ -66,8 +66,8 @@ All paths below are relative to this skill's directory.
 | `references/state.md` | component taxonomy of a game state: players, zones, objects, characteristics, per-object state, identity/LKI, game-level state |
 | `references/engine.md` | pseudo-code game-state model + the damage pipeline (CR 120) |
 | `references/generalizations.md` | asymmetric rule families, the generalized mechanic each implies, and 12 engine modeling directives |
-| `references/keyword-classification.md` | every keyword classified intrinsic / composite / composite-given(P) / marker, + the 6-primitive engine basis (full data: skill/keywords-classified.json) |
-| `references/deontics.md` | the deontic layer: May/Cant/Must/toll algebra over action legality — "can't", "only", "as though", "if able" unified |
+| `references/keyword-classification.md` | every keyword classified intrinsic / composite / composite-given(P) / marker, + the 5-primitive engine basis (full data: skill/keywords-classified.json) |
+| `references/deontics.md` | the deontic layer: May/Cant/Must/Gate/Toll algebra over action legality — "can't", "only", "as though", "if able" unified |
 | `references/costs.md` | the cost algebra: positions, components, modification pipeline, payability |
 | `references/events.md` | event ontology: types, cause triples, composition, trigger interface |
 | `references/choices.md` | decision points: kinds, lock stages, deciders, visibility, randomness |

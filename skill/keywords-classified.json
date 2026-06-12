@@ -9,7 +9,6 @@
       "marker"
     ],
     "given_vocabulary": {
-      "cause-tagged-events": "Events carry a tag for what caused them (e.g. \"tapped because it was declared as an attacker\"), so statics/replacements can match on cause rather than the CR hardcoding the case.",
       "damage-result-rewrite": "A stage that rewrites the RESULT of a damage event (substitute or augment what damage does) instead of the amount \u2014 the slot CR 120.3 hardcodes for lifelink/wither/infect/toxic.",
       "progress-track": "A game-maintained monotonic value with thresholds (day/night, speed) advanced by turn-based actions or inherent triggers; statics read it.",
       "attachment-relation": "A first-class attached-to edge between an object and a legal host (object or player) with legality predicate and violation policy.",
@@ -440,7 +439,7 @@
       "rule": "702.51",
       "class": "composite-given",
       "given": "cost-modification-hook",
-      "how": "For each colored/generic mana in the already-determined total cost, may tap an untapped creature of that color (or any creature for generic) rather than pay that mana; CR explicitly says it is neither additional nor alternative cost (702.51b). Same pay-substitution hook as Delve.",
+      "how": "For each colored/generic mana in the already-determined total cost, may tap an untapped creature of that color (or any creature for generic) rather than pay that mana; CR explicitly says it is neither additional nor alternative cost (702.51b). Same cost-modification-hook pay-substitution as Delve.",
       "cites": [
         "702.51a",
         "702.51b"
@@ -519,7 +518,7 @@
       "rule": "702.145",
       "class": "composite-given",
       "given": "progress-track",
-      "how": "Three statics that read the game day/night designation (a game-maintained state track advanced by the untap-step turn-based action, rule 731): enters transformed if night, transforms as it becomes night, can\u2019t otherwise transform; given the day/night track these are statics + forced transforms.",
+      "how": "Three statics that read the game day/night designation (a game-maintained state track advanced by the untap-step turn-based action, rule 731): enters transformed if night, transforms as it becomes night, can\u2019t otherwise transform; given the day/night progress-track these are statics + forced transforms.",
       "cites": [
         "702.145b",
         "702.145c",
@@ -578,7 +577,7 @@
       "rule": "702.66",
       "class": "composite-given",
       "given": "cost-modification-hook",
-      "how": "Static cost-payment alteration: for each generic mana in the total cost, may exile a graveyard card instead of paying. Decomposes given a hook that lets a permission edit how generic mana of an already-determined total cost is paid (it is neither additional nor alternative cost).",
+      "how": "Static cost-payment alteration: for each generic mana in the total cost, may exile a graveyard card instead of paying. Decomposes given the cost-modification-hook primitive: a permission that edits how generic mana of an already-determined total cost is paid (it is neither additional nor alternative cost).",
       "cites": [
         "702.66a",
         "702.66b"
@@ -1324,7 +1323,7 @@
       "rule": "702.126",
       "class": "composite-given",
       "given": "cost-modification-hook",
-      "how": "For each generic mana in the already-determined total cost, may tap an untapped artifact rather than pay that mana; CR explicitly says it is neither additional nor alternative cost (702.126b). Same pay-substitution hook as Delve/Convoke.",
+      "how": "For each generic mana in the already-determined total cost, may tap an untapped artifact rather than pay that mana; CR explicitly says it is neither additional nor alternative cost (702.126b). Same cost-modification-hook pay-substitution as Delve/Convoke.",
       "cites": [
         "702.126a",
         "702.126b"
@@ -1700,7 +1699,7 @@
       "rule": "702.145",
       "class": "composite-given",
       "given": "progress-track",
-      "how": "Two statics that read the game day/night designation (game-maintained track, rule 731): transform as it becomes day, can\u2019t otherwise transform; given the day/night track these are statics + forced transforms.",
+      "how": "Two statics that read the game day/night designation (game-maintained track, rule 731): transform as it becomes day, can\u2019t otherwise transform; given the day/night progress-track these are statics + forced transforms.",
       "cites": [
         "702.145e",
         "702.145f",
@@ -2419,7 +2418,7 @@
       "rule": "702.164",
       "class": "composite-given",
       "given": "damage-result-rewrite",
-      "how": "Augments the result of combat damage to a player: in addition to damage's other results, give poison counters equal to total toxic value (120.3g) \u2014 a damage-result augmentation at the damage-result stage, like lifelink/infect.",
+      "how": "Augments the result of combat damage to a player: in addition to damage's other results, give poison counters equal to total toxic value (120.3g) \u2014 a damage-result augmentation given the damage-result-rewrite stage, like lifelink/infect.",
       "cites": [
         "702.164c",
         "120.3g"
@@ -2578,10 +2577,11 @@
       "name": "Vigilance",
       "kind": "ability",
       "rule": "702.20",
-      "class": "composite-given",
-      "given": "cause-tagged-events",
-      "how": "Null-replacement on the 'tapped because declared attacker' event given cause-tagged events; CR instead hardcodes the exemption in 508.1f.",
+      "class": "intrinsic",
+      "given": null,
+      "how": "Dedicated rules text inside the attack-declaration procedure: 702.20a names it a static ability that modifies the rules for the declare attackers step, and 702.20b exempts the creature from 508.1f's attack-tap — the same justification shape as trample owning 510.1c-d. Hypothetical decomposition (documented, not adopted): a null-replacement on tap(cause: attack-declaration) given cause-tagged events; that primitive was retired as sole-dependent under the dependents threshold (keyword-classification.md).",
       "cites": [
+        "702.20a",
         "702.20b",
         "508.1f"
       ],
@@ -2608,7 +2608,7 @@
       "rule": "702.21",
       "class": "composite",
       "given": null,
-      "how": "MayIf(resolve(spell/ability targeting This), pay {N}) \u2014 resolution-stage toll via triggered counter-unless-pays (702.21a).",
+      "how": "Toll(resolve(spell/ability targeting This), pay {N}) \u2014 the resolution-stage MayIf flavor (deontics.md Gate/Toll split) via triggered counter-unless-pays (702.21a).",
       "cites": [
         "702.21a"
       ],
@@ -3636,7 +3636,7 @@
       "rule": "701.67",
       "class": "composite-given",
       "given": "cost-modification-hook",
-      "how": "Pay [cost]; for each generic mana in that cost, may tap an untapped artifact/creature rather than pay that mana (701.67b limits the substitution to the waterbend cost\u2019s generic component). Same pay-substitution hook as Delve/Convoke/Improvise.",
+      "how": "Pay [cost]; for each generic mana in that cost, may tap an untapped artifact/creature rather than pay that mana (701.67b limits the substitution to the waterbend cost\u2019s generic component). Same cost-modification-hook pay-substitution as Delve/Convoke/Improvise.",
       "cites": [
         "701.67a",
         "701.67b",

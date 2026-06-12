@@ -1,4 +1,4 @@
-# Deontic Layer — May / Can't / Must / Toll Algebra
+# Deontic Layer — May / Can't / Must / Gate / Toll Algebra
 
 *Synthesized from the Comprehensive Rules effective 2026-04-17
 (`data/rules/cr.json`). Orientation only — verify load-bearing specifics
@@ -38,8 +38,8 @@ Every deontic clause is one of four predicate kinds over action instances.
 | **May**(a) | a is permitted | cast: 117.1a–c; attack: 508.1a; block: 509.1a | keyword/effect rows ("may play this as though…", flash 702.8a) |
 | **Cant**(a) | a is forbidden | — (none; absence of Cant) | 508.1c attack-restrictions, 509.1b block-restrictions, "can't be…" |
 | **Must**(a) | a is required if able | — | "attacks if able" 508.1d, "blocks if able" 509.1c, goad 701.15b |
-| **MayIf**(a, cost) — *declaration-gate* | a is legal *only if* the toll is paid at declaration | — | "can't attack/block unless … pays" (508.1d / 509.1c), play-gating "can't cast unless" |
-| **MayIf**(a, cost) — *resolution-stage* | a is *fully legal*; a later trigger/resolution punishes unless the toll is paid | — | ward 702.21a, Mana-Leak-style "counter … unless its controller pays {N}" |
+| **Gate**(a, cost) — the declaration-gating MayIf flavor | a is legal *only if* the price is paid at declaration | — | "can't attack/block unless … pays" (508.1d / 509.1c), play-gating "can't cast unless" |
+| **Toll**(a, cost) — the resolution-stage MayIf flavor | a is *fully legal*; a later trigger/resolution punishes unless the price is paid | — | ward 702.21a, Mana-Leak-style "counter … unless its controller pays {N}" |
 
 **May** is the existential floor: an action with *no* matching permission
 row is illegal. Casting needs a permission and no prohibition (601.3); the
@@ -48,15 +48,15 @@ permission rows in one table (generalizations.md Family 1).
 
 **Cant** is pure subtraction. **Must** is satisfied-if-able and arbitrated
 by the maximize-without-violating solver (§4). **MayIf** splits in two by
-*when* the toll bites. A **declaration-gating** toll is conditional *legality*:
-"can't attack/block unless a player pays a cost" makes the declaration illegal
-unless paid — yet the actor is never *required* to pay, even to satisfy a
-requirement (508.1d / 509.1c state this explicitly). A **resolution-stage**
-toll leaves the action fully legal: ward (702.21a) and Mana-Leak-style "counter
-… unless … pays {N}" let the spell be cast / the target be chosen normally,
-then a *trigger or the resolving counter* punishes (counters it) unless the
-toll is paid. §8's ward row is the resolution-stage form; don't model it as a
-gate on casting.
+*when* the price bites; the flavors are named **Gate** and **Toll**. A
+**Gate** (declaration-gating) is conditional *legality*: "can't attack/block
+unless a player pays a cost" makes the declaration illegal unless paid — yet
+the actor is never *required* to pay, even to satisfy a requirement (508.1d /
+509.1c state this explicitly). A **Toll** (resolution-stage) leaves the
+action fully legal: ward (702.21a) and Mana-Leak-style "counter … unless …
+pays {N}" let the spell be cast / the target be chosen normally, then a
+*trigger or the resolving counter* punishes (counters it) unless the price
+is paid. §8's ward row is a Toll; don't model it as a Gate on casting.
 
 ## 3. Modifiers
 
@@ -100,7 +100,8 @@ effect "can't" clashes.
 **Must** is not "do it"; it is "the declaration is illegal if you could have
 obeyed more requirements without breaking a restriction." The combat solver
 (508.1d attackers, 509.1c blockers): maximize the number of requirements
-obeyed subject to every restriction, with the toll caveat above. Restrictions
+obeyed subject to every restriction, with the Gate caveat above (a Gate's
+price is never compulsory). Restrictions
 (508.1c) and requirements (508.1d) are checked by *different* rules: 508.1c
 fails a declaration that disobeys any restriction; 508.1d fails one that
 obeys fewer requirements than the maximum possible.
@@ -182,8 +183,10 @@ is deontic.
   **Cant**(Attack) — it removes the declare-attackers permission. Deontic.
 - **Vigilance** (702.20b): "Attacking **doesn't** cause creatures with
   vigilance to tap." Attacking stays fully legal; the *tap event* that
-  declaring normally produces (508.1f) is edited out. Event-edit, not
-  deontic. Same combat step, opposite layer.
+  declaring normally produces (508.1f) simply never happens for it —
+  rules text on the procedure itself (702.20a; classified intrinsic,
+  `keyword-classification.md`). Event-side, not deontic — never a Cant.
+  Same combat step, opposite layer.
 
 **Worked trap — "can't be regenerated."** It surface-reads deontic ("can't")
 but is an event-edit. Regeneration is itself a replacement effect: a shield
@@ -214,7 +217,7 @@ Flash is the canonical permission-window case — keep three things separate:
 ## 8. Worked notation
 
 Notation: `Cant(Verb(actor, object) where ⟨pred⟩)`,
-`May(Verb …)`, `Must(Verb …)`, `MayIf(Verb …, cost)`.
+`May(Verb …)`, `Must(Verb …)`, `Gate(Verb …, cost)`, `Toll(Verb …, cost)`.
 
 | mechanic | algebra |
 |---|---|
@@ -224,13 +227,23 @@ Notation: `Cant(Verb(actor, object) where ⟨pred⟩)`,
 | **Shroud** (702.18a) | `Cant(Target(x, This))` for all sources — symmetric |
 | **Hexproof** (702.11b) | `Cant(Target(x, This) where Opponent(controller(x)))` — asymmetric |
 | **Protection from Q** (DEBT, 702.16) | `Cant(Target(x,This) where Q(x))` (b) ∧ `Cant(Enchant/Equip(x,This) where Q(x))` (c/d) ∧ `Cant(Block(b,This) where Q(b))` (f) ∧ Damage from Q-sources prevented (e — *prevention*, an event-edit leg, not deontic) |
-| **Ward {N}** (702.21a) | trigger ⇒ `MayIf(resolve(spell/ability targeting This), pay {N})` — counter unless paid |
+| **Ward {N}** (702.21a) | trigger ⇒ `Toll(resolve(spell/ability targeting This), pay {N})` — counter unless paid; never a Gate on casting |
 | **Goad** (701.15b–c) | `Must(Attack(This)) ∧ Must(Attack-target(This, ¬goader))` — *both* legs are "if able" **requirements** (508.1d), not a Cant; multiple goaders ⇒ additional requirements (701.15c) |
+| **Haste** (702.10b–c) | a *flag* the standing Cant rows read, not a May-row lift: `Cant(Attack(This) where ¬Haste(This) ∧ ¬ContinuouslyControlled(This))` (508.1a) ∧ `Cant(Activate(p, A) where {T}/{Q} ∈ cost(A) ∧ ¬Haste(src(A)) ∧ ¬ContinuouslyControlled(src(A)))` (602.5a) |
 | **"Activate only as a sorcery"** (602.5d) | `Only`-refine: `May(Activate(p, A))` window ∩ sorcery-timing window |
 
 Protection's four legs are not all deontic: Target/Enchant-Equip/Block are
 **Cant** (deontic); Damage is **prevention** (event-edit, `effects.md` §6).
 That split is the whole point of §6.
+
+Haste is spelled as a flag in the Cant predicates (the reach pattern —
+meaning living in another rule's predicate) rather than a May-row lift
+because the summoning-sickness restrictions name haste in their own
+conditions: 508.1a's declaration legality reads "must either have haste or
+have been controlled by the active player continuously since the turn
+began," and 602.5a says "Ignore this rule for creatures with haste" — so
+there is no separate permission row for haste to widen; 302.6 and
+702.10b–c are prose mirrors of those two predicates.
 
 ## 9. Grammar → algebra marker table
 
@@ -245,8 +258,9 @@ Surface phrases that signal a deontic clause (corpus-verified lines).
 | `Activate only as a sorcery` | Only (window) | "{0}: Attach target Equipment you control to this creature. Activate only as a sorcery." |
 | `Activate only during your turn / once each turn` | Only (window) | "Activate only during your turn and only once each turn." |
 | `attacks each combat if able` | Must | "Goad target creature. (Until your next turn, that creature attacks each combat if able …)" |
-| `unless … pays {N}` | MayIf (toll) | "Counter target spell unless its controller pays {2}." |
-| `Ward {N}` | MayIf (toll) | "Ward {1} (Whenever this creature becomes the target of a spell or ability an opponent controls, counter it unless that player pays {1}.)" |
+| `can't attack … unless … pays` | Gate | "Creatures can't attack you unless their controller pays {2} for each creature they control that's attacking you." |
+| `unless … pays {N}` | Toll | "Counter target spell unless its controller pays {2}." |
+| `Ward {N}` | Toll | "Ward {1} (Whenever this creature becomes the target of a spell or ability an opponent controls, counter it unless that player pays {1}.)" |
 | `as though it didn't have [keyword]` | AsThough | "This creature can attack this turn as though it didn't have defender." |
 | `may cast … as though they had flash` | AsThough (permission) | "You may cast spells this turn as though they had flash." |
 | `spend mana as though it were …` | AsThough (payment) | "you may spend mana as though it were mana of any color to cast that spell." (609.4b) |
@@ -265,9 +279,11 @@ legal(a):                          # a = action instance, choices may be open
         ∧ (¬∃ row ∈ restrictions(verb(a)): row.forbids(c))  # restriction subtraction:
         # 601.3 / 508.1c subtract rule-or-effect restrictions themselves;
         # 101.2 is only the effect-vs-effect "can't beats may" tiebreaker.
-        # tolls are conditional permissions: a MayIf row .matches(c) only if
-        # the toll is among c's paid costs; the actor is never forced to pay
-        # (508.1d / 509.1c), so unpaid-toll completions simply don't match.
+        # Gates are conditional permissions: a Gate row .matches(c) only if
+        # its price is among c's paid costs; the actor is never forced to pay
+        # (508.1d / 509.1c), so unpaid-Gate completions simply don't match.
+        # Tolls (ward, counter-unless-pays) never enter declare-legality —
+        # they bite downstream, as triggers or at resolution.
 
 declare_combat(player, side):                       # attackers 508 / blockers 509
     sets = all candidate declaration sets
@@ -280,7 +296,8 @@ declare_combat(player, side):                       # attackers 508 / blockers 5
 ```
 
 Evaluation order: enumerate completions → permission floor → restriction
-subtraction → obligation maximization → price any chosen tolls. AsThough is
+subtraction → obligation maximization → price any chosen Gates (Tolls bite
+later, at trigger/resolution time). AsThough is
 applied as a premise-rewrite *inside* `matches`/`forbids` for the scoped
 effect only (609.4).
 

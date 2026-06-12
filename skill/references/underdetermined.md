@@ -42,29 +42,6 @@ internal representation is open — still pin it.
   the producer pointer. Observable only when snow-ness changes between
   production and payment within one step or phase (106.4).
 
-**U3 — Vigilance: procedure carve-out vs. cause-tagged replacement** —
-Status: `representation-only`
-
-- **CR says:** behavior is fully fixed — attack-taps aren't a cost,
-  "attacking simply causes creatures to become tapped" (508.1f), and
-  "attacking doesn't cause creatures with vigilance to tap" (702.20b).
-  The rules identity is fixed too: a "static ability that modifies the
-  rules for the declare attackers step" (702.20a), never admitted by
-  614.1's closed replacement-effect definition (the enumerated
-  "instead"/"skip"/enters/face-up forms, 614.1a–614.1e).
-- **Open:** only the engine representation. Modeled as a replacement
-  effect anyway, the exemption enters the event-rewriter machinery —
-  616.1 ordering, 614.5 one-shot marking — which the CR never subjects
-  it to (no one ever orders vigilance against another tap-rewrite).
-- **Docs assume:** a null replacement on tap(cause: attack-declaration) —
-  the composite-given reading (`keyword-classification.md` composite-given
-  table; cause triple defined in `events.md` §3).
-- **Alternatives:** hardcode in the declare-attackers procedure (mirrors
-  702.20a literally; reintroduces the special case cause tags exist to
-  remove). No current card replaces attack-taps, so the divergence is
-  unobservable today — the choice is free but must be pinned before one
-  is printed.
-
 **U4 — Cast-from-stack object identity** — Status: `assumed`
 
 - **CR says:** casting moves the card "from where it is to the stack"
@@ -242,9 +219,11 @@ Status: `representation-only`
 
 ## Settled
 
-Former candidates refuted by a specific rule — kept with the resolving
-cite so the refutation isn't re-litigated. Retired registry entries keep
-their U-numbers.
+Former candidates refuted by a specific rule — or, where the CR fixes
+behavior but not representation, pinned by a recorded project policy
+(`settled-by-policy`) — kept with the resolving cite or policy so the
+question isn't re-litigated. Retired registry entries keep their
+U-numbers.
 
 - **S1 — Oracle paragraph segmentation** (candidate: `grammar.md` §1's
   one-paragraph-one-ability unit is mere formatting practice). Settled by
@@ -269,8 +248,29 @@ their U-numbers.
   (703.2, 704.2) — `events.md` §3's agent=None commitment and log-join
   treatment of dies-from-damage wordings were already CR-correct.
   Residue — nullable field vs. synthetic "game rules" agent — is
-  `representation-only` (U3's class): behavior fixed, pin it (docs keep
-  nullable).
+  `representation-only`: behavior fixed, pin it (docs keep nullable).
+
+- **U3 — Vigilance: procedure carve-out vs. cause-tagged replacement**
+  (retired, `settled-by-policy`; was `representation-only`: the CR fixes
+  behavior — attack-taps aren't a cost, "attacking simply causes
+  creatures to become tapped," 508.1f, and "attacking doesn't cause
+  creatures with vigilance to tap," 702.20b — leaving only the engine
+  representation open: null replacement on
+  tap(cause: attack-declaration) vs. hardcoding in the declare-attackers
+  procedure). No CR rule settles it; the **dependents threshold**
+  (`keyword-classification.md`, Primitive basis) settles it as project
+  policy: with the Enlist record corrected to its CR-named hooks
+  (702.154b), `cause-tagged-events` held exactly one keyword dependent,
+  so the primitive was retired and vigilance classified **intrinsic** —
+  the procedure carve-out reading, mirroring 702.20a's own framing ("a
+  static ability that modifies the rules for the declare attackers
+  step") and 614.1's closed replacement-effect definition, which never
+  admits the exemption. The cause-tagged null replacement is kept as the
+  documented alternative (`events.md` §3 — the hypothetical
+  decomposition). Reopens as a *new* U-number if a printed card makes
+  the divergence observable (a tap-rewrite that must order against the
+  exemption, 616.1, 614.5) or a second cause-tag consumer re-mints the
+  primitive.
 
 - **U5 — Base semantics of "can't lose" / "can't win"** (retired; was:
   does "can't lose" gate the outcome while the condition holds, or
@@ -303,6 +303,9 @@ On every CR refresh:
 3. New entries take the next U-number; never renumber.
 4. If a "Docs assume" doc changes its commitment, flip the status
    (`assumed` ↔ `open`) in the same change; `representation-only` retires
-   only when a printed card makes the divergence observable.
+   when a printed card makes the divergence observable — or when a
+   recorded project policy pins the representation (mark the retirement
+   `settled-by-policy`; if the question later becomes observable, it
+   reopens under a new U-number).
 5. `scripts/cite check` (this doc is covered by its source globs) must
    exit 0.

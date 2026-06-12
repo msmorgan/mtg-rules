@@ -107,9 +107,13 @@ or replacement text matches on):
 
 ## 3. Cause tags
 
-This section is **the defining home of `keyword-classification.md`'s
-`cause-tagged-events` primitive**: events carry a tag for *what caused
-them*, so rules can match on cause instead of hardcoding each case.
+Events carry a tag for *what caused them*, so rules can match on cause
+instead of hardcoding each case. No keyword consumes this as a `given`
+primitive — `cause-tagged-events` was retired from
+`keyword-classification.md`'s vocabulary when its sole would-be consumer
+(vigilance) collapsed to intrinsic under the dependents threshold — but
+the cause model stays: trigger predicates need every coordinate of it
+regardless (Karmic Justice and the agent predicates below).
 
 The CR already runs on cause-filtered views. "Dies" is the battlefield →
 graveyard change *regardless of cause* (700.4), while "destroyed" admits
@@ -130,11 +134,13 @@ cause field:
 | Tapped for mana — a {T} mana ability resolving and producing mana; dedicated trigger and replacement wording | 106.12, 106.12a, 106.12b |
 | Effect instruction — "tap target creature" | 701.26a |
 
-Vigilance is the type specimen — and the sole keyword consumer: the CR
-hardcodes "attacking doesn't cause creatures with vigilance to tap"
-(702.20b) inside the declare-attackers procedure (508.1f) — with
-cause-tagged events it is a null replacement on
-tap(cause: attack-declaration). (Enlist needs no cause tags: it is an
+Vigilance is the type specimen of the attack-declaration cause — but not
+a consumer: the CR hardcodes "attacking doesn't cause creatures with
+vigilance to tap" (702.20b) as rules text on the declare-attackers
+procedure's tap (508.1f), and the classification follows it (intrinsic,
+`keyword-classification.md`); the null replacement on
+tap(cause: attack-declaration) survives only as vigilance's documented
+hypothetical decomposition. (Enlist needs no cause tags either: it is an
 optional cost to attack, 508.1g, whose trigger keys on that payment via
 ability *linkage*, 607.2h — the CR says so itself, 702.154b.)
 

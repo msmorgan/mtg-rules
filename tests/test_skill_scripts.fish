@@ -115,6 +115,13 @@ t_fails "setup-data rejects bogus flag" $scripts/setup-data --bogus
 t "keywords-classified.json parses" '^valid$' fish -c "jq -e . skill/keywords-classified.json >/dev/null; and echo valid"
 t "keyword classes are all in enum" '^0$' fish -c 'jq -r "[.keywords[].class] - [\"intrinsic\",\"composite\",\"composite-given\",\"marker\"] | length" skill/keywords-classified.json'
 t "keyword count covers both lists" '^260$' fish -c "jq -r '.keywords | length' skill/keywords-classified.json"
+# Lint (the Enlist-bug class): a composite-given row whose `how` never names
+# its `given` primitive is exactly how a tag/rationale mismatch survives
+# review. Normalized comparison: lowercase, hyphens treated as spaces.
+t "lint: composite-given how names its given primitive" '^0$' \
+    jq -r '[.keywords[] | select(.class=="composite-given") | (.given|ascii_downcase|gsub("-";" ")) as $g | select(((.how|ascii_downcase|gsub("-";" ")) | contains($g)) | not) | .name] | length' skill/keywords-classified.json
+t "lint: every given value is in meta.given_vocabulary" '^0$' \
+    jq -r '([.keywords[] | select(.class=="composite-given") | .given] | unique) - (.meta.given_vocabulary | keys) | length' skill/keywords-classified.json
 
 # --- lookup/classify/health ---
 t "lookup deathtouch spans rule and keyword sources" '(?s)\[rule\] 702\.2.*\[keyword\]' $scripts/lookup deathtouch
