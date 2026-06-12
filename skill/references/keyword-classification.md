@@ -10,7 +10,7 @@ Every keyword ability (CR 702) and keyword action (CR 701) is classified by
 rows, `how` rationale, cites, `core_referenced` flag) lives in
 `../keywords-classified.json`; this doc holds the rubric, the engine
 primitive basis, and the closed-class tables. The JSON is the authority for
-the 212-row composite enumeration — only highlights appear below.
+the 215-row composite enumeration — only highlights appear below.
 
 ## Rubric (rubric_version 1)
 
@@ -54,12 +54,12 @@ directive/family.
 
 | primitive | one-line definition | keywords needing it | generalizations cross-ref |
 |---|---|---|---|
-| `cause-tagged-events` | Events carry a tag for *what caused them* ("tapped because declared as an attacker"), so statics/replacements match on cause instead of the CR hardcoding the case. | Vigilance, Enlist | **defining home: `events.md` §3** (cause = a *(verb, agency, agent)* triple there); directive 2 (role-vs-identity parameters) |
+| `cause-tagged-events` | Events carry a tag for *what caused them* ("tapped because declared as an attacker"), so statics/replacements match on cause instead of the CR hardcoding the case. | Vigilance (sole consumer — the U3 type specimen, `underdetermined.md`) | **defining home: `events.md` §3** (cause = a *(verb, agency, agent)* triple there); directive 2 (role-vs-identity parameters) |
 | `damage-result-rewrite` | A stage that rewrites the *result* of a damage event (substitute or augment what damage does), not its amount — the slot CR 120.3 hardcodes. | Lifelink, Wither, Infect, Toxic | Family 11 / directive 3 (typed transform algebra: substitute/augment) |
 | `progress-track` | A game-maintained monotonic value with thresholds (day/night, speed), advanced by turn-based actions or inherent triggers; statics read it. | Daybound, Nightbound, Max Speed, Start Your Engines! | Family 4 / directive 4 (one ProgressTrack type) |
 | `attachment-relation` | A first-class `attached_to` edge to a legal host (object or player) with legality predicate and violation policy. | Attach | Family 5 / directive 2 (attach carries host+predicate+policy) |
 | `cost-modification-hook` | A permission that edits how generic/colored mana of an already-determined total cost is paid (601.2f–h) — *neither* additional *nor* alternative cost. | Delve, Convoke, Improvise, Assist, Waterbend | **defining home: `costs.md` §4** (payment-stage substitution at the 601.2f–h lock); directive 10 (mana payment predicates) |
-| `face-down-objects` | A primitive for objects existing face down (708): put/cast face down as a 2/2, secret-identity memory, special action to turn face up. | Morph, Manifest, Manifest Dread, Disguise, Cloak, Foretell, Hidden Agenda | Family 8 / directive 6 (copy/cast through the copiable-value lens, across the 708 boundary) |
+| `face-down-objects` | A primitive for objects existing face down (708): put/cast face down as a 2/2, secret-identity memory, special action to turn face up. Scope is exactly 708's — face-down spells and permanents (708.5 excludes other zones); foretell (exile, 406.3–4) and hidden agenda (command zone, 905.4a) compile to native zone machinery instead. | Morph, Manifest, Manifest Dread, Disguise, Cloak | Family 8 / directive 6 (copy/cast through the copiable-value lens, across the 708 boundary) |
 
 ## Intrinsic table (24)
 
@@ -94,14 +94,13 @@ the verbs other rules hang machinery on).
 | Transform | action | 701.27 | Face-flip on a DFC/DFT, distinct from turn-face-up/down, once-per-stack guard + "transformed permanent" status. | 701.27a, 701.27b, 701.27f, 701.27g |
 | Untap | action | 701.26 | Flip tapped→untapped (only tapped can be untapped) — complement of Tap. | 701.26b |
 
-## Composite-given table (23)
+## Composite-given table (20)
 
 Each decomposes once its `given` primitive exists; grouped by primitive.
 
 | name | given | decomposition | cites |
 |---|---|---|---|
 | Vigilance | cause-tagged-events | Null-replacement on the "tapped because declared attacker" event; CR hardcodes the exemption in 508.1f. | 702.20b, 508.1f |
-| Enlist | cause-tagged-events | Optional cost-to-attack hook (508.1g) tapping an eligible creature + linked trigger granting +X/+0. | 702.154a, 702.154b, 508.1g |
 | Lifelink | damage-result-rewrite | Augment the damage result: controller gains that much life in addition; CR hardcodes 120.3f. | 702.15b, 120.3f |
 | Toxic | damage-result-rewrite | Augment combat damage to a player with poison counters = toxic value (120.3g). | 702.164c, 120.3g |
 | Wither | damage-result-rewrite | Substitute: damage to a creature becomes that many -1/-1 counters instead of being marked (120.3d). | 702.80a, 120.3d, 302.7 |
@@ -121,8 +120,6 @@ Each decomposes once its `given` primitive exists; grouped by primitive.
 | Cloak | face-down-objects | Like manifest but the face-down 2/2 has ward {2}; special action (116) to turn face up. | 701.58a, 701.58b, 701.58h, 708.2a |
 | Manifest | face-down-objects | Put a card onto the battlefield as a 2/2 face-down creature (708) + special action to turn it up for its mana cost. | 701.40a, 701.40b, 701.40h, 708.2a |
 | Manifest Dread | face-down-objects | Look at top two, manifest one (708), graveyard the rest — built on manifest. | 701.62a, 701.62b, 701.40a, 708.2a |
-| Foretell | face-down-objects | Special action (116.2h): pay {2}, exile the card face down (708) + alt foretell cost to cast it later. | 702.143a, 702.143b, 116.2h, 708.5 |
-| Hidden Agenda | face-down-objects | Conspiracy enters the command zone face down (708) with a secret noted name (linked memory); special action (116.2j) flips it up. | 702.106a, 702.106c, 702.106d, 708.5 |
 
 ## Marker (1)
 
@@ -132,7 +129,7 @@ Each decomposes once its `given` primitive exists; grouped by primitive.
 
 ## Composite highlights
 
-The full 212-row composite enumeration lives in
+The full 215-row composite enumeration lives in
 `../keywords-classified.json`. Twelve instructive ones:
 
 | name | rule | decomposition | cites |
@@ -155,8 +152,8 @@ The full 212-row composite enumeration lives in
 | class | count |
 |---|---|
 | intrinsic | 24 (8 ability, 16 action) |
-| composite | 212 (165 ability, 47 action) |
-| composite-given | 23 |
+| composite | 215 (168 ability, 47 action) |
+| composite-given | 20 |
 | marker | 1 |
 | **total** | **260** (192 ability, 68 action) |
 

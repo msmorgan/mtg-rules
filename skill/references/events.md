@@ -130,12 +130,13 @@ cause field:
 | Tapped for mana — a {T} mana ability resolving and producing mana; dedicated trigger and replacement wording | 106.12, 106.12a, 106.12b |
 | Effect instruction — "tap target creature" | 701.26a |
 
-Vigilance is the type specimen: the CR hardcodes "attacking doesn't cause
-creatures with vigilance to tap" (702.20b) inside the declare-attackers
-procedure (508.1f) — with cause-tagged events it is a null replacement on
-tap(cause: attack-declaration). Enlist is the other consumer: an optional
-cost to attack (508.1g) whose linked trigger keys on that payment
-(702.154b).
+Vigilance is the type specimen — and the sole keyword consumer: the CR
+hardcodes "attacking doesn't cause creatures with vigilance to tap"
+(702.20b) inside the declare-attackers procedure (508.1f) — with
+cause-tagged events it is a null replacement on
+tap(cause: attack-declaration). (Enlist needs no cause tags: it is an
+optional cost to attack, 508.1g, whose trigger keys on that payment via
+ability *linkage*, 607.2h — the CR says so itself, 702.154b.)
 
 Other cause dimensions the CR's wording distinguishes:
 

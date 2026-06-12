@@ -769,13 +769,14 @@
       "name": "Enlist",
       "kind": "ability",
       "rule": "702.154",
-      "class": "composite-given",
-      "given": "cause-tagged-events",
-      "how": "Optional cost-to-attack hook (508.1g) tapping an eligible creature, plus a linked triggered ability granting +X/+0; composes given the engine's attack-optional-cost hook.",
+      "class": "composite",
+      "given": null,
+      "how": "Optional cost to attack (508.1g) tapping an eligible creature, with a linked triggered ability (607.2h) granting +X/+0 — same template as exert (701.43d); 702.154b names both rules-native hooks explicitly.",
       "cites": [
         "702.154a",
         "702.154b",
-        "508.1g"
+        "508.1g",
+        "607.2h"
       ],
       "core_referenced": false,
       "confidence": "high"
@@ -1095,14 +1096,15 @@
       "name": "Foretell",
       "kind": "ability",
       "rule": "702.143",
-      "class": "composite-given",
-      "given": "face-down-objects",
-      "how": "Special action (116.2h) to pay {2} and exile the card FACE DOWN (708), plus a static granting an alternative foretell cost to cast it on a later turn; given the face-down-objects primitive it is special-action exile-face-down + alt-cost cast.",
+      "class": "composite",
+      "given": null,
+      "how": "Special action (116.2h) to pay {2} and exile the card face down, plus a static granting an alternative foretell cost to cast it later (601.2b, 601.2f-h). Not a 708 object: 708 covers only face-down spells and permanents (708.5 excludes other zones); face-down exile with look permission is native zone machinery (406.3-4), the same basis hideaway compiles to.",
       "cites": [
         "702.143a",
         "702.143b",
         "116.2h",
-        "708.5"
+        "406.3",
+        "406.4"
       ],
       "core_referenced": true,
       "confidence": "high"
@@ -1263,14 +1265,16 @@
       "name": "Hidden Agenda",
       "kind": "ability",
       "rule": "702.106",
-      "class": "composite-given",
-      "given": "face-down-objects",
-      "how": "As the conspiracy enters the command zone it is turned FACE DOWN (708) and a card name is secretly noted (linked memory); a special action (116.2j) flips it face up; given the face-down-objects primitive it is enter-face-down + secret-name memory + turn-face-up.",
+      "class": "composite",
+      "given": null,
+      "how": "As the conspiracy is put into the command zone it is turned face down (variant-native, 905.4a — command zone, not 708) and a card name is secretly chosen as linked-ability memory (607.2d); a special action (116.2j) turns it face up. Every component is a rules-native hook the CR names explicitly.",
       "cites": [
         "702.106a",
         "702.106c",
         "702.106d",
-        "708.5"
+        "116.2j",
+        "607.2d",
+        "905.4a"
       ],
       "core_referenced": true,
       "confidence": "high"
