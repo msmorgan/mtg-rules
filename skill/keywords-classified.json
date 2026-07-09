@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_from": "CR effective 2026-04-17",
+    "generated_from": "CR effective 2026-06-19",
     "rubric_version": 1,
     "classes": [
       "intrinsic",
@@ -15,9 +15,54 @@
       "cost-modification-hook": "A permission that edits how the generic/colored mana of an already-determined total cost is paid (601.2f-h) \u2014 neither an additional nor an alternative cost.",
       "face-down-objects": "A primitive for objects existing face down (708): put/cast face down as a 2/2, secret-identity memory, and a special action to turn face up."
     },
-    "ident_rule": "ident = PascalCase engine-enum spelling derived from name: drop apostrophes, treat every other non-alphanumeric run (spaces, hyphens, punctuation, symbols like \u221e) as a word break, uppercase each word's first letter, keep the rest as printed, join. First Strike\u2192FirstStrike; Jump-Start\u2192JumpStart; For Mirrodin!\u2192ForMirrodin; \u221e (Infinity)\u2192Infinity. Idents are unique across all 260 records and match ^[A-Z][A-Za-z0-9]*$ (harness-pinned); consumers drift-guard their keyword enums against them."
+    "ident_rule": "ident = PascalCase engine-enum spelling derived from name: drop apostrophes, treat every other non-alphanumeric run (spaces, hyphens, punctuation, symbols like \u221e) as a word break, uppercase each word's first letter, keep the rest as printed, join. First Strike\u2192FirstStrike; Jump-Start\u2192JumpStart; For Mirrodin!\u2192ForMirrodin; \u221e (Infinity)\u2192Infinity. Idents are unique across all 263 records and match ^[A-Z][A-Za-z0-9]*$ (harness-pinned); consumers drift-guard their keyword enums against them."
   },
   "keywords": [
+    {
+      "name": "Heal",
+      "ident": "Heal",
+      "kind": "action",
+      "rule": "701.69",
+      "class": "composite",
+      "given": null,
+      "how": "Keyword action: remove marked damage from a permanent (all of it, when an effect says damage \u2018is healed\u2019) \u2014 the existing marked-damage-removal operation (cleanup 514.2, regeneration 701.19) invoked on demand; no new machinery.",
+      "cites": [
+        "701.69a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Power-up",
+      "ident": "PowerUp",
+      "kind": "ability",
+      "rule": "702.193",
+      "class": "composite",
+      "given": null,
+      "how": "Activated ability with a conditional self-cost-reduction (reduced by this permanent\u2019s mana cost if it entered this turn, generic-first per 118.7) plus an \u2018activate only once\u2019 restriction \u2014 cost reduction + entered-this-turn state check + activation-count restriction (cf. Exhaust).",
+      "cites": [
+        "702.193a",
+        "702.193b"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Teamwork",
+      "ident": "Teamwork",
+      "kind": "ability",
+      "rule": "702.194",
+      "class": "composite",
+      "given": null,
+      "how": "Static on the stack: optional additional cost to tap any number of creatures you control with total power N or more, plus a linked \u2018cast using teamwork\u2019 memory other abilities read (incl. teamwork-conditional targets, 702.194c) \u2014 additional-cost choice + a was-X flag (cf. Bargain, Kicker).",
+      "cites": [
+        "702.194a",
+        "702.194b",
+        "702.194c"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
     {
       "name": "Absorb",
       "ident": "Absorb",
@@ -3085,7 +3130,7 @@
       "how": "Macro: draw a card, discard a card, then put a +1/+1 counter on the permanent if a nonland card was discarded (N is a count loop).",
       "cites": [
         "701.50a",
-        "701.50e"
+        "701.50d"
       ],
       "core_referenced": false,
       "confidence": "high"

@@ -1,6 +1,6 @@
 # Casting — The Spell/Ability Pipeline
 
-*Synthesized from the Comprehensive Rules effective 2026-04-17
+*Synthesized from the Comprehensive Rules effective 2026-06-19
 (`data/rules/cr.json`). Orientation only — verify load-bearing specifics
 with `scripts/rule` before citing. Run `scripts/cite check` after CR
 refreshes.*
@@ -65,8 +65,8 @@ must be legally allowed to begin (601.3, see §3).
 
 601.4 lets a player make a normally-later choice early when an earlier choice
 depends on it (e.g. announcing extra modes that only a later kicker payment
-unlocks) (601.4). 601.7: casting a cost-altering spell doesn't touch spells/
-abilities already on the stack (601.7).
+unlocks) (601.4). 601.8: casting a cost-altering spell doesn't touch spells/
+abilities already on the stack (601.8).
 
 ## 2. Costs (118)
 
@@ -93,8 +93,8 @@ activating mana abilities is never mandatory (118.3c).
   601.3 / 601.2e (legality). Failing to *pay* at 601.2h is a separate failure,
   but it is **not** exempted from rewind: being unable to comply with 601.2h
   makes the cast illegal and the game returns to before proposal (601.2 intro,
-  733.1). A later *prohibition* rewinds too (601.5) — nothing survives a
-  completed proposal except conditional flash (601.5a). Paying a reduced/changed
+  733.1). A later *prohibition* rewinds too (601.6) — nothing survives a
+  completed proposal except conditional flash (601.6a). Paying a reduced/changed
   cost still counts as paying the original (118.7, 118.11).
 - **X handling:** if X isn't defined by text, the controller announces it as
   part of casting, at 601.2b (107.3a, 601.2b). A spell cast for neither its
@@ -139,15 +139,15 @@ Both kinds of "cost trouble" rewind — they are not opposed cases:
 - **(b) Prohibition arises after proposal → also a full rewind.** If a player
   is *no longer allowed* to cast the spell after completing its proposal
   (601.2a–d), the casting is illegal and the game **returns to the moment
-  before the casting was proposed** (601.5, via rule 733). The "it doesn't
+  before the casting was proposed** (601.6, via rule 733). The "it doesn't
   matter" clause is what makes this universal: the rewind applies regardless of
   whether the prohibiting rule/effect would make the casting illegal *while
   determining or paying costs* (601.2f–h) **or any time after the spell has
-  already been cast** (601.5). The **only** thing that persists past a completed
+  already been cast** (601.6). The **only** thing that persists past a completed
   proposal is **conditional flash**: once a player has legally begun casting a
   spell that had (or could be cast as though it had) flash because certain
   conditions were met, they may continue casting it as though it had flash even
-  if those conditions stop being met (601.5a).
+  if those conditions stop being met (601.6a).
 
 The 601.2f **cost lock** is a real boundary but a different one: it isn't a
 rewind boundary, it's where the total cost is fixed so that later cost-changing
@@ -270,8 +270,8 @@ cost-locked── 601.2f total cost computed (alt/base + add'l + inc − red),
                 then "locked in" — later cost effects no-op
 paid       ── 601.2g mana abilities, 601.2h pay (no partials, no unpayable);
                 can't-comply / can't-pay here → rewinds (601.2 intro, 733);
-                a later *prohibition* rewinds too (601.5) — nothing survives a
-                completed proposal except conditional flash (601.5a)
+                a later *prohibition* rewinds too (601.6) — nothing survives a
+                completed proposal except conditional flash (601.6a)
 cast       ── 601.2i becomes cast; cast/put-on-stack triggers fire;
                 controller may regain priority
 … stack …  ── waits; pass-in-succession (608.1)
@@ -288,6 +288,6 @@ caveat). The one boundary an engine must respect is the **cost lock** (601.2f):
 after the total cost is locked in, later cost-changing effects are inert — it is
 a *fixing* boundary, not a rewind boundary. Both *any* inability to comply with
 a step 601.2a–i (including can't-pay at 601.2h, 601.2 intro + 733) **and** a
-player becoming no longer allowed to cast after proposal completes (601.5) send
+player becoming no longer allowed to cast after proposal completes (601.6) send
 the game back to before proposal; the **only** thing that survives a completed
-proposal is **conditional flash** (601.5a).
+proposal is **conditional flash** (601.6a).

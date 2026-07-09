@@ -1,6 +1,6 @@
 # Temporal Scope — Durations, Windows, Locks
 
-*Synthesized from the Comprehensive Rules effective 2026-04-17
+*Synthesized from the Comprehensive Rules effective 2026-06-19
 (`data/rules/cr.json`). Orientation only — verify load-bearing specifics
 with `scripts/rule` before citing. Run `scripts/cite check` after CR
 refreshes.*

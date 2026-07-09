@@ -1,6 +1,6 @@
 # Choices — Decision Points
 
-*Synthesized from the Comprehensive Rules effective 2026-04-17
+*Synthesized from the Comprehensive Rules effective 2026-06-19
 (`data/rules/cr.json`). Orientation only — verify load-bearing specifics
 with `scripts/rule` before citing. Run `scripts/cite check` after CR
 refreshes.*
@@ -35,9 +35,9 @@ delegation) develops this; the resolution steps:
   outstanding (101.4d).
 - **Textual delegation.** Some spells have an opponent make a casting choice
   the controller normally would (mode, targets); the opponent does so when
-  the controller normally would (601.6). With several eligible opponents,
-  the controller picks which one chooses (601.6a); controller-then-opponent
-  ordering is an explicit exception to 101.4 (601.6b). Smaller examples:
+  the controller normally would (601.7). With several eligible opponents,
+  the controller picks which one chooses (601.7a); controller-then-opponent
+  ordering is an explicit exception to 101.4 (601.7b). Smaller examples:
   discard normally lets the affected player pick the card, but effects can
   require random discard or let another player choose (701.9b); copy effects
   may let the copy's controller choose new targets (707.10c).

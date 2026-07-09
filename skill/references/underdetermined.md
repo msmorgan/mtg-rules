@@ -1,6 +1,6 @@
 # Underdetermined — The Engine-Choice Registry
 
-*Synthesized from the Comprehensive Rules effective 2026-04-17
+*Synthesized from the Comprehensive Rules effective 2026-06-19
 (`data/rules/cr.json`). Orientation only — verify load-bearing specifics
 with `scripts/rule` before citing. Run `scripts/cite check` after CR
 refreshes.*
@@ -148,7 +148,7 @@ join key telling each consumer which ADR to revisit.
   controller, status, and counters are clearly in — but do attachments,
   choices made for the object, and history-dependent quantities (damage
   marked, "this turn" facts) ride along? The CR never draws the line;
-  consumers name fields case by case (702.2e, 702.15c, 701.44c, 701.50c,
+  consumers name fields case by case (702.2e, 702.15c, 701.44c, 701.50b,
   800.4i).
 - **Docs assume:** mechanism only — LKI is a snapshot read from the event
   log (`events.md` §5, §7); no doc commits to an extent.

@@ -1,16 +1,16 @@
 # Keyword Classification — Intrinsic / Composite / Marker
 
-*Synthesized from the Comprehensive Rules effective 2026-04-17
+*Synthesized from the Comprehensive Rules effective 2026-06-19
 (`data/rules/cr.json`). Orientation only — verify load-bearing specifics
 with `scripts/rule` before citing. Run `scripts/cite check` after CR
 refreshes.*
 
 Every keyword ability (CR 702) and keyword action (CR 701) is classified by
-**what an engine has to build for it**. The full per-keyword data (all 260
+**what an engine has to build for it**. The full per-keyword data (all 263
 rows, `how` rationale, cites, `core_referenced` flag) lives in
 `../keywords-classified.json`; this doc holds the rubric, the engine
 primitive basis, and the closed-class tables. The JSON is the authority for
-the 215-row composite enumeration — only highlights appear below.
+the 218-row composite enumeration — only highlights appear below.
 
 ## Rubric (rubric_version 1)
 
@@ -157,7 +157,7 @@ Each decomposes once its `given` primitive exists; grouped by primitive.
 
 ## Composite highlights
 
-The full 215-row composite enumeration lives in
+The full 218-row composite enumeration lives in
 `../keywords-classified.json`. Twelve instructive ones:
 
 | name | rule | decomposition | cites |
@@ -180,13 +180,13 @@ The full 215-row composite enumeration lives in
 | class | count |
 |---|---|
 | intrinsic | 25 (9 ability, 16 action) |
-| composite | 215 (168 ability, 47 action) |
+| composite | 218 (170 ability, 48 action) |
 | composite-given | 19 (14 ability, 5 action) |
 | marker | 1 |
-| **total** | **260** (192 ability, 68 action) |
+| **total** | **263** (194 ability, 69 action) |
 
-`core_referenced` (named in CR outside its own 70x section): **64** of 260
-rows are true, 196 false. Per row in the JSON. The 16 intrinsic actions and
+`core_referenced` (named in CR outside its own 70x section): **64** of 263
+rows are true, 199 false. Per row in the JSON. The 16 intrinsic actions and
 several intrinsic abilities (deathtouch→510.1c/704.5h, trample→510.1, etc.)
 are core-referenced; most composite *abilities* are self-contained.
 

@@ -9,6 +9,55 @@ mints/retirements, notation changes) are always called out explicitly.
 
 ## Unreleased
 
+## 1.8.0 — 2026-07-09
+
+CR refresh to the **June 19, 2026** Comprehensive Rules (Marvel Super
+Heroes / MSH, the SOS→MSH diff) plus the pending citation-tooling change.
+Re-synthesized against the new CR: all cited rules re-verified
+(`cite check` clean, lockfile re-blessed at `cr_date 2026-06-19`), all 18
+`rulings-check.md` probes still MATCH, no `underdetermined.md` entry newly
+settled, no `generalizations.md` empty cell newly filled. The effective-date
+header on every reference doc is now 2026-06-19.
+
+### Taxonomy additions
+
+- **Three new keywords classified** (all `composite`): **Heal** (701.69,
+  action — remove marked damage, reusing the cleanup/regeneration
+  operation), **Power-up** (702.193, ability — conditional self-cost-reduction
+  if it entered this turn + "activate only once", cf. Affinity + Exhaust),
+  **Teamwork** (702.194, ability — optional additional cost tapping creatures
+  of total power N, plus a "cast using teamwork" was-X memory, cf.
+  Bargain/Kicker). Counts: total **260 → 263** (ability 192 → 194, action
+  68 → 69), composite **215 → 218**. No existing row was reclassified — purely
+  additive, but the count/`keywords_classified_sha` change is a consumer
+  re-sync trigger for enum drift-guards.
+
+### Citation fixes (CR renumbering)
+
+- **601.5–601.7 block renumber.** The MSH CR inserted a new 601.5
+  ("announcing targets — options available only if other choices are made
+  later"), shifting the block: old 601.5→601.6 (prohibition rewind),
+  601.5a→601.6a (conditional flash), 601.6/a/b→601.7/a/b (opponent choices),
+  601.7→601.8 (cost-altering doesn't touch the stack). All sites in
+  `casting.md`, `choices.md`, `generalizations.md` re-pointed; content
+  unchanged.
+- **Connive block renumber (topic-drift, hash-checker-invisible).** Old
+  701.50c (connive LKI) → 701.50b and old 701.50e (Connive N) → 701.50d, with
+  a brand-new 701.50e (connive 0). The cites in `underdetermined.md`
+  (701.50c→701.50b) and `keywords-classified.json` Connive (701.50e→701.50d)
+  now point at the intended rules — a re-point `cite bless` would otherwise
+  have silently re-pinned to the wrong topic.
+
+### Tooling
+
+- `scripts/cite audit [--diff] [files…]`: new subcommand that prints each
+  citation site's claim line next to the **full official text** of every rule
+  it cites — the semantic check the checksum checker can't do (it proves a
+  rule *exists*, not that it's the rule the claim names). `--diff` audits only
+  the lines added in a unified diff (stdin, or `jj diff`/`git diff`). And
+  `cite bless` now prints a **"newly registered rule(s)"** list so each cite
+  entering the lock gets one forced glance against its claim — the cheapest
+  point to catch a right-number-wrong-topic cite.
 - `scripts/cite check`: new staleness class **MALFORMED** — a token with the
   bracketed shape (`[CR#…]`) whose contents fail citation parsing is now
   reported (`MALFORMED <token> <file>:<line>`), counted as stale (non-zero

@@ -114,7 +114,7 @@ t_fails "setup-data rejects bogus flag" $scripts/setup-data --bogus
 # --- keyword classification ---
 t "keywords-classified.json parses" '^valid$' fish -c "jq -e . skill/keywords-classified.json >/dev/null; and echo valid"
 t "keyword classes are all in enum" '^0$' fish -c 'jq -r "[.keywords[].class] - [\"intrinsic\",\"composite\",\"composite-given\",\"marker\"] | length" skill/keywords-classified.json'
-t "keyword count covers both lists" '^260$' fish -c "jq -r '.keywords | length' skill/keywords-classified.json"
+t "keyword count covers both lists" '^263$' fish -c "jq -r '.keywords | length' skill/keywords-classified.json"
 # Lint (the Enlist-bug class): a composite-given row whose `how` never names
 # its `given` primitive is exactly how a tag/rationale mismatch survives
 # review. Normalized comparison: lowercase, hyphens treated as spaces.
@@ -197,14 +197,14 @@ t_fails "cite show rejects a malformed citation" env $cdat $cite --config $citet
 rm -rf $citetmp
 
 # --- version (conformance manifest) ---
-t "version emits the plugin version" '"plugin_version": "1\.7\.0"' $scripts/version
+t "version emits the plugin version" '"plugin_version": "1\.8\.0"' $scripts/version
 t "version manifest parses with all four keys" '^true$' \
     fish -c "$scripts/version | jq -e 'has(\"plugin_version\") and has(\"git_commit\") and has(\"cr_effective\") and has(\"keywords_classified_sha\")'"
 
 # --- keyword idents (machine enum spellings) ---
-t "idents: all 260 records carry a string ident" '^260$' \
+t "idents: all 263 records carry a string ident" '^263$' \
     jq -r '[.keywords[].ident | select(type == "string")] | length' $repo/skill/keywords-classified.json
-t "idents: all 260 unique" '^260$' \
+t "idents: all 263 unique" '^263$' \
     jq -r '[.keywords[].ident] | unique | length' $repo/skill/keywords-classified.json
 t "idents: all match ^[A-Z][A-Za-z0-9]*\$" '^0$' \
     jq -r '[.keywords[].ident | select(test("^[A-Z][A-Za-z0-9]*$") | not)] | length' $repo/skill/keywords-classified.json
