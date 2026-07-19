@@ -6,14 +6,18 @@ set -g skill_dir (path dirname $here)
 
 # Data resolution chain — each candidate accepted iff <dir>/rules/cr.json is readable:
 #   1. $MTG_RULES_DATA (if set)
-#   2. ~/.claude/plugins/data/mtg-rules/data
-#   3. (path dirname $skill_dir)/data  (dev/repo layout)
+#   2. ~/.gemini/config/plugins/mtg-rules/data
+#   3. ~/.claude/plugins/data/mtg-rules/data
+#   4. (path dirname (path dirname $skill_dir))/data (agy/gemini plugin layout, e.g. plugins/mtg-rules/skills/mtg-rules -> plugins/mtg-rules/data)
+#   5. (path dirname $skill_dir)/data  (dev/repo layout, e.g. repo/skill -> repo/data)
 set -g data_dir ""
 set -l _candidates
 if set -q MTG_RULES_DATA
     set -a _candidates $MTG_RULES_DATA
 end
+set -a _candidates $HOME/.gemini/config/plugins/mtg-rules/data
 set -a _candidates $HOME/.claude/plugins/data/mtg-rules/data
+set -a _candidates (path dirname (path dirname $skill_dir))/data
 set -a _candidates (path dirname $skill_dir)/data
 
 for _cand in $_candidates
@@ -28,8 +32,10 @@ end
 if test -z "$data_dir"
     echo >&2 "mtg-rules: could not find data directory. Tried:"
     echo >&2 "  1. \$MTG_RULES_DATA = "(set -q MTG_RULES_DATA; and echo $MTG_RULES_DATA; or echo "(not set)")
-    echo >&2 "  2. $HOME/.claude/plugins/data/mtg-rules/data"
-    echo >&2 "  3. "(path dirname $skill_dir)/data
+    echo >&2 "  2. $HOME/.gemini/config/plugins/mtg-rules/data"
+    echo >&2 "  3. $HOME/.claude/plugins/data/mtg-rules/data"
+    echo >&2 "  4. "(path dirname (path dirname $skill_dir))/data
+    echo >&2 "  5. "(path dirname $skill_dir)/data
     echo >&2 "Populate data with: scripts/setup-data (plugin installs) or scripts/fetch_data.fish (repo checkouts)"
     exit 1
 end

@@ -1,8 +1,12 @@
 # mtg-rules
 
-Marketplace and development repository for the **mtg-rules** Claude Code plugin — a judge-grade Magic: The Gathering rules skill grounded in the Comprehensive Rules, with verified citations and synthesized engine/grammar taxonomies.
+Marketplace and development repository for the **mtg-rules** plugin — a judge-grade Magic: The Gathering rules skill grounded in the Comprehensive Rules, with verified citations and synthesized engine/grammar taxonomies. Compatible with both **Claude Code** and **Google Antigravity (agy)**.
 
-## Install via Plugin Marketplace
+## Installation
+
+### Claude Code
+
+Install via the plugin marketplace:
 
 ```
 /plugin marketplace add /path/to/mtg-rules
@@ -10,6 +14,21 @@ Marketplace and development repository for the **mtg-rules** Claude Code plugin 
 /plugin marketplace add https://github.com/msmorgan/mtg-rules
 
 /plugin install mtg-rules@mtg-rules
+```
+
+### Google Antigravity (agy)
+
+Install globally by cloning or copying the repository into your global plugins directory:
+
+```bash
+git clone https://github.com/msmorgan/mtg-rules ~/.gemini/config/plugins/mtg-rules
+```
+
+Or for a specific workspace, clone or copy the repository into `.agents/plugins/mtg-rules` under your project root:
+
+```bash
+mkdir -p .agents/plugins
+git clone https://github.com/msmorgan/mtg-rules .agents/plugins/mtg-rules
 ```
 
 ### First-Run Data Setup
@@ -40,7 +59,7 @@ Example — full install:
 scripts/setup-data --cards --rulings
 ```
 
-Data lands in `~/.claude/plugins/data/mtg-rules/data/` by default, or in `$MTG_RULES_DATA` if that variable is set.
+Data lands in `~/.gemini/config/plugins/mtg-rules/data/` (for agy) or `~/.claude/plugins/data/mtg-rules/data/` (for Claude Code) by default, or in `$MTG_RULES_DATA` if that variable is set.
 
 ## Development Setup (Repo Checkout)
 

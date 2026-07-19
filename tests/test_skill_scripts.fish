@@ -197,7 +197,7 @@ t_fails "cite show rejects a malformed citation" env $cdat $cite --config $citet
 rm -rf $citetmp
 
 # --- version (conformance manifest) ---
-t "version emits the plugin version" '"plugin_version": "1\.8\.0"' $scripts/version
+t "version emits the plugin version" '"plugin_version": "1\.8\.1"' $scripts/version
 t "version manifest parses with all four keys" '^true$' \
     fish -c "$scripts/version | jq -e 'has(\"plugin_version\") and has(\"git_commit\") and has(\"cr_effective\") and has(\"keywords_classified_sha\")'"
 

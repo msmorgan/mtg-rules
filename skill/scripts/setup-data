@@ -34,7 +34,7 @@ function usage
 
 Populate the mtg-rules data directory for an installed plugin copy.
 
-Default dest: \$MTG_RULES_DATA if set, else ~/.claude/plugins/data/mtg-rules/data
+Default dest: \$MTG_RULES_DATA if set, else ~/.gemini/config/plugins/mtg-rules/data (if ~/.gemini exists) or ~/.claude/plugins/data/mtg-rules/data
 
 Tiers (idempotent — re-run any time to refresh):
   base       (always)    rules/* (6 files) + catalogs/* (20 files), ~4 MB
@@ -135,7 +135,17 @@ if set -q _flag_dest
 else if set -q MTG_RULES_DATA
     set -g dest $MTG_RULES_DATA
 else
-    set -g dest $HOME/.claude/plugins/data/mtg-rules/data
+    # Determine default destination directory.
+    # Check if we are inside a standard skills/mtg-rules/scripts/ folder.
+    set -l here (path resolve (status dirname))
+    set -l skill_root (path dirname $here)
+    if string match -q '*/skills/mtg-rules' $skill_root
+        set -g dest (path dirname (path dirname $skill_root))/data
+    else if test -d $HOME/.gemini
+        set -g dest $HOME/.gemini/config/plugins/mtg-rules/data
+    else
+        set -g dest $HOME/.claude/plugins/data/mtg-rules/data
+    end
 end
 set -g dest (path normalize $dest)
 
