@@ -9,6 +9,14 @@ mints/retirements, notation changes) are always called out explicitly.
 
 ## Unreleased
 
+## 1.8.1 — 2026-07-19
+
+Skill **description** (frontmatter) trimmed to trigger-only: mechanism and
+post-fire-behavior prose that already lives in the skill body was moved out
+of the always-loaded router, cutting per-session token cost. **No taxonomy,
+CR data, or behavior change** — `cr_effective` and `keywords_classified_sha`
+are unchanged, so consumers pinning the version manifest need no re-sync.
+
 ## 1.8.0 — 2026-07-09
 
 CR refresh to the **June 19, 2026** Comprehensive Rules (Marvel Super
