@@ -160,6 +160,12 @@ t "cite list still skips malformed tokens" '^0$' \
     fish -c "env $cdat $cite --config $citetmp/cfg-malformed.json list | grep -c xyz; true"
 t "cite bless still skips malformed tokens" 'blessed 6 rules' \
     env $cdat $curlenv $cite --config $citetmp/cfg-malformed.json bless
+# An ellipsis-only token is prose about the format. Asserting the count is still
+# 6 (cfg-good's) proves both halves: not MALFORMED, and not counted as a cite.
+t "cite check treats an ellipsis token as prose, not MALFORMED" 'checked 6 citations against cr\.json \(eff\. 2026-04-17\); 0 stale' \
+    env $cdat $cite --config $citetmp/cfg-placeholder.json check
+t_fails "cite show rejects an ellipsis placeholder" \
+    env $cdat $cite --config $citetmp/cfg-good.json show '[CR#…]'
 t "cite flags UNLOCKED for an unblessed cite" 'UNLOCKED  100\.1  src/more\.md:1' \
     env $cdat $cite --config $citetmp/cfg-unlocked.json check
 t_fails "cite exits nonzero on stale" env $cdat $cite --config $citetmp/cfg-unlocked.json check
@@ -181,6 +187,10 @@ t "cite noncompliant count respects exemption" '4 non-compliant' \
     env $cdat $cite --config $citetmp/cfg-nc.json check --list-noncompliant
 t "cite noncompliant ignores canonical citations" '^0$' \
     fish -c "env $cdat $cite --config $citetmp/cfg-nc.json check --list-noncompliant | grep -c '702\.22a'; true"
+# `\brule N` used to fire inside `--per-rule 2`, because a hyphen is a word
+# boundary. The count above staying at 4 is the other half of this guard.
+t "cite noncompliant ignores a --per-rule CLI flag" '^0$' \
+    fish -c "env $cdat $cite --config $citetmp/cfg-nc.json check --list-noncompliant | grep -c 'per-rule'; true"
 t_fails "cite noncompliant exits nonzero" env $cdat $cite --config $citetmp/cfg-nc.json check --list-noncompliant
 t "cite bare-mode bless" 'blessed 2 rules' \
     env $cdat $curlenv $cite --config $citetmp/cfg-bare.json bless

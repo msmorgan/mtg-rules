@@ -47,6 +47,12 @@
 # whole [CR#…] span before the wide-net patterns run), so check is the only
 # tripwire for them.
 #
+# An ellipsis-only token is the one exception: a doc that *documents* this
+# format writes a literal [CR#…], which is prose, not a broken citation. Those
+# resolve as "placeholder" and are silent in every command — not MALFORMED, not
+# counted as checked citations. Narrow on purpose: [CR#] and [CR#rule] are
+# still MALFORMED, because those are typos.
+#
 # Env: MTG_RULES_CITE_WIZARDS_URL overrides bless's network URL resolution
 # (offline use, tests). MTG_RULES_DATA picks the data dir (see lib.fish).
 
@@ -179,8 +185,9 @@ function cmd_check
     jq -r -f $jq_lib/classify.jq \
         --slurpfile cur $work/cur.json --slurpfile lock $lock_path \
         $work/tokens.jsonl > $work/stale.txt
-    # non-ok tokens (gone ranges, malformed brackets) each count once
-    set -l checked (jq -s '([.[] | select(.status != "ok")] | length)
+    # non-ok tokens (gone ranges, malformed brackets) each count once;
+    # placeholders are prose about the format, not citations, so they don't count
+    set -l checked (jq -s '([.[] | select(.status != "ok" and .status != "placeholder")] | length)
                            + ([.[] | select(.status == "ok") | .members | length] | add // 0)' \
         $work/tokens.jsonl)
     set -l stale_n (wc -l < $work/stale.txt | string trim)
@@ -267,6 +274,7 @@ function cmd_show
         > $work/show.jsonl
     set -l kind (jq -r '.status' $work/show.jsonl)
     test "$kind" = skip; and die "cite show: malformed citation: $arg"
+    test "$kind" = placeholder; and die "cite show: not a citation, an ellipsis placeholder: $arg"
     test "$kind" = gone; and die "cite show: range endpoint not found: $arg"
     set -l members (jq -r '.members[]' $work/show.jsonl)
     set -l width 80

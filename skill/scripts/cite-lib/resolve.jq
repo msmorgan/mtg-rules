@@ -3,8 +3,13 @@
 #   $idx[0]:  {rule: position} over those keys
 # status: "ok" (members[] expanded), "skip" (malformed — `check` reports these
 # as MALFORMED via classify.jq; list/bless still ignore them), "gone" (a range
-# endpoint is not a leaf in the current CR, or the range is reversed).
+# endpoint is not a leaf in the current CR, or the range is reversed),
+# "placeholder" (an ellipsis-only token — prose *about* the citation format,
+# e.g. a doc writing `[CR#…]`; silent everywhere, never MALFORMED).
 def valid_one: test("^[0-9]{1,3}(\\.[0-9]+[a-z]*)?$");
+# Ellipsis-only, ASCII or U+2026. Deliberately narrow: an empty `[CR#]` or a
+# word like `[CR#rule]` stays MALFORMED, since those are typos, not prose.
+def placeholder_only: test("^\\s*(\\.{3}|…)\\s*$");
 def parse_part:
   if contains("..") then
     split("..") as $ab
@@ -23,7 +28,8 @@ def parse_part:
 | . as $raw
 | ($raw | split(",") | map(parse_part)) as $pp
 | {file: $s.file, line: $s.line, ctx: $s.ctx, raw: $raw}
-  + (if ($pp | length) == 0 or any($pp[]; .bad == true) then {status: "skip"}
+  + (if ($raw | placeholder_only) then {status: "placeholder"}
+     elif ($pp | length) == 0 or any($pp[]; .bad == true) then {status: "skip"}
      else
        ([$pp[]
          | if has("one") then [.one]
