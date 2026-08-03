@@ -4,7 +4,8 @@
   "plugins": [
     {
       "name": "mtg-rules",
-      "source": "./skill",
+      "source": "./",
+      "version": "1.8.2",
       "description": "MTG Comprehensive Rules skill: lookup scripts (CR, glossary, MTR, cards, official rulings) + synthesized taxonomies (game state, actions, effects/layers, designations, oracle grammar)."
     }
   ]

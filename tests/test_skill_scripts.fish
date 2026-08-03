@@ -31,8 +31,20 @@ function t_fails
 end
 
 set -g repo (path resolve (status dirname)/..)
-set -g scripts $repo/skill/scripts
+set -g scripts $repo/skills/mtg-rules/scripts
 set -g fixtures $repo/tests/fixtures
+
+# --- plugin layout ---
+t "Codex manifest names the plugin" '^mtg-rules$' \
+    jq -r '.name' $repo/.codex-plugin/plugin.json
+t "Codex manifest discovers the skills directory" '^\./skills/$' \
+    jq -r '.skills' $repo/.codex-plugin/plugin.json
+t "Codex marketplace installs the repository root" '^url \./$' \
+    jq -r '.plugins[0].source | [.source, .url] | join(" ")' $repo/.agents/plugins/marketplace.json
+t "Codex marketplace has a collision-free development name" '^mtg-rules-dev$' \
+    jq -r '.name' $repo/.agents/plugins/marketplace.json
+t "Codex and Claude manifests have the same version" '^true$' fish -c \
+    "test (jq -r .version $repo/.codex-plugin/plugin.json) = (jq -r .version $repo/.claude-plugin/plugin.json); and echo true"
 
 # --- lib.fish ---
 t "lib resolves rules dir" 'data/rules$' fish -c "source $scripts/lib.fish; or exit 1; echo \$rules_dir"
@@ -107,21 +119,31 @@ t "lib honors MTG_RULES_DATA" '/tmp/mtg-data-test/rules$' fish -c "set -x MTG_RU
 t "lib ignores invalid MTG_RULES_DATA" 'data/rules$' fish -c "set -x MTG_RULES_DATA /nonexistent; source $scripts/lib.fish; or exit 1; echo \$rules_dir"
 rm -rf /tmp/mtg-data-test
 
+set -l codex_test_root (mktemp -d)
+set -l codex_test_home $codex_test_root/home
+set -l codex_test_skill $codex_test_home/plugins/cache/mtg-rules/mtg-rules/1.8.2/skills/mtg-rules
+mkdir -p $codex_test_skill/scripts $codex_test_home/plugins/data/mtg-rules/data/rules
+cp $scripts/lib.fish $codex_test_skill/scripts/lib.fish
+echo '{}' >$codex_test_home/plugins/data/mtg-rules/data/rules/cr.json
+t "lib resolves persistent Codex plugin data" 'plugins/data/mtg-rules/data/rules$' \
+    env CODEX_HOME=$codex_test_home fish -c "source $codex_test_skill/scripts/lib.fish; or exit 1; echo \$rules_dir"
+rm -rf $codex_test_root
+
 # --- setup-data ---
 t "setup-data shows usage" '(?i)usage' fish -c "$scripts/setup-data --help; true"
 t_fails "setup-data rejects bogus flag" $scripts/setup-data --bogus
 
 # --- keyword classification ---
-t "keywords-classified.json parses" '^valid$' fish -c "jq -e . skill/keywords-classified.json >/dev/null; and echo valid"
-t "keyword classes are all in enum" '^0$' fish -c 'jq -r "[.keywords[].class] - [\"intrinsic\",\"composite\",\"composite-given\",\"marker\"] | length" skill/keywords-classified.json'
-t "keyword count covers both lists" '^263$' fish -c "jq -r '.keywords | length' skill/keywords-classified.json"
+t "keywords-classified.json parses" '^valid$' fish -c "jq -e . skills/mtg-rules/keywords-classified.json >/dev/null; and echo valid"
+t "keyword classes are all in enum" '^0$' fish -c 'jq -r "[.keywords[].class] - [\"intrinsic\",\"composite\",\"composite-given\",\"marker\"] | length" skills/mtg-rules/keywords-classified.json'
+t "keyword count covers both lists" '^263$' fish -c "jq -r '.keywords | length' skills/mtg-rules/keywords-classified.json"
 # Lint (the Enlist-bug class): a composite-given row whose `how` never names
 # its `given` primitive is exactly how a tag/rationale mismatch survives
 # review. Normalized comparison: lowercase, hyphens treated as spaces.
 t "lint: composite-given how names its given primitive" '^0$' \
-    jq -r '[.keywords[] | select(.class=="composite-given") | (.given|ascii_downcase|gsub("-";" ")) as $g | select(((.how|ascii_downcase|gsub("-";" ")) | contains($g)) | not) | .name] | length' skill/keywords-classified.json
+    jq -r '[.keywords[] | select(.class=="composite-given") | (.given|ascii_downcase|gsub("-";" ")) as $g | select(((.how|ascii_downcase|gsub("-";" ")) | contains($g)) | not) | .name] | length' skills/mtg-rules/keywords-classified.json
 t "lint: every given value is in meta.given_vocabulary" '^0$' \
-    jq -r '([.keywords[] | select(.class=="composite-given") | .given] | unique) - (.meta.given_vocabulary | keys) | length' skill/keywords-classified.json
+    jq -r '([.keywords[] | select(.class=="composite-given") | .given] | unique) - (.meta.given_vocabulary | keys) | length' skills/mtg-rules/keywords-classified.json
 
 # --- lookup/classify/health ---
 t "lookup deathtouch spans rule and keyword sources" '(?s)\[rule\] 702\.2.*\[keyword\]' $scripts/lookup deathtouch
@@ -129,6 +151,7 @@ t_fails "lookup rejects invalid regex" $scripts/lookup '['
 t_fails "lookup misses garbage" $scripts/lookup zzqqxyzzy
 t "classify Cascade is composite" 'Cascade.*composite' $scripts/classify Cascade
 t_fails "classify bogus keyword" $scripts/classify zzgrok
+t "cite defaults to the skill-relative config" '0 stale' $scripts/cite check
 t "health reports effective date and exits 0" '(?s)effective.*HEALTH_OK' fish -c "$scripts/health; and echo HEALTH_OK"
 
 # --- cite (fixtures copied to a tmp dir; locks are created there by bless) ---
@@ -207,19 +230,19 @@ t_fails "cite show rejects a malformed citation" env $cdat $cite --config $citet
 rm -rf $citetmp
 
 # --- version (conformance manifest) ---
-t "version emits the plugin version" '"plugin_version": "1\.8\.1"' $scripts/version
+t "version emits the plugin version" '"plugin_version": "1\.8\.2"' $scripts/version
 t "version manifest parses with all four keys" '^true$' \
     fish -c "$scripts/version | jq -e 'has(\"plugin_version\") and has(\"git_commit\") and has(\"cr_effective\") and has(\"keywords_classified_sha\")'"
 
 # --- keyword idents (machine enum spellings) ---
 t "idents: all 263 records carry a string ident" '^263$' \
-    jq -r '[.keywords[].ident | select(type == "string")] | length' $repo/skill/keywords-classified.json
+    jq -r '[.keywords[].ident | select(type == "string")] | length' $repo/skills/mtg-rules/keywords-classified.json
 t "idents: all 263 unique" '^263$' \
-    jq -r '[.keywords[].ident] | unique | length' $repo/skill/keywords-classified.json
+    jq -r '[.keywords[].ident] | unique | length' $repo/skills/mtg-rules/keywords-classified.json
 t "idents: all match ^[A-Z][A-Za-z0-9]*\$" '^0$' \
-    jq -r '[.keywords[].ident | select(test("^[A-Z][A-Za-z0-9]*$") | not)] | length' $repo/skill/keywords-classified.json
+    jq -r '[.keywords[].ident | select(test("^[A-Z][A-Za-z0-9]*$") | not)] | length' $repo/skills/mtg-rules/keywords-classified.json
 t "ident spot checks (First Strike, For Mirrodin!, ∞)" '^FirstStrike ForMirrodin Infinity$' \
-    jq -r '[.keywords[] | select(.name == "First Strike" or .name == "For Mirrodin!" or .name == "∞ (Infinity)") | .ident] | join(" ")' $repo/skill/keywords-classified.json
+    jq -r '[.keywords[] | select(.name == "First Strike" or .name == "For Mirrodin!" or .name == "∞ (Infinity)") | .ident] | join(" ")' $repo/skills/mtg-rules/keywords-classified.json
 t "classify prints the ident" 'ident: FirstStrike' $scripts/classify first strike
 
 # --- underdetermined (durable UD ids) ---

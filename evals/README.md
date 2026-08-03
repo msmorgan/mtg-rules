@@ -11,7 +11,7 @@ kind (keyword lines, activated/triggered/static shapes, modal bullets,
 replacement markers, Gate/Toll markers, cost lines, …) to a list of
 case-insensitive ERE patterns; the report prints, per kind, how many of the
 distinct supported oracle lines (the same extraction as
-`skill/scripts/corpus`) match any of that kind's patterns, plus the union
+`skills/mtg-rules/scripts/corpus`) match any of that kind's patterns, plus the union
 coverage across all kinds — the headline number. Needs the cards data tier
 (`derived/cards.jsonl`); no agent calls.
 
@@ -32,9 +32,9 @@ explained.
 Regression eval for the **skill**, not the data: each probe asks a headless
 agent one of the eighteen rulings-check questions cold and grades the answer
 against the citations and verdicts derived in
-`skill/references/rulings-check.md`. Run after CR refreshes or reference-doc
+`skills/mtg-rules/references/rulings-check.md`. Run after CR refreshes or reference-doc
 edits to catch a skill that stopped routing, citing, or concluding correctly.
-This directory deliberately lives outside `skill/` so the plugin doesn't ship it.
+This directory deliberately lives outside `skills/mtg-rules/` so the plugin doesn't ship it.
 
 **Cost warning:** every non-`--dry` run is one full `claude -p` agent run
 (skill lookups included). Spot-check single probes; don't loop all 18 casually.

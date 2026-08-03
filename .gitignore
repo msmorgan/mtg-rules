@@ -1,4 +1,4 @@
-# Matches the data directory and the symlink used in jj workspaces
+# Local authoritative data is fetched during development and is not packaged.
 /data
 
 # CLAUDE.md is intentionally tracked (overrides any global ignore)

@@ -1,6 +1,6 @@
 # Changelog
 
-**Consumers pin the version manifest** (`skill/scripts/version` →
+**Consumers pin the version manifest** (`skills/mtg-rules/scripts/version` →
 `{plugin_version, git_commit, cr_effective, keywords_classified_sha}`) as
 their conformance baseline; **a version bump here is the re-sync trigger** —
 re-run your alignment pass against the new taxonomy and data before
@@ -8,6 +8,15 @@ re-pinning. Taxonomy-meaning changes (reclassifications, primitive
 mints/retirements, notation changes) are always called out explicitly.
 
 ## Unreleased
+
+## 1.8.2 — 2026-08-03
+
+Codex packaging and runtime compatibility: the canonical skill now lives at
+`skills/mtg-rules/`, the repository has native Codex plugin and marketplace
+manifests plus skill UI metadata, and installed Codex copies resolve their
+data from a persistent directory outside the versioned plugin cache. Claude
+Code and agy continue to use the same canonical skill tree. **No taxonomy or
+CR-data change.**
 
 ## 1.8.1 — 2026-07-19
 
@@ -113,7 +122,7 @@ landing.
 ### Conformance plumbing
 
 - `scripts/cite`: config-driven citation checker with a text-drift lockfile
-  (`skill/cr-citations.lock`, normalized-text checksums; staleness classes
+  (`skills/mtg-rules/cr-citations.lock`, normalized-text checksums; staleness classes
   CHANGED/GONE/UNLOCKED) — replaces the old check-citations script.
 - `scripts/version`: machine-readable conformance manifest (see top note).
 - New lookup surface: `scripts/lookup` (unified meta-search),

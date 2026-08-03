@@ -9,10 +9,18 @@ set -l selfdir (path resolve (status dirname))
 
 # data dir + which resolution-chain candidate won
 set -l via "repo-relative"
+set -l codex_root "$HOME/.codex"
+if set -q CODEX_HOME; and test -n "$CODEX_HOME"
+    set codex_root (path normalize "$CODEX_HOME")
+end
 if set -q MTG_RULES_DATA; and test "$data_dir" = "$MTG_RULES_DATA"
     set via '$MTG_RULES_DATA'
+else if test "$data_dir" = "$codex_root/plugins/data/mtg-rules/data"
+    set via "Codex plugin data dir"
+else if test "$data_dir" = "$HOME/.gemini/config/plugins/mtg-rules/data"
+    set via "agy plugin data dir"
 else if test "$data_dir" = "$HOME/.claude/plugins/data/mtg-rules/data"
-    set via "plugin data dir"
+    set via "Claude plugin data dir"
 end
 echo "data: $data_dir (via $via)"
 
@@ -76,7 +84,11 @@ echo "tier rulings: AllPrintings.sqlite $sqlite_mark — rulings"
 
 # keyword classification + plugin version
 echo "keywords-classified: "(jq -r '.keywords | length' $skill_dir/keywords-classified.json)" keywords"
-echo "plugin version: "(jq -r '.version' $skill_dir/.claude-plugin/plugin.json)
+if test -n "$plugin_manifest"
+    echo "plugin version: "(jq -r '.version' $plugin_manifest)
+else
+    echo "plugin version: unknown (plugin manifest not found)"
+end
 
 # citations
 set -l cite_out ($selfdir/cite --config "$skill_dir/cite-config.json" check 2>&1)

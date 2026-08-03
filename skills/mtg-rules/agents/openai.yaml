@@ -1,0 +1,7 @@
+interface:
+  display_name: "MTG Rules"
+  short_description: "Verified Magic rules, cards, and policy"
+  default_prompt: "Use $mtg-rules to answer this Magic rules question with verified citations."
+
+policy:
+  allow_implicit_invocation: true

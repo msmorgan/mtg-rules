@@ -1,6 +1,6 @@
 #!/usr/bin/env fish
 # classify <keyword> — intrinsic/composite classification record from
-# skill/keywords-classified.json (case-insensitive name match).
+# skills/mtg-rules/keywords-classified.json (case-insensitive name match).
 
 source (path resolve (status dirname))/lib.fish; or exit 1
 

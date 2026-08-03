@@ -1,0 +1,37 @@
+{
+  "name": "mtg-rules",
+  "version": "1.8.2",
+  "description": "Judge-grade Magic: The Gathering rules answers and engine/grammar taxonomies, grounded in the Comprehensive Rules with verified citations.",
+  "author": {
+    "name": "msmorgan",
+    "url": "https://github.com/msmorgan"
+  },
+  "homepage": "https://github.com/msmorgan/mtg-rules",
+  "repository": "https://github.com/msmorgan/mtg-rules",
+  "license": "MIT",
+  "keywords": [
+    "magic-the-gathering",
+    "rules",
+    "judge",
+    "oracle-text",
+    "game-engine"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "MTG Rules",
+    "shortDescription": "Verified Magic rules, cards, and policy",
+    "longDescription": "Answer Magic: The Gathering rules, card-interaction, tournament-policy, engine-design, and Oracle-text questions from local authoritative data with verified citations.",
+    "developerName": "msmorgan",
+    "category": "Education",
+    "capabilities": [
+      "Interactive",
+      "Read"
+    ],
+    "websiteURL": "https://github.com/msmorgan/mtg-rules",
+    "defaultPrompt": [
+      "Explain this Magic card interaction with verified rules citations.",
+      "Look up this card's exact Oracle text and rule on the interaction.",
+      "Analyze this Magic mechanic for an engine implementation."
+    ]
+  }
+}

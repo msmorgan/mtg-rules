@@ -16,8 +16,8 @@
 # citations. With file arguments, audits those files; bare, the whole repo
 # (CR-refresh re-audits).
 #
-# Config (JSON, default ./cite-config.json; relative paths resolve against the
-# config file's directory):
+# Config (JSON, default ../cite-config.json relative to this script; paths in
+# the config resolve against the config file's directory):
 #   {
 #     "format": "bracketed" | "bare",     // [CR#601.2g,704.5k..704.5n] tokens vs bare dotted numbers
 #     "lockfile": "cr-citations.lock",
@@ -61,7 +61,7 @@ set -g jq_lib (path resolve (status dirname))/cite-lib
 
 # ---------- config ----------
 argparse --stop-nonopt 'config=' -- $argv; or exit 2
-set -l config_arg ./cite-config.json
+set -l config_arg $skill_dir/cite-config.json
 set -q _flag_config; and set config_arg $_flag_config
 test -r "$config_arg"; or die "cite: config not readable: $config_arg"
 set -g config_path (path resolve $config_arg)

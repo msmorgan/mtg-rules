@@ -9,7 +9,7 @@
 #   evals/coverage.fish --unmatched   # print the lines no kind matches (gap hunting)
 
 set -l evals_dir (path resolve (status dirname))
-source $evals_dir/../skill/scripts/lib.fish; or exit 1
+source $evals_dir/../skills/mtg-rules/scripts/lib.fish; or exit 1
 
 argparse 'u/unmatched' 'h/help' -- $argv; or exit 2
 if set -q _flag_help

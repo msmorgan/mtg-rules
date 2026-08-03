@@ -1,7 +1,7 @@
 {
   "meta": {
     "description": "Taxonomy kind -> list of case-insensitive ERE patterns (grep -iE) over distinct supported oracle-text lines. A line counts for a kind if ANY of its patterns match. Honest v1: structural proxies derived from the reference docs; kinds may overlap (the union dedups); refine patterns to push union coverage toward 100%.",
-    "corpus": "same extraction as skill/scripts/corpus default scope: supported (vintage-legal, non-reversible) cards, text split on newlines, distinct lines"
+    "corpus": "same extraction as skills/mtg-rules/scripts/corpus default scope: supported (vintage-legal, non-reversible) cards, text split on newlines, distinct lines"
   },
   "kinds": {
     "keyword-line": {

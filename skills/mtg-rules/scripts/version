@@ -12,8 +12,10 @@
 
 source (path resolve (status dirname))/lib.fish; or exit 1
 
-set -l plugin_version (jq -r '.version' $skill_dir/.claude-plugin/plugin.json)
-or die "version: cannot read $skill_dir/.claude-plugin/plugin.json"
+test -n "$plugin_manifest"
+or die "version: cannot find a Codex or Claude plugin manifest from $skill_dir"
+set -l plugin_version (jq -r '.version' $plugin_manifest)
+or die "version: cannot read $plugin_manifest"
 
 set -l git_commit (git -C $skill_dir rev-parse HEAD 2>/dev/null)
 

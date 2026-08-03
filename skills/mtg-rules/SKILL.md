@@ -1,6 +1,6 @@
 ---
 name: mtg-rules
-description: Use for ANY Magic: The Gathering rules question, card interaction or ruling, judge call, tournament-policy (MTR) question, MTG engine design (game-state modeling, action/effect taxonomy), oracle-text grammar/parsing work, and mechanic design-space analysis (asymmetric rule families, generalization feasibility, keyword intrinsic/composite classification). Authoritative local lookups: Comprehensive Rules, glossaries, MTR, exact card oracle text. Never answer MTG specifics from memory — verify with this skill's scripts.
+description: "Use for ANY Magic: The Gathering rules question, card interaction or ruling, judge call, tournament-policy (MTR) question, MTG engine design (game-state modeling, action/effect taxonomy), oracle-text grammar/parsing work, and mechanic design-space analysis (asymmetric rule families, generalization feasibility, keyword intrinsic/composite classification). Authoritative local lookups: Comprehensive Rules, glossaries, MTR, exact card oracle text. Never answer MTG specifics from memory — verify with this skill's scripts."
 ---
 
 # MTG Rules
@@ -10,6 +10,14 @@ Answers are grounded in local authoritative data. The Comprehensive Rules
 but the CR text is what you cite.
 
 All paths below are relative to this skill's directory.
+
+## First-run data
+
+If a lookup reports that the data directory is missing, run
+`scripts/setup-data` and retry. Add `--cards` before card or corpus lookups,
+and `--rulings` before official per-card ruling lookups. These downloads are
+the authoritative inputs; do not fall back to remembered MTG specifics while
+data is unavailable.
 
 ## Workflow (rigid)
 
@@ -68,7 +76,7 @@ All paths below are relative to this skill's directory.
 | `references/state.md` | component taxonomy of a game state: players, zones, objects, characteristics, per-object state, identity/LKI, game-level state |
 | `references/engine.md` | pseudo-code game-state model + the damage pipeline (CR 120) |
 | `references/generalizations.md` | asymmetric rule families, the generalized mechanic each implies, and 12 engine modeling directives |
-| `references/keyword-classification.md` | every keyword classified intrinsic / composite / composite-given(P) / marker, + the 5-primitive engine basis (full data: skill/keywords-classified.json) |
+| `references/keyword-classification.md` | every keyword classified intrinsic / composite / composite-given(P) / marker, + the 5-primitive engine basis (full data: `keywords-classified.json`) |
 | `references/deontics.md` | the deontic layer: May/Cant/Must/Gate/Toll algebra over action legality — "can't", "only", "as though", "if able" unified |
 | `references/costs.md` | the cost algebra: positions, components, modification pipeline, payability |
 | `references/events.md` | event ontology: types, cause triples, composition, trigger interface |
@@ -92,7 +100,7 @@ All paths below are relative to this skill's directory.
 ## Staleness
 
 Reference docs state the CR effective date they were synthesized from; the
-live data's date is in line 3 of `../data/rules/cr.txt`. If
+live data's date is reported by `scripts/health`. If
 `scripts/cite check` fails, or a cited rule reads differently than a
 doc claims, trust the CR text, answer from it, and flag the doc for re-sync.
 For a CHANGED citation: inspect the drift with `scripts/cite diff <rule>`,
@@ -108,6 +116,7 @@ the lockfile.
 - `mtgjson/` — card data; `derived/cards.jsonl` built by repo-root
   `scripts/build_derived.fish` (rebuild after refreshes)
 
-Installed plugin copies resolve data via `$MTG_RULES_DATA` →
-`~/.claude/plugins/data/mtg-rules/data` → repo layout; populate with
+Installed plugin copies resolve data via `$MTG_RULES_DATA` → the current
+host's persistent plugin data directory (Codex, agy, or Claude Code) → the
+plugin/repo layout; populate with
 `scripts/setup-data [--cards] [--rulings]`.
