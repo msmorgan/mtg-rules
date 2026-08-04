@@ -7,6 +7,7 @@
 #   cite [--config FILE] show <citation> [--plain]     # print the rule(s) a citation resolves to
 #   cite [--config FILE] diff <rule>                   # old-vs-current text for one rule
 #   cite [--config FILE] audit [--diff] [files…]       # claim-vs-rule-text report (semantic audit)
+#   cite [--config FILE] context [--seen FILE] [--full] # rule text for citations in stdin (PostToolUse hook)
 #
 # audit: prints each citation site's claim line next to the FULL official
 # text of every rule it cites — the checker proves a rule EXISTS; whether it
@@ -52,6 +53,14 @@
 # resolve as "placeholder" and are silent in every command — not MALFORMED, not
 # counted as checked citations. Narrow on purpose: [CR#] and [CR#rule] are
 # still MALFORMED, because those are typos.
+#
+# context: reads text on stdin (a tool's output or an edit's new content) and
+# prints the official text of every rule it cites, skipping rules listed in
+# --seen (the caller's session ledger, appended to as rules are reported).
+# Rules absent from the lockfile are "new to this repo" and print in full;
+# already-locked rules are clipped, since they're familiar ground. --full
+# prints everything unclipped. Silent (exit 0, no output) when nothing is new,
+# so it is safe to run on every tool call. See scripts/hooks/cite_context.fish.
 #
 # Env: MTG_RULES_CITE_WIZARDS_URL overrides bless's network URL resolution
 # (offline use, tests). MTG_RULES_DATA picks the data dir (see lib.fish).
@@ -384,6 +393,101 @@ function cmd_audit
     echo "audited $n citation site(s) — read each rule text against its claim"
 end
 
+function cmd_context
+    argparse 'seen=' full -- $argv; or exit 2
+    cite_prepare
+    cat > $work/in.txt
+    test -s $work/in.txt; or return 0
+
+    set -l pat '\[CR#[^\]]*\]'
+    test $cite_format = bare; and set pat '\b[1-9][0-9]{2}\.[0-9]+[a-z]?\b'
+
+    rg --json --text -e $pat -- $work/in.txt 2>/dev/null \
+        | jq -c --arg fmt $cite_format --arg root $work -f $jq_lib/sites.jq \
+        | jq -c -f $jq_lib/resolve.jq \
+            --slurpfile keys $work/keys.json --slurpfile idx $work/idx.json \
+        > $work/ctx.jsonl 2>/dev/null
+    test -s $work/ctx.jsonl; or return 0
+
+    # First-appearance order, deduped within this batch.
+    jq -r 'select(.status == "ok") | .members[]' $work/ctx.jsonl \
+        | awk '!seen[$0]++' > $work/batch.txt
+    test -s $work/batch.txt; or return 0
+
+    # Drop what the caller has already been shown this session. FILENAME, not
+    # NR == FNR: an empty ledger makes NR == FNR true for the batch too, which
+    # would swallow every rule and report nothing.
+    if set -q _flag_seen; and test -r "$_flag_seen"
+        awk -v sf="$_flag_seen" 'FILENAME == sf { s[$0] = 1; next } !($0 in s)' \
+            $_flag_seen $work/batch.txt > $work/new.txt
+    else
+        cp $work/batch.txt $work/new.txt
+    end
+    test -s $work/new.txt; or return 0
+
+    # "New to this repo" = cited but never blessed into the lockfile. With no
+    # lockfile there is no baseline, so nothing earns the full-text treatment.
+    if test -r $lock_path
+        jq -r '(.checksums // {}) | keys[]' $lock_path > $work/known.txt 2>/dev/null
+        or : > $work/known.txt
+    else
+        cp $work/batch.txt $work/known.txt
+    end
+
+    jq -r -f $jq_lib/texts.jq --rawfile mem $work/new.txt \
+        --slurpfile sec $work/sections.json $rules_dir/cr.json > $work/texts.tsv
+
+    set -l oos (jq -r '(.coverage.out_of_scope // {}) | keys[]' $config_path 2>/dev/null | string join ' ')
+    set -l clip 240
+    set -q _flag_full; and set clip 0
+
+    awk -F'\t' -v tf=$work/texts.tsv -v kf=$work/known.txt -v oos="$oos" -v clip=$clip '
+        function trunc(s, n,   i) {
+            if (n <= 0 || length(s) <= n) return s
+            i = n
+            while (i > 1 && substr(s, i, 1) != " ") i--
+            if (i <= 1) i = n
+            return substr(s, 1, i - 1) " …"
+        }
+        function out_of_scope(rule,   sec, i, lo, hi, p) {
+            sec = rule; sub(/\..*$/, "", sec)
+            for (i = 1; i <= nr; i++) {
+                p = index(ranges[i], "..")
+                if (p) {
+                    lo = substr(ranges[i], 1, p - 1); hi = substr(ranges[i], p + 2)
+                    if (sec + 0 >= lo + 0 && sec + 0 <= hi + 0) return 1
+                } else if (ranges[i] == sec) return 1
+            }
+            return 0
+        }
+        BEGIN { nr = split(oos, ranges, " ") }
+        FILENAME == tf { txt[$1] = $2; next }
+        FILENAME == kf { known[$1] = 1; next }
+        {
+            rule = $1
+            n++
+            tag = ""
+            if (!(rule in txt))        tag = "  ·  NOT FOUND IN THE CR"
+            else if (!(rule in known)) tag = "  ·  new to this repo"
+            if (out_of_scope(rule))    tag = tag "  ·  out-of-scope range"
+            body = (rule in txt) ? ((rule in known) ? trunc(txt[rule], clip) : txt[rule]) : ""
+            buf = buf sprintf("\n[CR#%s]%s\n", rule, tag)
+            if (body != "") buf = buf sprintf("    %s\n", body)
+        }
+        END {
+            if (!n) exit 0
+            printf "mtg-rules · %d CR citation%s referenced for the first time this session:\n",
+                   n, (n == 1 ? "" : "s")
+            printf "%s", buf
+        }
+    ' $work/texts.tsv $work/known.txt $work/new.txt
+
+    # Ledger update is the caller-visible side effect: report each rule once.
+    if set -q _flag_seen
+        cat $work/new.txt >> $_flag_seen
+    end
+end
+
 # ---------- dispatch ----------
 set -l cmd check
 if test (count $argv) -gt 0
@@ -403,6 +507,8 @@ switch $cmd
         cmd_diff $argv
     case audit
         cmd_audit $argv
+    case context
+        cmd_context $argv
     case '*'
-        die "cite: unknown subcommand: $cmd (expected check|bless|list|show|diff|audit)"
+        die "cite: unknown subcommand: $cmd (expected check|bless|list|show|diff|audit|context)"
 end

@@ -145,6 +145,41 @@ After WotC publishes updated rules or card data:
 | `health` | `skills/mtg-rules/scripts/health` |
 | `version` | `skills/mtg-rules/scripts/version` (conformance manifest — consumers pin this) |
 
+## Citation Context Hook (consumer repos)
+
+A `PostToolUse` hook prints the official CR text for any citation a tool call
+surfaces for the first time in a session, so a rule number written into code
+is checked against the rule it names while the claim is still fresh.
+
+It activates **only in repos that consume the skill** — that is, repos whose
+VCS root holds a `cite-config.json` (deckmaste.rs does). This repo keeps its
+config under `skills/mtg-rules/`, so the skill's own development tree is
+excluded automatically and no path is hardcoded. Elsewhere the hook exits in
+~11 ms without touching the CR.
+
+`Write` and `Edit` are annotated by default: those are the moments a claim
+enters the tree, and one edit cites a handful of rules. `Read` and `Bash` are
+opt-in because they annotate per *file*, not per *delta* — a `Read` of a
+127-citation engine module injects roughly 7k tokens.
+
+| Variable | Effect |
+|----------|--------|
+| `CITE_ON_READ=1` | also annotate `Read` — every rule the file covers |
+| `CITE_ON_BASH=1` | also annotate `Bash` stdout |
+| `CITE_CONTEXT_FULL=1` | never clip rules already in the lockfile |
+| `CITE_CONTEXT_OFF=1` | disable the hook entirely |
+
+Rules absent from the consumer repo's lockfile are flagged `new to this
+repo` and printed in full; already-locked rules are clipped to a preview.
+Citations that resolve to nothing are flagged `NOT FOUND IN THE CR`, and
+citations landing in a `coverage.out_of_scope` range are flagged as such.
+The same machinery is available directly:
+
+```sh
+printf 'fn end_step() { /* [CR#514.1] */ }' \
+  | skills/mtg-rules/scripts/cite --config /path/to/repo/cite-config.json context
+```
+
 ## License & Fan Content Notice
 
 Original content of this repository (scripts, tooling, document structure,

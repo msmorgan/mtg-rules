@@ -121,7 +121,7 @@ rm -rf /tmp/mtg-data-test
 
 set -l codex_test_root (mktemp -d)
 set -l codex_test_home $codex_test_root/home
-set -l codex_test_skill $codex_test_home/plugins/cache/mtg-rules/mtg-rules/1.8.2/skills/mtg-rules
+set -l codex_test_skill $codex_test_home/plugins/cache/mtg-rules/mtg-rules/1.8.3/skills/mtg-rules
 mkdir -p $codex_test_skill/scripts $codex_test_home/plugins/data/mtg-rules/data/rules
 cp $scripts/lib.fish $codex_test_skill/scripts/lib.fish
 echo '{}' >$codex_test_home/plugins/data/mtg-rules/data/rules/cr.json
@@ -227,10 +227,91 @@ t "cite show --plain prints number-prefixed line" '^702\.22a  Banding' \
 t "cite show resolves a section title" 'Keyword Abilities' \
     env $cdat $cite --config $citetmp/cfg-good.json show 702
 t_fails "cite show rejects a malformed citation" env $cdat $cite --config $citetmp/cfg-good.json show xyz
+
+# --- cite context (PostToolUse hook payload) ---
+t "cite context prints rule text for a cited rule" 'Banding is a static' \
+    fish -c "printf 'x [CR#702.22a] y' | env $cdat $cite --config $citetmp/cfg-good.json context"
+t "cite context is silent when nothing is cited" '^$' \
+    fish -c "printf 'no citations here' | env $cdat $cite --config $citetmp/cfg-good.json context"
+t "cite context expands a range" '(?s)704\.5k.*704\.5m.*704\.5n' \
+    fish -c "printf 'r [CR#704.5k..704.5n]' | env $cdat $cite --config $citetmp/cfg-good.json context"
+t "cite context marks a rule absent from the lockfile" 'new to this repo' \
+    fish -c "printf 'x [CR#100.1]' | env $cdat $cite --config $citetmp/cfg-good.json context"
+t "cite context flags a citation the CR does not have" 'NOT FOUND IN THE CR' \
+    fish -c "printf 'x [CR#999.9]' | env $cdat $cite --config $citetmp/cfg-good.json context"
+t "cite context ignores an ellipsis placeholder" '^$' \
+    fish -c "printf 'prose about [CR#…] tokens' | env $cdat $cite --config $citetmp/cfg-good.json context"
+# An EMPTY ledger used to make NR == FNR true for the batch file too, so every
+# rule was read as already-seen and the hook reported nothing on first use.
+t "cite context reports through an empty ledger" '702\.22a' \
+    fish -c "set -l s (mktemp); printf 'x [CR#702.22a]' | env $cdat $cite --config $citetmp/cfg-good.json context --seen \$s; rm -f \$s"
+t "cite context shows a rule once per ledger" '^$' \
+    fish -c "set -l s (mktemp); printf 'x [CR#702.22a]' | env $cdat $cite --config $citetmp/cfg-good.json context --seen \$s >/dev/null; printf 'x [CR#702.22a]' | env $cdat $cite --config $citetmp/cfg-good.json context --seen \$s; rm -f \$s"
+t "cite context ledger records what it reported" '^702\.22a$' \
+    fish -c "set -l s (mktemp); printf 'x [CR#702.22a]' | env $cdat $cite --config $citetmp/cfg-good.json context --seen \$s >/dev/null; cat \$s; rm -f \$s"
+
+# --- cite_context.fish PostToolUse hook ---
+set -g hook $scripts/hooks/cite_context.fish
+set -g hookdata $citetmp/data
+set -g hookenv
+set -g hookrepo (mktemp -d)      # consumer repo: cite-config.json beside a VCS marker
+mkdir -p $hookrepo/.git
+echo '{"format":"bracketed","lockfile":"lock.json","sources":{"globs":["*.md"]}}' > $hookrepo/cite-config.json
+set -g nomarker (mktemp -d)      # config, but no VCS root
+echo '{"format":"bracketed","lockfile":"lock.json","sources":{"globs":["*.md"]}}' > $nomarker/cite-config.json
+set -g noconfig (mktemp -d)      # VCS root, but no config
+mkdir -p $noconfig/.git
+
+function hookrun --argument-names cwd sid tool text
+    jq -nc --arg c $cwd --arg s $sid --arg t $tool --arg v $text '
+        {session_id: $s, cwd: $c, tool_name: $t}
+        + (if $t == "Edit" then {tool_input: {new_string: $v}}
+           elif $t == "Write" then {tool_input: {content: $v}}
+           else {tool_response: $v} end)' \
+        | env MTG_RULES_DATA=$hookdata TMPDIR=$hookrepo $hookenv fish $hook
+end
+
+t "hook annotates an Edit in a consumer repo" 'Banding is a static' \
+    hookrun $hookrepo e1 Edit '[CR#702.22a]'
+t "hook emits PostToolUse additionalContext" '^PostToolUse$' \
+    fish -c "jq -nc --arg c $hookrepo '{session_id:\"e2\",cwd:\$c,tool_name:\"Edit\",tool_input:{new_string:\"[CR#702.22a]\"}}' | env MTG_RULES_DATA=$hookdata TMPDIR=$hookrepo fish $hook | jq -r .hookSpecificOutput.hookEventName"
+t "hook annotates a Write" 'Banding is a static' \
+    hookrun $hookrepo e3 Write '[CR#702.22a]'
+t "hook is silent on an edit with no citations" '^$' \
+    hookrun $hookrepo e4 Edit 'fn main() { let x = 1; }'
+t "hook is silent on Read without CITE_ON_READ" '^$' \
+    hookrun $hookrepo e5 Read '[CR#702.22a]'
+t "hook is silent on Bash without CITE_ON_BASH" '^$' \
+    hookrun $hookrepo e6 Bash '[CR#702.22a]'
+set -g hookenv CITE_ON_READ=1
+t "hook annotates Read under CITE_ON_READ" 'Banding is a static' \
+    hookrun $hookrepo e7 Read '[CR#702.22a]'
+set -g hookenv CITE_ON_BASH=1
+t "hook annotates Bash under CITE_ON_BASH" 'Banding is a static' \
+    hookrun $hookrepo e8 Bash '[CR#702.22a]'
+set -g hookenv CITE_CONTEXT_OFF=1
+t "hook is silent under CITE_CONTEXT_OFF" '^$' \
+    hookrun $hookrepo e9 Edit '[CR#702.22a]'
+set -g hookenv
+t "hook is silent where cite-config.json is not at a VCS root" '^$' \
+    hookrun $nomarker e10 Edit '[CR#702.22a]'
+t "hook is silent in a repo with no cite-config.json" '^$' \
+    hookrun $noconfig e11 Edit '[CR#702.22a]'
+t "hook is silent in the skill's own development repo" '^$' \
+    hookrun $repo e12 Edit '[CR#702.22a]'
+t "hook shows a rule once per session id" '^$' \
+    fish -c "jq -nc --arg c $hookrepo '{session_id:\"e13\",cwd:\$c,tool_name:\"Edit\",tool_input:{new_string:\"[CR#702.22a]\"}}' | env MTG_RULES_DATA=$hookdata TMPDIR=$hookrepo fish $hook >/dev/null; jq -nc --arg c $hookrepo '{session_id:\"e13\",cwd:\$c,tool_name:\"Edit\",tool_input:{new_string:\"[CR#702.22a]\"}}' | env MTG_RULES_DATA=$hookdata TMPDIR=$hookrepo fish $hook"
+t "hook survives malformed stdin" '^$' \
+    fish -c "printf 'not json' | env MTG_RULES_DATA=$hookdata TMPDIR=$hookrepo fish $hook; true"
+t "plugin hooks.json registers the PostToolUse matcher" '^Write\|Edit\|Read\|Bash$' \
+    jq -r '.hooks.PostToolUse[0].matcher' $repo/hooks/hooks.json
+t "plugin hooks.json points at the hook script" '^true$' fish -c \
+    "test -x $repo/(jq -r '.hooks.PostToolUse[0].hooks[0].command' $repo/hooks/hooks.json | string replace -r '.*PLUGIN_ROOT\}\}?/' '' | string trim -c '\"'); and echo true"
+rm -rf $hookrepo $nomarker $noconfig
 rm -rf $citetmp
 
 # --- version (conformance manifest) ---
-t "version emits the plugin version" '"plugin_version": "1\.8\.2"' $scripts/version
+t "version emits the plugin version" '"plugin_version": "1\.8\.3"' $scripts/version
 t "version manifest parses with all four keys" '^true$' \
     fish -c "$scripts/version | jq -e 'has(\"plugin_version\") and has(\"git_commit\") and has(\"cr_effective\") and has(\"keywords_classified_sha\")'"
 

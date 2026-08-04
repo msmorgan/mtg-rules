@@ -9,6 +9,20 @@ mints/retirements, notation changes) are always called out explicitly.
 
 ## Unreleased
 
+## 1.8.3 — 2026-08-04
+
+**Citation context hook.** A new `PostToolUse` hook (`hooks/hooks.json` →
+`skills/mtg-rules/scripts/hooks/cite_context.fish`) prints the official CR
+text for citations seen for the first time in a session, turning a rule
+number written into code into an immediate claim-vs-rule-text check. It is
+scoped to repos that consume the skill — those whose VCS root holds a
+`cite-config.json` — so this repo's own tree is excluded and unrelated
+projects pay ~11 ms per tool call. `Write`/`Edit` are annotated by default;
+`Read` and `Bash` are opt-in via `CITE_ON_READ` / `CITE_ON_BASH`
+(`CITE_CONTEXT_FULL`, `CITE_CONTEXT_OFF` also recognized). Backed by a new
+`cite context` subcommand, which reads text on stdin and reuses the existing
+resolver, lockfile, and coverage config. **No taxonomy or CR-data change.**
+
 ## 1.8.2 — 2026-08-03
 
 Codex packaging and runtime compatibility: the canonical skill now lives at

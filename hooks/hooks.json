@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|Read|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "fish \"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/skills/mtg-rules/scripts/hooks/cite_context.fish\"",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  }
+}
