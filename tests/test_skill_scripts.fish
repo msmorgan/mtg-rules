@@ -121,7 +121,7 @@ rm -rf /tmp/mtg-data-test
 
 set -l codex_test_root (mktemp -d)
 set -l codex_test_home $codex_test_root/home
-set -l codex_test_skill $codex_test_home/plugins/cache/mtg-rules/mtg-rules/1.8.3/skills/mtg-rules
+set -l codex_test_skill $codex_test_home/plugins/cache/mtg-rules/mtg-rules/1.8.4/skills/mtg-rules
 mkdir -p $codex_test_skill/scripts $codex_test_home/plugins/data/mtg-rules/data/rules
 cp $scripts/lib.fish $codex_test_skill/scripts/lib.fish
 echo '{}' >$codex_test_home/plugins/data/mtg-rules/data/rules/cr.json
@@ -249,11 +249,22 @@ t "cite context shows a rule once per ledger" '^$' \
     fish -c "set -l s (mktemp); printf 'x [CR#702.22a]' | env $cdat $cite --config $citetmp/cfg-good.json context --seen \$s >/dev/null; printf 'x [CR#702.22a]' | env $cdat $cite --config $citetmp/cfg-good.json context --seen \$s; rm -f \$s"
 t "cite context ledger records what it reported" '^702\.22a$' \
     fish -c "set -l s (mktemp); printf 'x [CR#702.22a]' | env $cdat $cite --config $citetmp/cfg-good.json context --seen \$s >/dev/null; cat \$s; rm -f \$s"
+# One `cite list` surfaces every citation in the repo — uncapped that is ~53k
+# tokens from a single tool call. The cap is announced, never silent.
+t "cite context caps how many rules it reports" '… 2 more first-seen citations not shown' \
+    fish -c "printf 'a [CR#100.1a] b [CR#702.22a] c [CR#704.5k]' | env $cdat $cite --config $citetmp/cfg-good.json context --max 1"
+t "cite context --max 0 lifts the cap" '(?s)100\.1a.*702\.22a.*704\.5k' \
+    fish -c "printf 'a [CR#100.1a] b [CR#702.22a] c [CR#704.5k]' | env $cdat $cite --config $citetmp/cfg-good.json context --max 0"
+t "cite context ledgers only the rules it showed" '^100\.1a$' \
+    fish -c "set -l s (mktemp); printf 'a [CR#100.1a] b [CR#702.22a]' | env $cdat $cite --config $citetmp/cfg-good.json context --seen \$s --max 1 >/dev/null; cat \$s; rm -f \$s"
+t_fails "cite context rejects a non-numeric --max" \
+    fish -c "printf 'x [CR#100.1a]' | env $cdat $cite --config $citetmp/cfg-good.json context --max abc"
 
 # --- cite_context.fish PostToolUse hook ---
 set -g hook $scripts/hooks/cite_context.fish
 set -g hookdata $citetmp/data
 set -g hookenv
+set -g hookclean -u CITE_ON_READ -u CITE_ON_BASH -u CITE_CONTEXT_FULL -u CITE_CONTEXT_MAX -u CITE_CONTEXT_OFF
 set -g hookrepo (mktemp -d)      # consumer repo: cite-config.json beside a VCS marker
 mkdir -p $hookrepo/.git
 echo '{"format":"bracketed","lockfile":"lock.json","sources":{"globs":["*.md"]}}' > $hookrepo/cite-config.json
@@ -262,19 +273,31 @@ echo '{"format":"bracketed","lockfile":"lock.json","sources":{"globs":["*.md"]}}
 set -g noconfig (mktemp -d)      # VCS root, but no config
 mkdir -p $noconfig/.git
 
+# `fish --no-config` throughout: CITE_ON_READ/CITE_ON_BASH are the kind of
+# switch a developer sets with `set -Ux`, and a fish process reads the
+# universal store no matter what its parent's environment says — without this
+# the default-off assertions below pass or fail based on who is running them.
 function hookrun --argument-names cwd sid tool text
     jq -nc --arg c $cwd --arg s $sid --arg t $tool --arg v $text '
         {session_id: $s, cwd: $c, tool_name: $t}
         + (if $t == "Edit" then {tool_input: {new_string: $v}}
            elif $t == "Write" then {tool_input: {content: $v}}
            else {tool_response: $v} end)' \
-        | env MTG_RULES_DATA=$hookdata TMPDIR=$hookrepo $hookenv fish $hook
+        | env $hookclean MTG_RULES_DATA=$hookdata TMPDIR=$hookrepo $hookenv fish --no-config $hook
+end
+
+# Bash payloads carry the command too, so the skill-call exemption can see it.
+function hookbash --argument-names cwd sid command stdout
+    jq -nc --arg c $cwd --arg s $sid --arg cmd $command --arg v $stdout \
+        '{session_id: $s, cwd: $c, tool_name: "Bash",
+          tool_input: {command: $cmd}, tool_response: {stdout: $v}}' \
+        | env $hookclean MTG_RULES_DATA=$hookdata TMPDIR=$hookrepo $hookenv fish --no-config $hook
 end
 
 t "hook annotates an Edit in a consumer repo" 'Banding is a static' \
     hookrun $hookrepo e1 Edit '[CR#702.22a]'
 t "hook emits PostToolUse additionalContext" '^PostToolUse$' \
-    fish -c "jq -nc --arg c $hookrepo '{session_id:\"e2\",cwd:\$c,tool_name:\"Edit\",tool_input:{new_string:\"[CR#702.22a]\"}}' | env MTG_RULES_DATA=$hookdata TMPDIR=$hookrepo fish $hook | jq -r .hookSpecificOutput.hookEventName"
+    fish -c "jq -nc --arg c $hookrepo '{session_id:\"e2\",cwd:\$c,tool_name:\"Edit\",tool_input:{new_string:\"[CR#702.22a]\"}}' | env $hookclean MTG_RULES_DATA=$hookdata TMPDIR=$hookrepo fish --no-config $hook | jq -r .hookSpecificOutput.hookEventName"
 t "hook annotates a Write" 'Banding is a static' \
     hookrun $hookrepo e3 Write '[CR#702.22a]'
 t "hook is silent on an edit with no citations" '^$' \
@@ -300,9 +323,45 @@ t "hook is silent in a repo with no cite-config.json" '^$' \
 t "hook is silent in the skill's own development repo" '^$' \
     hookrun $repo e12 Edit '[CR#702.22a]'
 t "hook shows a rule once per session id" '^$' \
-    fish -c "jq -nc --arg c $hookrepo '{session_id:\"e13\",cwd:\$c,tool_name:\"Edit\",tool_input:{new_string:\"[CR#702.22a]\"}}' | env MTG_RULES_DATA=$hookdata TMPDIR=$hookrepo fish $hook >/dev/null; jq -nc --arg c $hookrepo '{session_id:\"e13\",cwd:\$c,tool_name:\"Edit\",tool_input:{new_string:\"[CR#702.22a]\"}}' | env MTG_RULES_DATA=$hookdata TMPDIR=$hookrepo fish $hook"
+    fish -c "jq -nc --arg c $hookrepo '{session_id:\"e13\",cwd:\$c,tool_name:\"Edit\",tool_input:{new_string:\"[CR#702.22a]\"}}' | env $hookclean MTG_RULES_DATA=$hookdata TMPDIR=$hookrepo fish --no-config $hook >/dev/null; jq -nc --arg c $hookrepo '{session_id:\"e13\",cwd:\$c,tool_name:\"Edit\",tool_input:{new_string:\"[CR#702.22a]\"}}' | env $hookclean MTG_RULES_DATA=$hookdata TMPDIR=$hookrepo fish --no-config $hook"
+set -g hookenv CITE_ON_BASH=1
+# Calls into this skill already print rule text; re-expanding it duplicates
+# the output, and `cite list` alone would inject ~53k tokens.
+t "hook exempts a path invocation of a skill script" '^$' \
+    hookbash $hookrepo x1 'skills/mtg-rules/scripts/cite list' '[CR#702.22a] -> 702.22a'
+t "hook exempts a plugin-cache invocation" '^$' \
+    hookbash $hookrepo x2 '~/.claude/plugins/cache/mtg-rules/scripts/rule 702.22a' '[CR#702.22a]'
+t "hook exempts a bare skill-script invocation" '^$' \
+    hookbash $hookrepo x3 'cite show 702.22a' '[CR#702.22a]'
+t "hook exempts a skill call after a pipe" '^$' \
+    hookbash $hookrepo x4 'cat foo | rule 702.22a' '[CR#702.22a]'
+t "hook still annotates unrelated Bash output" 'Banding is a static' \
+    hookbash $hookrepo x5 'cargo test --workspace' 'panicked: [CR#702.22a] violated'
+t "hook does not exempt a merely similar command" 'Banding is a static' \
+    hookbash $hookrepo x6 'cargo build --features rules' 'note [CR#702.22a]'
+set -g hookenv
+# The exempt list is hand-maintained; this fails if a script is added to
+# scripts/ without being added to the hook's alternation.
+t "hook exempt list covers every skill script" '^$' fish -c "
+    for s in (ls $scripts | grep -v '^lib.fish\$' | grep -v '^cite-lib\$' | grep -v '^hooks\$')
+        grep -qF \"\$s\" $hook; or echo \"missing: \$s\"
+    end"
+set -g hookenv CITE_CONTEXT_MAX=1
+t "hook honors CITE_CONTEXT_MAX" 'not shown' \
+    hookrun $hookrepo e14 Edit '[CR#100.1a] [CR#702.22a] [CR#704.5k]'
+set -g hookenv
+# Linux caps a SINGLE argv entry at 128 KB, so the payload can never ride in
+# argv: `cite list` output (~700 KB) silently produced nothing until every
+# stage moved to files.
+set -g bigfile (mktemp)
+for i in (seq 4000)
+    echo "line $i filler text padding this well past the argv limit [CR#702.22a] tail"
+end > $bigfile
+t "hook handles a payload past the single-argument limit" 'Banding is a static' \
+    fish -c "jq -nc --arg c $hookrepo --rawfile v $bigfile '{session_id:\"e15\",cwd:\$c,tool_name:\"Edit\",tool_input:{new_string:\$v}}' | env $hookclean MTG_RULES_DATA=$hookdata TMPDIR=$hookrepo fish --no-config $hook"
+rm -f $bigfile
 t "hook survives malformed stdin" '^$' \
-    fish -c "printf 'not json' | env MTG_RULES_DATA=$hookdata TMPDIR=$hookrepo fish $hook; true"
+    fish -c "printf 'not json' | env $hookclean MTG_RULES_DATA=$hookdata TMPDIR=$hookrepo fish --no-config $hook; true"
 t "plugin hooks.json registers the PostToolUse matcher" '^Write\|Edit\|Read\|Bash$' \
     jq -r '.hooks.PostToolUse[0].matcher' $repo/hooks/hooks.json
 t "plugin hooks.json points at the hook script" '^true$' fish -c \
@@ -311,7 +370,7 @@ rm -rf $hookrepo $nomarker $noconfig
 rm -rf $citetmp
 
 # --- version (conformance manifest) ---
-t "version emits the plugin version" '"plugin_version": "1\.8\.3"' $scripts/version
+t "version emits the plugin version" '"plugin_version": "1\.8\.4"' $scripts/version
 t "version manifest parses with all four keys" '^true$' \
     fish -c "$scripts/version | jq -e 'has(\"plugin_version\") and has(\"git_commit\") and has(\"cr_effective\") and has(\"keywords_classified_sha\")'"
 

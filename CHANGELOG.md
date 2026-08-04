@@ -9,6 +9,27 @@ mints/retirements, notation changes) are always called out explicitly.
 
 ## Unreleased
 
+## 1.8.4 — 2026-08-04
+
+**Citation context hook fixes**, all found by turning `CITE_ON_BASH` on:
+
+- **Large payloads produced nothing.** The hook passed tool output through
+  argv, and Linux caps a *single* argument at 128 KB — `cite list` output
+  (~700 KB) failed the exec and the annotation vanished silently. Every stage
+  now moves through files.
+- **Calls into this skill are exempt on `Bash`.** `rule`, `cite show`,
+  `cite audit` already print rule text; annotating them duplicated it. Both
+  path and bare command-position invocations are recognized, and a test
+  asserts the exempt list covers `scripts/`.
+- **Reports are capped** at 40 rules (`CITE_CONTEXT_MAX`, `0` lifts it).
+  Uncapped, one `cite list` in a large consumer repo injected ~53k tokens.
+  Truncation states how many citations were held back; the session ledger
+  records only what was actually shown.
+- **Tests are hermetic against `set -Ux`.** `CITE_ON_*` is exactly the kind
+  of switch a developer exports universally, and fish hands universals to
+  every child regardless of the parent environment — the default-off
+  assertions used to pass or fail depending on who ran them.
+
 ## 1.8.3 — 2026-08-04
 
 **Citation context hook.** A new `PostToolUse` hook (`hooks/hooks.json` →

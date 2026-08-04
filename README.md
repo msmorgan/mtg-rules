@@ -167,7 +167,19 @@ opt-in because they annotate per *file*, not per *delta* — a `Read` of a
 | `CITE_ON_READ=1` | also annotate `Read` — every rule the file covers |
 | `CITE_ON_BASH=1` | also annotate `Bash` stdout |
 | `CITE_CONTEXT_FULL=1` | never clip rules already in the lockfile |
+| `CITE_CONTEXT_MAX=N` | rules reported per call (default 40; `0` lifts the cap) |
 | `CITE_CONTEXT_OFF=1` | disable the hook entirely |
+
+Presence is what counts, not value — `CITE_ON_READ=0` still turns it *on*.
+Unset the variable to turn it off.
+
+**Bash calls into this skill are exempt.** `rule`, `cite show`, `cite audit`
+and friends already print rule text, so annotating them would duplicate it —
+and one uncapped `cite list` in a large consumer repo resolves to ~1,180
+rules (~53k tokens). Both the path form (`skills/mtg-rules/scripts/cite …`)
+and a bare command-position name (`cite list`) are recognized. Independent of
+that, `CITE_CONTEXT_MAX` bounds every call, and a truncated report says how
+many citations it held back rather than trailing off silently.
 
 Rules absent from the consumer repo's lockfile are flagged `new to this
 repo` and printed in full; already-locked rules are clipped to a preview.

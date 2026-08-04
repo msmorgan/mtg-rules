@@ -7,7 +7,7 @@
 #   cite [--config FILE] show <citation> [--plain]     # print the rule(s) a citation resolves to
 #   cite [--config FILE] diff <rule>                   # old-vs-current text for one rule
 #   cite [--config FILE] audit [--diff] [files…]       # claim-vs-rule-text report (semantic audit)
-#   cite [--config FILE] context [--seen FILE] [--full] # rule text for citations in stdin (PostToolUse hook)
+#   cite [--config FILE] context [--seen F] [--full] [--max N]  # rule text for citations in stdin (hook)
 #
 # audit: prints each citation site's claim line next to the FULL official
 # text of every rule it cites — the checker proves a rule EXISTS; whether it
@@ -394,7 +394,13 @@ function cmd_audit
 end
 
 function cmd_context
-    argparse 'seen=' full -- $argv; or exit 2
+    argparse 'seen=' 'max=' full -- $argv; or exit 2
+    # A single `cite list` can surface every citation in the repo. Report a
+    # bounded slice and say how many were held back — a silent truncation
+    # would read as "that was all of them".
+    set -l maxrules 40
+    set -q _flag_max; and set maxrules $_flag_max
+    string match -qr '^\d+$' -- "$maxrules"; or die "cite context: --max wants a non-negative integer"
     cite_prepare
     cat > $work/in.txt
     test -s $work/in.txt; or return 0
@@ -425,6 +431,16 @@ function cmd_context
     end
     test -s $work/new.txt; or return 0
 
+    set -l held 0
+    if test $maxrules -gt 0
+        set -l total (wc -l < $work/new.txt | string trim)
+        if test $total -gt $maxrules
+            set held (math $total - $maxrules)
+            head -n $maxrules $work/new.txt > $work/capped.txt
+            mv $work/capped.txt $work/new.txt
+        end
+    end
+
     # "New to this repo" = cited but never blessed into the lockfile. With no
     # lockfile there is no baseline, so nothing earns the full-text treatment.
     if test -r $lock_path
@@ -441,7 +457,7 @@ function cmd_context
     set -l clip 240
     set -q _flag_full; and set clip 0
 
-    awk -F'\t' -v tf=$work/texts.tsv -v kf=$work/known.txt -v oos="$oos" -v clip=$clip '
+    awk -F'\t' -v tf=$work/texts.tsv -v kf=$work/known.txt -v oos="$oos" -v clip=$clip -v held=$held '
         function trunc(s, n,   i) {
             if (n <= 0 || length(s) <= n) return s
             i = n
@@ -479,6 +495,9 @@ function cmd_context
             printf "mtg-rules · %d CR citation%s referenced for the first time this session:\n",
                    n, (n == 1 ? "" : "s")
             printf "%s", buf
+            if (held > 0)
+                printf "\n… %d more first-seen citation%s not shown (cap: CITE_CONTEXT_MAX).\n",
+                       held, (held == 1 ? "" : "s")
         }
     ' $work/texts.tsv $work/known.txt $work/new.txt
 
