@@ -39,6 +39,8 @@ t "Codex manifest names the plugin" '^mtg-rules$' \
     jq -r '.name' $repo/.codex-plugin/plugin.json
 t "Codex manifest discovers the skills directory" '^\./skills/$' \
     jq -r '.skills' $repo/.codex-plugin/plugin.json
+t "Codex manifest leaves hooks to conventional discovery" '^false$' \
+    jq -r 'has("hooks")' $repo/.codex-plugin/plugin.json
 t "Codex marketplace installs the repository root" '^url \./$' \
     jq -r '.plugins[0].source | [.source, .url] | join(" ")' $repo/.agents/plugins/marketplace.json
 t "Codex marketplace has a collision-free development name" '^mtg-rules-dev$' \
@@ -91,12 +93,49 @@ t_fails "mtr rejects list with positional" $scripts/mtr --list 1.7
 # --- card ---
 t "card lightning bolt oracle text" '3 damage to any target' $scripts/card Lightning Bolt
 t "card face lookup resolves full name" 'Fire // Ice' $scripts/card Fire
+t "card full-name mode rejects a lone multiface face" \
+    '^card: no exact match' fish -c "$scripts/card --full-name Start 2>&1; true"
+t "card combined name renders every face" '(?s)face: Start.*face: Finish' \
+    $scripts/card --full-name 'Start // Finish'
 t "card case-insensitive" 'Llanowar Elves' $scripts/card llanowar elves
 t_fails "card bogus name" $scripts/card Zzgrokk the Unreal
 t_fails "card partial name fails with suggestions" $scripts/card Llanowar El
 t "card finds unsupported planes too" '[Pp]lane' $scripts/card Llanowar
 t_fails "card empty name rejected" $scripts/card ''
 t "card handles quoted names" 'Ach! Hans' $scripts/card '"Ach! Hans, Run!"'
+
+# --- card_context.fish UserPromptSubmit hook ---
+set -g cardhook $scripts/hooks/card_context.fish
+
+function cardhookjson --argument-names prompt
+    jq -nc --arg p $prompt '{session_id: "card-test", prompt: $p}' \
+        | fish --no-config $cardhook
+end
+
+function cardhookrun --argument-names prompt
+    cardhookjson "$prompt" | jq -r '.hookSpecificOutput.additionalContext // empty'
+end
+
+function cardhookcount --argument-names prompt pattern
+    cardhookrun "$prompt" | grep -c -- $pattern
+end
+
+t "card hook injects an exact bracketed card" 'Whenever an attacking creature' \
+    cardhookrun 'Explain [Brazen Cannonade].'
+t "card hook emits UserPromptSubmit additionalContext" '^UserPromptSubmit$' \
+    fish -c "jq -nc --arg p '[Brazen Cannonade]' '{prompt:\$p}' | fish --no-config $cardhook | jq -r .hookSpecificOutput.hookEventName"
+t "card hook renders both faces of a canonical combined name" \
+    '(?s)face: Start.*face: Finish' cardhookrun '[Start // Finish]'
+t "card hook rejects a lone multiface face" '^$' cardhookrun '[Start]'
+t "card hook ignores non-card brackets" '^$' cardhookrun 'See [the previous section].'
+t "card hook deduplicates repeated names case-insensitively" '^1$' \
+    cardhookcount '[Brazen Cannonade] and [brazen cannonade]' '^# Brazen Cannonade$'
+t "card hook survives malformed stdin" '^$' \
+    fish -c "printf 'not json' | fish --no-config $cardhook; true"
+t "plugin hooks.json registers UserPromptSubmit" '^command$' \
+    jq -r '.hooks.UserPromptSubmit[0].hooks[0].type' $repo/hooks/hooks.json
+t "plugin hooks.json points at the card hook script" '^true$' fish -c \
+    "test -x $repo/(jq -r '.hooks.UserPromptSubmit[0].hooks[0].command' $repo/hooks/hooks.json | string replace -r '.*PLUGIN_ROOT\}\}?/' '' | string trim -c '\"'); and echo true"
 
 # --- corpus ---
 t "corpus finds deathtouch lines" '[Dd]eathtouch' $scripts/corpus --match deathtouch
@@ -121,7 +160,7 @@ rm -rf /tmp/mtg-data-test
 
 set -l codex_test_root (mktemp -d)
 set -l codex_test_home $codex_test_root/home
-set -l codex_test_skill $codex_test_home/plugins/cache/mtg-rules/mtg-rules/1.8.4/skills/mtg-rules
+set -l codex_test_skill $codex_test_home/plugins/cache/mtg-rules/mtg-rules/1.9.0/skills/mtg-rules
 mkdir -p $codex_test_skill/scripts $codex_test_home/plugins/data/mtg-rules/data/rules
 cp $scripts/lib.fish $codex_test_skill/scripts/lib.fish
 echo '{}' >$codex_test_home/plugins/data/mtg-rules/data/rules/cr.json
@@ -370,7 +409,7 @@ rm -rf $hookrepo $nomarker $noconfig
 rm -rf $citetmp
 
 # --- version (conformance manifest) ---
-t "version emits the plugin version" '"plugin_version": "1\.8\.4"' $scripts/version
+t "version emits the plugin version" '"plugin_version": "1\.9\.0"' $scripts/version
 t "version manifest parses with all four keys" '^true$' \
     fish -c "$scripts/version | jq -e 'has(\"plugin_version\") and has(\"git_commit\") and has(\"cr_effective\") and has(\"keywords_classified_sha\")'"
 

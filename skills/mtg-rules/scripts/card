@@ -1,11 +1,17 @@
 #!/usr/bin/env fish
-# card <name> — exact oracle text + characteristics from MTGJSON atomic data.
+# card [--full-name] <name> — exact oracle text + characteristics from MTGJSON.
 
 source (path resolve (status dirname))/lib.fish; or exit 1
 
-test (count $argv) -ge 1; or die "usage: card <card name>"
+test (count $argv) -ge 1; or die "usage: card [--full-name] <card name>"
+set -l match_faces true
+if test "$argv[1]" = --full-name
+    set match_faces false
+    set -e argv[1]
+end
+test (count $argv) -ge 1; or die "usage: card [--full-name] <card name>"
 set -l name "$argv"
-test -n "$name"; or die "usage: card <card name>"
+test -n "$name"; or die "usage: card [--full-name] <card name>"
 set -l idx $derived_dir/cards.jsonl
 set -l atomic $mtgjson_dir/AtomicCards.json
 
@@ -23,11 +29,13 @@ if not test -f $idx
     test -r $atomic
     or die "card: no card data found ($atomic missing). Populate it with: scripts/setup-data --cards (plugin install) or scripts/fetch_data.fish + scripts/build_derived.fish (repo checkout)"
     echo >&2 "card: note: derived index missing — run scripts/setup-data --cards (plugin) or scripts/build_derived.fish (repo) for fast lookups; using slow path"
-    jq -r --arg n $name '
-        ( .data[$n]
-          // [ .data | to_entries[]
-               | select(.key | ascii_downcase == ($n | ascii_downcase))
-               | .value[] ] ) as $faces
+    jq -r --arg n $name --argjson match_faces $match_faces '
+        ($n | ascii_downcase) as $q
+        | [ .data | to_entries[]
+            | select((.key | ascii_downcase) == $q
+                     or ($match_faces
+                         and any(.value[]; ((.faceName // "") | ascii_downcase) == $q)))
+            | .value[] ] as $faces
         | if ($faces | length) == 0 then "card: no card named \($n)\n" | halt_error(1) else empty end,
           ( $faces[] | {name, face: .faceName, layout, manaCost, type, text,
                         power, toughness, loyalty, defense} | ('$fmt') )
@@ -41,17 +49,19 @@ or echo >&2 "card: warning: derived index older than AtomicCards.json — run sc
 set -l lines (grep -iF -- $name $idx)
 set -l hits
 if test (count $lines) -gt 0
-    set hits (printf '%s\n' $lines | jq -c --arg n $name '
+    set hits (printf '%s\n' $lines | jq -c --arg n $name --argjson match_faces $match_faces '
         ($n | ascii_downcase) as $q
         | select(((.name | ascii_downcase) == $q)
-                 or (.face != null and (.face | ascii_downcase) == $q))')
+                 or ($match_faces
+                     and .face != null and (.face | ascii_downcase) == $q))')
 else
     # grep -iF misses names stored JSON-escaped (embedded double quotes);
     # fall back to a full jq scan of the index (~0.3 s).
-    set hits (jq -c --arg n $name '
+    set hits (jq -c --arg n $name --argjson match_faces $match_faces '
         ($n | ascii_downcase) as $q
         | select(((.name | ascii_downcase) == $q)
-                 or (.face != null and (.face | ascii_downcase) == $q))' $idx)
+                 or ($match_faces
+                     and .face != null and (.face | ascii_downcase) == $q))' $idx)
 end
 
 if test (count $hits) -eq 0
