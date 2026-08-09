@@ -76,10 +76,9 @@ set -l idx_mark "absent"
 test -r $derived_dir/cards.jsonl; and set idx_mark "✓"
 set -l atomic_mark "absent"
 test -r $mtgjson_dir/AtomicCards.json; and set atomic_mark "✓"
-echo "tier cards:   cards.jsonl $idx_mark, AtomicCards.json $atomic_mark — card, corpus"
-
 set -l sqlite_mark "absent"
 test -r $mtgjson_dir/AllPrintings.sqlite; and set sqlite_mark "✓"
+echo "tier cards:   AllPrintings.sqlite $sqlite_mark — card; cards.jsonl $idx_mark, AtomicCards.json $atomic_mark — corpus"
 echo "tier rulings: AllPrintings.sqlite $sqlite_mark — rulings"
 
 # keyword classification + plugin version

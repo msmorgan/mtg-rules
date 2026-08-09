@@ -59,7 +59,7 @@ data is unavailable.
 | `scripts/rule-search <regex> [--max N]` | case-insensitive search over all CR rule text |
 | `scripts/define <term>` | official + unofficial glossary |
 | `scripts/keyword <name>` | keyword ability/action → its full CR section |
-| `scripts/card <name>` | exact oracle text + characteristics (MTGJSON atomic) |
+| `scripts/card <name>` | exact oracle text + characteristics (MTGJSON SQLite) |
 | `scripts/rulings <name>` | official per-card rulings (MTGJSON), date-stamped — re-resolve any CR numbers they cite |
 | `scripts/mtr 1.7` / `--list` / `--search <re>` | Magic Tournament Rules sections |
 | `scripts/corpus [--type T] [--keyword K] [--match RE] [--all]` | distinct oracle-text lines (grammar corpus) |
@@ -113,8 +113,9 @@ the lockfile.
 - `rules/{glossary,unofficial-glossary,keywords}.json` — terms + keyword lists
 - `rules/mtr.json` — Magic Tournament Rules
 - `catalogs/*.json` — Scryfall closed vocabularies (types, keywords, word-bank)
-- `mtgjson/` — card data; `derived/cards.jsonl` built by repo-root
-  `scripts/build_derived.fish` (rebuild after refreshes)
+- `mtgjson/AllPrintings.sqlite` — exact card lookups and rulings;
+  `mtgjson/AtomicCards.json` feeds the `derived/cards.jsonl` corpus index built
+  by repo-root `scripts/build_derived.fish` (rebuild after refreshes)
 
 Installed plugin copies resolve data via `$MTG_RULES_DATA` → the current
 host's persistent plugin data directory (Codex, agy, or Claude Code) → the

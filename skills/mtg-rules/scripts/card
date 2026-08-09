@@ -1,5 +1,5 @@
 #!/usr/bin/env fish
-# card [--full-name] <name> — exact oracle text + characteristics from MTGJSON.
+# card [--full-name] <name> — exact oracle text + characteristics from MTGJSON SQLite.
 
 source (path resolve (status dirname))/lib.fish; or exit 1
 
@@ -12,8 +12,16 @@ end
 test (count $argv) -ge 1; or die "usage: card [--full-name] <card name>"
 set -l name "$argv"
 test -n "$name"; or die "usage: card [--full-name] <card name>"
-set -l idx $derived_dir/cards.jsonl
-set -l atomic $mtgjson_dir/AtomicCards.json
+command -q sqlite3; or die "card: sqlite3 not found"
+set -l db $mtgjson_dir/AllPrintings.sqlite
+test -r $db
+or die "card: no card database found ($db missing). Populate it with: scripts/setup-data --cards (plugin install) or scripts/fetch_data.fish (repo checkout)"
+
+set -l esc (string replace -a "'" "''" -- $name)
+set -l face_predicate
+if $match_faces
+    set face_predicate "OR faceName = '$esc' COLLATE NOCASE"
+end
 
 set -l fmt '
     "# \(.name)\(if .face and .face != .name then "  (face: \(.face), \(.layout // "?"))" else "" end)",
@@ -25,55 +33,37 @@ set -l fmt '
     ""
 '
 
-if not test -f $idx
-    test -r $atomic
-    or die "card: no card data found ($atomic missing). Populate it with: scripts/setup-data --cards (plugin install) or scripts/fetch_data.fish + scripts/build_derived.fish (repo checkout)"
-    echo >&2 "card: note: derived index missing — run scripts/setup-data --cards (plugin) or scripts/build_derived.fish (repo) for fast lookups; using slow path"
-    jq -r --arg n $name --argjson match_faces $match_faces '
-        ($n | ascii_downcase) as $q
-        | [ .data | to_entries[]
-            | select((.key | ascii_downcase) == $q
-                     or ($match_faces
-                         and any(.value[]; ((.faceName // "") | ascii_downcase) == $q)))
-            | .value[] ] as $faces
-        | if ($faces | length) == 0 then "card: no card named \($n)\n" | halt_error(1) else empty end,
-          ( $faces[] | {name, face: .faceName, layout, manaCost, type, text,
-                        power, toughness, loyalty, defense} | ('$fmt') )
-    ' $atomic
-    exit
-end
+set -l hits (sqlite3 -json $db "
+    SELECT DISTINCT
+        name,
+        NULLIF(faceName, '') AS face,
+        NULLIF(layout, '') AS layout,
+        NULLIF(manaCost, '') AS manaCost,
+        NULLIF(type, '') AS type,
+        NULLIF(text, '') AS text,
+        NULLIF(power, '') AS power,
+        NULLIF(toughness, '') AS toughness,
+        NULLIF(loyalty, '') AS loyalty,
+        NULLIF(defense, '') AS defense,
+        NULLIF(side, '') AS side
+    FROM cards
+    WHERE name = '$esc' COLLATE NOCASE
+       $face_predicate
+    ORDER BY CASE side WHEN 'a' THEN 0 WHEN 'b' THEN 1 ELSE 2 END, faceName;")
+or die "card: query failed for '$name'"
 
-test $idx -nt $atomic
-or echo >&2 "card: warning: derived index older than AtomicCards.json — run scripts/build_derived.fish"
-
-set -l lines (grep -iF -- $name $idx)
-set -l hits
-if test (count $lines) -gt 0
-    set hits (printf '%s\n' $lines | jq -c --arg n $name --argjson match_faces $match_faces '
-        ($n | ascii_downcase) as $q
-        | select(((.name | ascii_downcase) == $q)
-                 or ($match_faces
-                     and .face != null and (.face | ascii_downcase) == $q))')
-else
-    # grep -iF misses names stored JSON-escaped (embedded double quotes);
-    # fall back to a full jq scan of the index (~0.3 s).
-    set hits (jq -c --arg n $name --argjson match_faces $match_faces '
-        ($n | ascii_downcase) as $q
-        | select(((.name | ascii_downcase) == $q)
-                 or ($match_faces
-                     and .face != null and (.face | ascii_downcase) == $q))' $idx)
-end
-
-if test (count $hits) -eq 0
-    set -l near
-    test (count $lines) -gt 0
-    and set near (printf '%s\n' $lines | jq -r --arg n $name '
-        ($n | ascii_downcase) as $q
-        | select(.name | ascii_downcase | contains($q)) | .name' | sort -u | head -8)
+if test -z "$hits"
+    set -l near (sqlite3 $db "
+        SELECT DISTINCT name
+        FROM cards
+        WHERE instr(lower(name), lower('$esc')) > 0
+        ORDER BY name
+        LIMIT 8;")
+    or die "card: suggestion query failed for '$name'"
     if test (count $near) -gt 0
         die "card: no exact match for '$name'. Did you mean: "(string join ', ' $near)
     end
     die "card: no card named '$name'"
 end
 
-printf '%s\n' $hits | jq -r "$fmt"
+printf '%s\n' "$hits" | jq -r ".[] | ($fmt)"

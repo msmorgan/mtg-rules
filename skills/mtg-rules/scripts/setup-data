@@ -4,7 +4,7 @@
 # SELF-CONTAINED BY DESIGN: this script must NOT source lib.fish. lib.fish
 # resolves (and requires) a populated data dir and exits 1 when data is
 # absent — which is exactly the situation setup-data exists to fix.
-# Only external deps: curl + jq (sqlite3 is needed at rulings-USE time, not here).
+# Only external deps: curl + jq (sqlite3 is needed at card/rulings use time).
 #
 # Usage: setup-data [--dest DIR] [--cards] [--rulings] [--help]
 
@@ -40,9 +40,9 @@ plugin data directory (Codex, agy, or Claude Code), or repo data in a checkout
 Tiers (idempotent — re-run any time to refresh):
   base       (always)    rules/* (6 files) + catalogs/* (20 files), ~4 MB
                          enables: rule, define, keyword, mtr, cite
-  --cards                mtgjson AtomicCards.json + derived/cards.jsonl, ~155 MB
-                         enables: card, corpus
-  --rulings              mtgjson AllPrintings.sqlite (large)
+  --cards                AllPrintings.sqlite + AtomicCards.json + cards.jsonl,
+                         ~790 MB; enables: card, corpus
+  --rulings              mtgjson AllPrintings.sqlite (shared with --cards)
                          enables: rulings
 
 Options:
@@ -120,14 +120,12 @@ for program in curl jq
     end
 end
 
-# --cards needs xz to decompress AtomicCards.json
-if set -q _flag_cards; and not command -q xz
-    echo >&2 "setup-data: --cards needs 'xz' to decompress mtgjson data"
-    exit 1
-end
-if set -q _flag_rulings; and not command -q xz
-    echo >&2 "setup-data: --rulings needs 'xz' to decompress mtgjson data"
-    exit 1
+# Both optional tiers fetch xz-compressed MTGJSON data.
+if set -q _flag_cards; or set -q _flag_rulings
+    if not command -q xz
+        echo >&2 "setup-data: --cards/--rulings need 'xz' to decompress mtgjson data"
+        exit 1
+    end
 end
 
 # --- destination ------------------------------------------------------------
@@ -192,10 +190,23 @@ for cat in $catalogs
     sleep 0.1
 end
 
+# --- shared MTGJSON SQLite database -----------------------------------------
+if set -q _flag_cards; or set -q _flag_rulings
+    echo >&2 ""
+    echo >&2 "[sqlite] mtgjson AllPrintings.sqlite — enables: card, rulings"
+    mkdir -p $mtgjson_dir
+    or begin
+        echo >&2 "setup-data: ERROR: cannot create $mtgjson_dir"
+        exit 1
+    end
+    fetch_xz_to $mtgjson_base/AllPrintings.sqlite.xz $mtgjson_dir/AllPrintings.sqlite
+    or exit 1
+end
+
 # --- --cards tier -----------------------------------------------------------
 if set -q _flag_cards
     echo >&2 ""
-    echo >&2 "[cards] mtgjson AtomicCards.json + derived/cards.jsonl — enables: card, corpus"
+    echo >&2 "[cards] mtgjson AtomicCards.json + derived/cards.jsonl — enables: corpus"
     mkdir -p $mtgjson_dir $derived_dir
     or begin
         echo >&2 "setup-data: ERROR: cannot create $mtgjson_dir / $derived_dir"
@@ -227,19 +238,6 @@ if set -q _flag_cards
         exit 1
     end
     echo >&2 "  derived/cards.jsonl: "(count < $out)" face records"
-end
-
-# --- --rulings tier ---------------------------------------------------------
-if set -q _flag_rulings
-    echo >&2 ""
-    echo >&2 "[rulings] mtgjson AllPrintings.sqlite — enables: rulings"
-    mkdir -p $mtgjson_dir
-    or begin
-        echo >&2 "setup-data: ERROR: cannot create $mtgjson_dir"
-        exit 1
-    end
-    fetch_xz_to $mtgjson_base/AllPrintings.sqlite.xz $mtgjson_dir/AllPrintings.sqlite
-    or exit 1
 end
 
 # --- summary ----------------------------------------------------------------

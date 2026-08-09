@@ -93,6 +93,8 @@ t_fails "mtr rejects list with positional" $scripts/mtr --list 1.7
 # --- card ---
 t "card lightning bolt oracle text" '3 damage to any target' $scripts/card Lightning Bolt
 t "card face lookup resolves full name" 'Fire // Ice' $scripts/card Fire
+t "card full-name mode excludes a matching face of another card" '^1$' fish -c \
+    "$scripts/card --full-name 'Lightning Bolt' | grep -c '^# '"
 t "card full-name mode rejects a lone multiface face" \
     '^card: no exact match' fish -c "$scripts/card --full-name Start 2>&1; true"
 t "card combined name renders every face" '(?s)face: Start.*face: Finish' \
@@ -103,6 +105,15 @@ t_fails "card partial name fails with suggestions" $scripts/card Llanowar El
 t "card finds unsupported planes too" '[Pp]lane' $scripts/card Llanowar
 t_fails "card empty name rejected" $scripts/card ''
 t "card handles quoted names" 'Ach! Hans' $scripts/card '"Ach! Hans, Run!"'
+
+set -l sqlite_card_data (mktemp -d)
+mkdir -p $sqlite_card_data/rules $sqlite_card_data/mtgjson
+echo '{}' >$sqlite_card_data/rules/cr.json
+set -l card_db (fish -c "source $scripts/lib.fish; echo \$mtgjson_dir/AllPrintings.sqlite")
+ln -s $card_db $sqlite_card_data/mtgjson/AllPrintings.sqlite
+t "card lookup needs only MTGJSON SQLite" '3 damage to any target' \
+    env MTG_RULES_DATA=$sqlite_card_data $scripts/card Lightning Bolt
+rm -rf $sqlite_card_data
 
 # --- card_context.fish UserPromptSubmit hook ---
 set -g cardhook $scripts/hooks/card_context.fish
@@ -162,7 +173,7 @@ rm -rf /tmp/mtg-data-test
 
 set -l codex_test_root (mktemp -d)
 set -l codex_test_home $codex_test_root/home
-set -l codex_test_skill $codex_test_home/plugins/cache/mtg-rules/mtg-rules/1.9.1/skills/mtg-rules
+set -l codex_test_skill $codex_test_home/plugins/cache/mtg-rules/mtg-rules/1.9.2/skills/mtg-rules
 mkdir -p $codex_test_skill/scripts $codex_test_home/plugins/data/mtg-rules/data/rules
 cp $scripts/lib.fish $codex_test_skill/scripts/lib.fish
 echo '{}' >$codex_test_home/plugins/data/mtg-rules/data/rules/cr.json
@@ -172,6 +183,8 @@ rm -rf $codex_test_root
 
 # --- setup-data ---
 t "setup-data shows usage" '(?i)usage' fish -c "$scripts/setup-data --help; true"
+t "setup-data cards tier includes MTGJSON SQLite" \
+    '(?s)--cards.*AllPrintings\.sqlite' $scripts/setup-data --help
 t_fails "setup-data rejects bogus flag" $scripts/setup-data --bogus
 
 # --- keyword classification ---
@@ -411,7 +424,7 @@ rm -rf $hookrepo $nomarker $noconfig
 rm -rf $citetmp
 
 # --- version (conformance manifest) ---
-t "version emits the plugin version" '"plugin_version": "1\.9\.1"' $scripts/version
+t "version emits the plugin version" '"plugin_version": "1\.9\.2"' $scripts/version
 t "version manifest parses with all four keys" '^true$' \
     fish -c "$scripts/version | jq -e 'has(\"plugin_version\") and has(\"git_commit\") and has(\"cr_effective\") and has(\"keywords_classified_sha\")'"
 

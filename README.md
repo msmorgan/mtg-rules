@@ -94,22 +94,23 @@ set -x MTG_RULES_DATA /path/to/your/data
 
 The on-disk layout under the resolved data dir (`$MTG_RULES_DATA` →
 host-specific plugin data → repo `data/`) is a compatibility
-contract, versioned with the plugin (current: 1.7.0; layout changes are
+contract, versioned with the plugin (current: 1.9.2; layout changes are
 called out in [CHANGELOG.md](CHANGELOG.md)). Consumers pin the manifest from
 `skills/mtg-rules/scripts/version` and re-sync on any bump.
 
 | Tier | Files | Built by | Enabling scripts |
 |------|-------|----------|------------------|
 | base | `rules/cr.txt`, `rules/cr.json`, `rules/glossary.json`, `rules/unofficial-glossary.json`, `rules/keywords.json`, `rules/mtr.json`, `catalogs/*.json` | fetched: `skills/mtg-rules/scripts/setup-data` or repo `scripts/fetch_data.fish` | `rule`, `rule-search`, `define`, `keyword`, `mtr`, `lookup`, `classify`, `underdetermined`, `cite`, `health`, `version` |
-| cards | `mtgjson/AtomicCards.json` (fetched), `derived/cards.jsonl` (**built, never fetched**) | fetched: `setup-data --cards` or `fetch_data.fish`; derived: `setup-data --cards` builds it inline, repo checkouts run `scripts/build_derived.fish` | `card`, `corpus`, `evals/coverage.fish` |
-| rulings | `mtgjson/AllPrintings.sqlite` | fetched: `setup-data --rulings` or `fetch_data.fish` | `rulings` |
+| cards | `mtgjson/AllPrintings.sqlite`, `mtgjson/AtomicCards.json` (fetched), `derived/cards.jsonl` (**built, never fetched**) | fetched: `setup-data --cards` or `fetch_data.fish`; derived: `setup-data --cards` builds it inline, repo checkouts run `scripts/build_derived.fish` | `card` (SQLite), `corpus`, `evals/coverage.fish` |
+| rulings | `mtgjson/AllPrintings.sqlite` (shared with the cards tier) | fetched: `setup-data --rulings`, `setup-data --cards`, or `fetch_data.fish` | `rulings` |
 
 **Who builds `derived/`:** consumers hosting their own shared data dir
 (pointing `MTG_RULES_DATA` at it) must run the `cards.jsonl` build step
 themselves after every `AtomicCards.json` refresh — either re-run
 `setup-data --cards` (which rebuilds it) or run repo
-`scripts/build_derived.fish`. A fetched-but-underived data dir makes `card`
-and `corpus` fail with a pointer to this step. `skills/mtg-rules/scripts/health`
+`scripts/build_derived.fish`. A fetched-but-underived data dir makes `corpus`
+fail with a pointer to this step; `card` queries `AllPrintings.sqlite` directly.
+`skills/mtg-rules/scripts/health`
 reports which tiers are present and warns per reference doc whose stated
 synthesis date lags the live CR effective date.
 

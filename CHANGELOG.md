@@ -7,6 +7,14 @@ re-run your alignment pass against the new taxonomy and data before
 re-pinning. Taxonomy-meaning changes (reclassifications, primitive
 mints/retirements, notation changes) are always called out explicitly.
 
+## 1.9.2 — 2026-08-08
+
+- **SQLite card lookup.** `scripts/card` now queries MTGJSON's
+  `AllPrintings.sqlite` directly instead of scanning the derived JSONL index.
+  `setup-data --cards` fetches that shared card-and-rulings database; the
+  AtomicCards-derived JSONL remains the corpus index. **No taxonomy or CR-data
+  change.**
+
 ## 1.9.1 — 2026-08-08
 
 - **Double-bracketed card context.** A `UserPromptSubmit` hook resolves exact
