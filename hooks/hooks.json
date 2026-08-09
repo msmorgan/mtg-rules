@@ -1,5 +1,18 @@
 {
   "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "fish \"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/skills/mtg-rules/scripts/hooks/ensure_data.fish\"",
+            "timeout": 600,
+            "statusMessage": "Preparing MTG rules and card data"
+          }
+        ]
+      }
+    ],
     "UserPromptSubmit": [
       {
         "hooks": [

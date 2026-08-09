@@ -6,7 +6,7 @@
 # absent — which is exactly the situation setup-data exists to fix.
 # Only external deps: curl + jq (sqlite3 is needed at card/rulings use time).
 #
-# Usage: setup-data [--dest DIR] [--cards] [--rulings] [--help]
+# Usage: setup-data [--dest DIR] [--runtime] [--cards] [--rulings] [--help]
 
 # --- upstream endpoints (mirrors scripts/lib/functions/fetch/*) -------------
 set -g academyruins_base 'https://api.academyruins.com'
@@ -30,7 +30,7 @@ set -g catalogs \
     ability-words flavor-words watermarks
 
 function usage
-    printf '%s\n' "usage: setup-data [--dest DIR] [--cards] [--rulings] [--help]
+    printf '%s\n' "usage: setup-data [--dest DIR] [--runtime] [--cards] [--rulings] [--help]
 
 Populate the mtg-rules data directory for an installed plugin copy.
 
@@ -40,13 +40,16 @@ plugin data directory (Codex, agy, or Claude Code), or repo data in a checkout
 Tiers (idempotent — re-run any time to refresh):
   base       (always)    rules/* (6 files) + catalogs/* (20 files), ~4 MB
                          enables: rule, define, keyword, mtr, cite
+  --runtime              AllPrintings.sqlite in addition to base
+                         enables: automatic hooks, card, rulings
   --cards                AllPrintings.sqlite + AtomicCards.json + cards.jsonl,
-                         ~790 MB; enables: card, corpus
+                         ~790 MB; enables: card, rulings, corpus
   --rulings              mtgjson AllPrintings.sqlite (shared with --cards)
                          enables: rulings
 
 Options:
   --dest DIR   write data under DIR instead of the default location
+  --runtime    fetch the hook runtime (base + AllPrintings.sqlite)
   --cards      also fetch card data (slow, large)
   --rulings    also fetch the official-rulings database (slow, large)
   --help       show this help and exit"
@@ -95,7 +98,7 @@ function fetch_xz_to
 end
 
 # --- arg parsing ------------------------------------------------------------
-argparse h/help dest= cards rulings -- $argv
+argparse h/help dest= runtime cards rulings -- $argv
 or begin
     usage >&2
     exit 1
@@ -121,9 +124,9 @@ for program in curl jq
 end
 
 # Both optional tiers fetch xz-compressed MTGJSON data.
-if set -q _flag_cards; or set -q _flag_rulings
+if set -q _flag_runtime; or set -q _flag_cards; or set -q _flag_rulings
     if not command -q xz
-        echo >&2 "setup-data: --cards/--rulings need 'xz' to decompress mtgjson data"
+        echo >&2 "setup-data: --runtime/--cards/--rulings need 'xz' to decompress mtgjson data"
         exit 1
     end
 end
@@ -131,8 +134,12 @@ end
 # --- destination ------------------------------------------------------------
 if set -q _flag_dest
     set -g dest $_flag_dest
-else if set -q MTG_RULES_DATA
+else if set -q MTG_RULES_DATA; and test -n "$MTG_RULES_DATA"
     set -g dest $MTG_RULES_DATA
+else if set -q PLUGIN_DATA; and test -n "$PLUGIN_DATA"
+    set -g dest $PLUGIN_DATA
+else if set -q CLAUDE_PLUGIN_DATA; and test -n "$CLAUDE_PLUGIN_DATA"
+    set -g dest $CLAUDE_PLUGIN_DATA
 else
     # Determine default destination directory.
     set -l here (path resolve (status dirname))
@@ -191,7 +198,7 @@ for cat in $catalogs
 end
 
 # --- shared MTGJSON SQLite database -----------------------------------------
-if set -q _flag_cards; or set -q _flag_rulings
+if set -q _flag_runtime; or set -q _flag_cards; or set -q _flag_rulings
     echo >&2 ""
     echo >&2 "[sqlite] mtgjson AllPrintings.sqlite — enables: card, rulings"
     mkdir -p $mtgjson_dir
@@ -244,6 +251,7 @@ end
 echo >&2 ""
 echo >&2 "setup-data: done. Data in $dest"
 set -l tiers base
+set -q _flag_runtime; and set -a tiers runtime
 set -q _flag_cards; and set -a tiers cards
 set -q _flag_rulings; and set -a tiers rulings
 echo >&2 "setup-data: tiers fetched: "(string join ', ' $tiers)

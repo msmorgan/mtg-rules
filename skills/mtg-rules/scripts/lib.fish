@@ -17,9 +17,10 @@ end
 
 # Data resolution chain — each candidate accepted iff <dir>/rules/cr.json is readable:
 #   1. $MTG_RULES_DATA (if set)
-#   2. the current host's persistent plugin data directory
-#   3. plugin/repo-relative data (plugin/skills/mtg-rules -> plugin/data)
-#   4. the other supported hosts' persistent plugin data directories
+#   2. the host-provided persistent plugin data directory
+#   3. the current host's conventional persistent plugin data directory
+#   4. plugin/repo-relative data (plugin/skills/mtg-rules -> plugin/data)
+#   5. the other supported hosts' persistent plugin data directories
 set -g data_dir ""
 set -l _candidates
 
@@ -33,6 +34,18 @@ set -l _claude_data "$HOME/.claude/plugins/data/mtg-rules/data"
 
 if set -q MTG_RULES_DATA
     set -a _candidates "$MTG_RULES_DATA"
+end
+
+# Codex exposes PLUGIN_DATA; Claude Code exposes CLAUDE_PLUGIN_DATA. Prefer
+# either host-owned persistent location over paths inferred from an installed
+# cache layout, while keeping MTG_RULES_DATA as the explicit user override.
+for _data_var in PLUGIN_DATA CLAUDE_PLUGIN_DATA
+    if set -q $_data_var; and test -n "$$_data_var"
+        set -l _host_data $$_data_var
+        if not contains -- "$_host_data" $_candidates
+            set -a _candidates "$_host_data"
+        end
+    end
 end
 
 # Prefer the persistent data directory belonging to the host that installed
@@ -78,7 +91,7 @@ if test -z "$data_dir"
         echo >&2 "  $_candidate_number. $_cand"
         set _candidate_number (math $_candidate_number + 1)
     end
-    echo >&2 "Populate plugin data with: $skill_dir/scripts/setup-data [--cards] [--rulings]"
+    echo >&2 "Populate plugin data with: $skill_dir/scripts/setup-data --runtime [--cards]"
     echo >&2 "For a repo checkout, you may instead run: scripts/fetch_data.fish"
     exit 1
 end

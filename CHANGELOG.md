@@ -7,6 +7,18 @@ re-run your alignment pass against the new taxonomy and data before
 re-pinning. Taxonomy-meaning changes (reclassifications, primitive
 mints/retirements, notation changes) are always called out explicitly.
 
+## 1.9.3 — 2026-08-09
+
+- **Automatic persistent data bootstrap.** Codex and Claude Code now provision
+  base rules, catalogs, and MTGJSON `AllPrintings.sqlite` from a non-blocking
+  `SessionStart` hook; agy uses its root-level `PreInvocation` hook. Downloads
+  are locked, staged, validated, and marked with a data ABI only after
+  completion, so upgrades reuse host-persistent data without manual intervention
+  and concurrent first-run hooks share one completed runtime. `$PLUGIN_DATA` and
+  `$CLAUDE_PLUGIN_DATA` are now first-class resolution targets, with the
+  existing Codex, agy, and Claude path fallbacks retained. **No taxonomy or
+  CR-data change.**
+
 ## 1.9.2 — 2026-08-08
 
 - **SQLite card lookup.** `scripts/card` now queries MTGJSON's

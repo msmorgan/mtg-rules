@@ -15,6 +15,10 @@ if set -q CODEX_HOME; and test -n "$CODEX_HOME"
 end
 if set -q MTG_RULES_DATA; and test "$data_dir" = "$MTG_RULES_DATA"
     set via '$MTG_RULES_DATA'
+else if set -q PLUGIN_DATA; and test "$data_dir" = "$PLUGIN_DATA"
+    set via '$PLUGIN_DATA'
+else if set -q CLAUDE_PLUGIN_DATA; and test "$data_dir" = "$CLAUDE_PLUGIN_DATA"
+    set via '$CLAUDE_PLUGIN_DATA'
 else if test "$data_dir" = "$codex_root/plugins/data/mtg-rules/data"
     set via "Codex plugin data dir"
 else if test "$data_dir" = "$HOME/.gemini/config/plugins/mtg-rules/data"

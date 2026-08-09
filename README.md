@@ -43,12 +43,23 @@ mkdir -p .agents/plugins
 git clone https://github.com/msmorgan/mtg-rules .agents/plugins/mtg-rules
 ```
 
-### First-Run Data Setup
+### Automatic First-Run Data
 
-After installing, populate the data directory with the bundled fetcher from the plugin root:
+The plugin automatically downloads its hook runtime—base rules, catalogs, and
+MTGJSON's `AllPrintings.sqlite`—into persistent host storage before the first
+model turn. Codex and Claude Code use `SessionStart`; agy uses its equivalent
+`PreInvocation` hook. A lock prevents concurrent sessions from duplicating the
+download, payloads are validated in staging, and a data-ABI marker makes
+later session checks local and fast. Hook setup failures produce a warning but
+do not block prompts or tools.
+
+Required local tools are `fish`, `curl`, `jq`, `xz`, and `sqlite3`.
+
+The first run requires hook trust on hosts that prompt for newly installed hook
+definitions. If automatic setup reports a failure, retry from the plugin root:
 
 ```bash
-skills/mtg-rules/scripts/setup-data
+skills/mtg-rules/scripts/setup-data --runtime
 ```
 
 **Data tiers** (all are idempotent — re-run to refresh):
@@ -56,22 +67,29 @@ skills/mtg-rules/scripts/setup-data
 | Tier | Flag | Size | Enables |
 |------|------|------|---------|
 | Base rules + catalogs | *(default)* | ~4 MB | `rule`, `define`, `keyword`, `mtr`, `cite` |
-| Card lookups + corpus | `--cards` | ~155 MB | `card`, `corpus` |
+| Hook runtime | `--runtime` | large | base + `card`, `rulings`, hooks |
+| Card corpus | `--cards` | ~790 MB | runtime + `corpus` |
 | Official rulings DB | `--rulings` | large | `rulings` |
 
-Example — base tier only:
+Example — refresh the automatic runtime:
 
 ```bash
-skills/mtg-rules/scripts/setup-data
+skills/mtg-rules/scripts/setup-data --runtime
 ```
 
 Example — full install:
 
 ```bash
-skills/mtg-rules/scripts/setup-data --cards --rulings
+skills/mtg-rules/scripts/setup-data --cards
 ```
 
-Data lands in `$CODEX_HOME/plugins/data/mtg-rules/data/` (or `~/.codex/plugins/data/mtg-rules/data/`) for Codex, `~/.gemini/config/plugins/mtg-rules/data/` for agy, or `~/.claude/plugins/data/mtg-rules/data/` for Claude Code. Set `$MTG_RULES_DATA` or pass `--dest` to override it.
+When available, data lands in the host-provided `$PLUGIN_DATA` (Codex) or
+`$CLAUDE_PLUGIN_DATA` (Claude Code). Otherwise it uses
+`$CODEX_HOME/plugins/data/mtg-rules/data/` (or
+`~/.codex/plugins/data/mtg-rules/data/`) for Codex,
+`~/.gemini/config/plugins/mtg-rules/data/` for agy, or
+`~/.claude/plugins/data/mtg-rules/data/` for Claude Code. Set
+`$MTG_RULES_DATA` or pass `--dest` to override it.
 
 ## Development Setup (Repo Checkout)
 
@@ -94,14 +112,15 @@ set -x MTG_RULES_DATA /path/to/your/data
 
 The on-disk layout under the resolved data dir (`$MTG_RULES_DATA` →
 host-specific plugin data → repo `data/`) is a compatibility
-contract, versioned with the plugin (current: 1.9.2; layout changes are
+contract, versioned with the plugin (current: 1.9.3; layout changes are
 called out in [CHANGELOG.md](CHANGELOG.md)). Consumers pin the manifest from
 `skills/mtg-rules/scripts/version` and re-sync on any bump.
 
 | Tier | Files | Built by | Enabling scripts |
 |------|-------|----------|------------------|
 | base | `rules/cr.txt`, `rules/cr.json`, `rules/glossary.json`, `rules/unofficial-glossary.json`, `rules/keywords.json`, `rules/mtr.json`, `catalogs/*.json` | fetched: `skills/mtg-rules/scripts/setup-data` or repo `scripts/fetch_data.fish` | `rule`, `rule-search`, `define`, `keyword`, `mtr`, `lookup`, `classify`, `underdetermined`, `cite`, `health`, `version` |
-| cards | `mtgjson/AllPrintings.sqlite`, `mtgjson/AtomicCards.json` (fetched), `derived/cards.jsonl` (**built, never fetched**) | fetched: `setup-data --cards` or `fetch_data.fish`; derived: `setup-data --cards` builds it inline, repo checkouts run `scripts/build_derived.fish` | `card` (SQLite), `corpus`, `evals/coverage.fish` |
+| runtime | base + `mtgjson/AllPrintings.sqlite` | automatic hook bootstrap or `setup-data --runtime` | all base scripts, `card` (SQLite), `rulings`, hooks |
+| cards | runtime + `mtgjson/AtomicCards.json` (fetched), `derived/cards.jsonl` (**built, never fetched**) | fetched: `setup-data --cards` or `fetch_data.fish`; derived: `setup-data --cards` builds it inline, repo checkouts run `scripts/build_derived.fish` | `card` (SQLite), `rulings`, `corpus`, `evals/coverage.fish` |
 | rulings | `mtgjson/AllPrintings.sqlite` (shared with the cards tier) | fetched: `setup-data --rulings`, `setup-data --cards`, or `fetch_data.fish` | `rulings` |
 
 **Who builds `derived/`:** consumers hosting their own shared data dir
@@ -159,8 +178,9 @@ The `UserPromptSubmit` hook performs case-insensitive exact-name lookups with
 the local `card` command. It ignores bracketed text that is not a card name,
 deduplicates repeated names, and requires a multifaced card's canonical
 combined name, including its ` // ` separator—for example,
-`[[Start // Finish]]`. Combined names render every face. The card data tier must
-be installed (see First-Run Data Setup above).
+`[[Start // Finish]]`. Combined names render every face. The SQLite card
+database is part of the automatically installed hook runtime (see Automatic
+First-Run Data above).
 
 ## Citation Context Hook (consumer repos)
 

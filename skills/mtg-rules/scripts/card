@@ -15,7 +15,7 @@ test -n "$name"; or die "usage: card [--full-name] <card name>"
 command -q sqlite3; or die "card: sqlite3 not found"
 set -l db $mtgjson_dir/AllPrintings.sqlite
 test -r $db
-or die "card: no card database found ($db missing). Populate it with: scripts/setup-data --cards (plugin install) or scripts/fetch_data.fish (repo checkout)"
+or die "card: no card database found ($db missing). Populate it with: scripts/setup-data --runtime (plugin install) or scripts/fetch_data.fish (repo checkout)"
 
 set -l esc (string replace -a "'" "''" -- $name)
 set -l face_predicate

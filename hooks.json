@@ -1,0 +1,11 @@
+{
+  "mtg-rules-data": {
+    "PreInvocation": [
+      {
+        "type": "command",
+        "command": "fish ./skills/mtg-rules/scripts/hooks/ensure_data.fish",
+        "timeout": 600
+      }
+    ]
+  }
+}

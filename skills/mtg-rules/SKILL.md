@@ -13,9 +13,11 @@ All paths below are relative to this skill's directory.
 
 ## First-run data
 
-If a lookup reports that the data directory is missing, run
-`scripts/setup-data` and retry. Add `--cards` before card or corpus lookups,
-and `--rulings` before official per-card ruling lookups. These downloads are
+Installed plugins automatically provision base rules, catalogs, and MTGJSON's
+`AllPrintings.sqlite` in persistent host storage before the first model turn.
+If that bootstrap warns or a lookup reports missing data, run
+`scripts/setup-data --runtime` and retry. Add `--cards` only for `corpus`,
+which also needs AtomicCards and the derived JSONL index. These downloads are
 the authoritative inputs; do not fall back to remembered MTG specifics while
 data is unavailable.
 
@@ -117,7 +119,8 @@ the lockfile.
   `mtgjson/AtomicCards.json` feeds the `derived/cards.jsonl` corpus index built
   by repo-root `scripts/build_derived.fish` (rebuild after refreshes)
 
-Installed plugin copies resolve data via `$MTG_RULES_DATA` → the current
-host's persistent plugin data directory (Codex, agy, or Claude Code) → the
-plugin/repo layout; populate with
-`scripts/setup-data [--cards] [--rulings]`.
+Installed plugin copies resolve data via `$MTG_RULES_DATA` → `$PLUGIN_DATA` /
+`$CLAUDE_PLUGIN_DATA` → the current host's conventional persistent plugin data
+directory (Codex, agy, or Claude Code) → the plugin/repo layout. The hook
+runtime is populated automatically; manually retry with
+`scripts/setup-data --runtime`, or add `--cards` for the corpus tier.

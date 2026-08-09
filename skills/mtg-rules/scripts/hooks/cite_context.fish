@@ -61,7 +61,7 @@ switch $tool
         # tests/test_skill_scripts.fish asserts this list covers scripts/.
         jq -r '.tool_input.command // ""' < $ccwork/payload.json > $ccwork/cmd.txt 2>/dev/null
         grep -qF 'mtg-rules' $ccwork/cmd.txt; and exit 0
-        grep -qE '(^|[;&|(]|env( +[A-Za-z_][A-Za-z0-9_]*=[^ ]*)+ +)[[:space:]]*(\./)*(rule-search|underdetermined|setup-data|classify|corpus|rulings|keyword|version|define|health|lookup|card|cite|rule|mtr)([[:space:]]|$)' \
+        grep -qE '(^|[;&|(]|env( +[A-Za-z_][A-Za-z0-9_]*=[^ ]*)+ +)[[:space:]]*(\./)*(rule-search|underdetermined|setup-data|ensure-data|classify|corpus|rulings|keyword|version|define|health|lookup|card|cite|rule|mtr)([[:space:]]|$)' \
             $ccwork/cmd.txt; and exit 0
         set selector 'if (.tool_response | type) == "string" then .tool_response else (.tool_response.stdout? // "") end'
     case '*'

@@ -171,21 +171,94 @@ t "lib honors MTG_RULES_DATA" '/tmp/mtg-data-test/rules$' fish -c "set -x MTG_RU
 t "lib ignores invalid MTG_RULES_DATA" 'data/rules$' fish -c "set -x MTG_RULES_DATA /nonexistent; source $scripts/lib.fish; or exit 1; echo \$rules_dir"
 rm -rf /tmp/mtg-data-test
 
+set -l plugin_data_test (mktemp -d)
+mkdir -p $plugin_data_test/rules
+echo '{}' >$plugin_data_test/rules/cr.json
+t "lib honors host-provided PLUGIN_DATA" "$plugin_data_test/rules\$" \
+    env -u MTG_RULES_DATA PLUGIN_DATA=$plugin_data_test fish -c "source $scripts/lib.fish; or exit 1; echo \$rules_dir"
+rm -rf $plugin_data_test
+
 set -l codex_test_root (mktemp -d)
 set -l codex_test_home $codex_test_root/home
-set -l codex_test_skill $codex_test_home/plugins/cache/mtg-rules/mtg-rules/1.9.2/skills/mtg-rules
+set -l codex_test_skill $codex_test_home/plugins/cache/mtg-rules/mtg-rules/1.9.3/skills/mtg-rules
 mkdir -p $codex_test_skill/scripts $codex_test_home/plugins/data/mtg-rules/data/rules
 cp $scripts/lib.fish $codex_test_skill/scripts/lib.fish
 echo '{}' >$codex_test_home/plugins/data/mtg-rules/data/rules/cr.json
 t "lib resolves persistent Codex plugin data" 'plugins/data/mtg-rules/data/rules$' \
-    env CODEX_HOME=$codex_test_home fish -c "source $codex_test_skill/scripts/lib.fish; or exit 1; echo \$rules_dir"
+    env -u MTG_RULES_DATA CODEX_HOME=$codex_test_home fish -c "source $codex_test_skill/scripts/lib.fish; or exit 1; echo \$rules_dir"
 rm -rf $codex_test_root
 
 # --- setup-data ---
 t "setup-data shows usage" '(?i)usage' fish -c "$scripts/setup-data --help; true"
 t "setup-data cards tier includes MTGJSON SQLite" \
     '(?s)--cards.*AllPrintings\.sqlite' $scripts/setup-data --help
+t "setup-data exposes the automatic runtime tier" \
+    '(?s)--runtime.*AllPrintings\.sqlite' $scripts/setup-data --help
 t_fails "setup-data rejects bogus flag" $scripts/setup-data --bogus
+
+# --- automatic data bootstrap ---
+set -l ensure $scripts/ensure-data
+set -l ensure_hook $scripts/hooks/ensure_data.fish
+set -l ensure_tmp (mktemp -d)
+set -l ensure_count $ensure_tmp/count
+t "ensure-data installs the complete runtime and ABI marker" '(?s)^1.*READY$' fish -c \
+    "env MTG_RULES_SETUP_DATA=$fixtures/fake_setup_data.fish MTG_RULES_FAKE_SETUP_COUNT=$ensure_count $ensure --dest $ensure_tmp; cat $ensure_count; test -s $ensure_tmp/mtgjson/AllPrintings.sqlite; and test (cat $ensure_tmp/.mtg-rules-runtime-v1) = 1; and echo READY"
+t "ensure-data fast path does not re-run setup" '^1$' fish -c \
+    "env MTG_RULES_SETUP_DATA=$fixtures/fake_setup_data.fish MTG_RULES_FAKE_SETUP_COUNT=$ensure_count $ensure --dest $ensure_tmp; cat $ensure_count"
+t "fresh automatic runtime supports SQLite card lookup" '3 damage to any target' \
+    env MTG_RULES_DATA=$ensure_tmp $scripts/card Lightning Bolt
+t "fresh automatic runtime supports CR lookup" 'Fixture rule text' \
+    env MTG_RULES_DATA=$ensure_tmp $scripts/rule 100.1
+t "ensure-data repairs a missing runtime file" '^2$' fish -c \
+    "rm $ensure_tmp/catalogs/card-names.json; env MTG_RULES_SETUP_DATA=$fixtures/fake_setup_data.fish MTG_RULES_FAKE_SETUP_COUNT=$ensure_count $ensure --dest $ensure_tmp; cat $ensure_count"
+rm -rf $ensure_tmp
+
+set -l ensure_concurrent (mktemp -d)
+set -l concurrent_count $ensure_concurrent/count
+t "ensure-data serializes concurrent first-run sessions" '^1$' bash -c \
+    "env MTG_RULES_SETUP_DATA=$fixtures/fake_setup_data.fish MTG_RULES_FAKE_SETUP_COUNT=$concurrent_count MTG_RULES_FAKE_SETUP_DELAY=1 fish --no-config $ensure --dest $ensure_concurrent >/dev/null 2>&1 & env MTG_RULES_SETUP_DATA=$fixtures/fake_setup_data.fish MTG_RULES_FAKE_SETUP_COUNT=$concurrent_count MTG_RULES_FAKE_SETUP_DELAY=1 fish --no-config $ensure --dest $ensure_concurrent >/dev/null 2>&1 & wait; cat $concurrent_count"
+rm -rf $ensure_concurrent
+
+set -l ensure_stale (mktemp -d)
+mkdir $ensure_stale/.mtg-rules-runtime.lock
+t "ensure-data reclaims an ownerless stale lock" '^READY$' fish -c \
+    "env MTG_RULES_SETUP_DATA=$fixtures/fake_setup_data.fish $ensure --dest $ensure_stale; test -s $ensure_stale/.mtg-rules-runtime-v1; and echo READY"
+rm -rf $ensure_stale
+
+set -l ensure_fail (mktemp -d)
+t "bootstrap hook warns but exits zero on setup failure" '(?s)non-blocking.*HOOK_OK$' fish -c \
+    "printf '{}' | env PLUGIN_DATA=$ensure_fail MTG_RULES_SETUP_DATA=$fixtures/fake_setup_data.fish MTG_RULES_FAKE_SETUP_FAIL=1 fish --no-config $ensure_hook; and echo HOOK_OK"
+t "agy bootstrap failure uses PreInvocation output" 'injectSteps' fish -c \
+    "printf '{\"invocationNum\":0}' | env PLUGIN_DATA=$ensure_fail MTG_RULES_SETUP_DATA=$fixtures/fake_setup_data.fish MTG_RULES_FAKE_SETUP_FAIL=1 fish --no-config $ensure_hook"
+rm -rf $ensure_fail
+
+t "Codex and Claude register SessionStart bootstrap" '^startup\|resume\|clear$' \
+    jq -r '.hooks.SessionStart[0].matcher' $repo/hooks/hooks.json
+t "agy registers PreInvocation bootstrap" '^command$' \
+    jq -r '."mtg-rules-data".PreInvocation[0].type' $repo/hooks.json
+
+set -l host_tmp (mktemp -d)
+set -l codex_root $host_tmp/codex
+set -l codex_ensure $codex_root/plugins/cache/mtg-rules/mtg-rules/1.9.3/skills/mtg-rules/scripts/ensure-data
+mkdir -p (path dirname $codex_ensure)
+cp $ensure $codex_ensure
+t "Codex path fallback provisions persistent plugin data" '^true$' fish -c \
+    "env -u MTG_RULES_DATA -u PLUGIN_DATA -u CLAUDE_PLUGIN_DATA HOME=$host_tmp/home CODEX_HOME=$codex_root MTG_RULES_SETUP_DATA=$fixtures/fake_setup_data.fish fish --no-config $codex_ensure; test -s $codex_root/plugins/data/mtg-rules/data/.mtg-rules-runtime-v1; and echo true"
+
+set -l claude_home $host_tmp/claude-home
+set -l claude_ensure $claude_home/.claude/plugins/cache/mtg-rules/mtg-rules/1.9.3/skills/mtg-rules/scripts/ensure-data
+mkdir -p (path dirname $claude_ensure)
+cp $ensure $claude_ensure
+t "Claude path fallback provisions persistent plugin data" '^true$' fish -c \
+    "env -u MTG_RULES_DATA -u PLUGIN_DATA -u CLAUDE_PLUGIN_DATA -u CODEX_HOME HOME=$claude_home MTG_RULES_SETUP_DATA=$fixtures/fake_setup_data.fish fish --no-config $claude_ensure; test -s $claude_home/.claude/plugins/data/mtg-rules/data/.mtg-rules-runtime-v1; and echo true"
+
+set -l agy_home $host_tmp/agy-home
+set -l agy_ensure $agy_home/.gemini/config/plugins/mtg-rules/skills/mtg-rules/scripts/ensure-data
+mkdir -p (path dirname $agy_ensure)
+cp $ensure $agy_ensure
+t "agy path fallback provisions persistent plugin data" '^true$' fish -c \
+    "env -u MTG_RULES_DATA -u PLUGIN_DATA -u CLAUDE_PLUGIN_DATA -u CODEX_HOME HOME=$agy_home MTG_RULES_SETUP_DATA=$fixtures/fake_setup_data.fish fish --no-config $agy_ensure; test -s $agy_home/.gemini/config/plugins/mtg-rules/data/.mtg-rules-runtime-v1; and echo true"
+rm -rf $host_tmp
 
 # --- keyword classification ---
 t "keywords-classified.json parses" '^valid$' fish -c "jq -e . skills/mtg-rules/keywords-classified.json >/dev/null; and echo valid"
@@ -424,7 +497,7 @@ rm -rf $hookrepo $nomarker $noconfig
 rm -rf $citetmp
 
 # --- version (conformance manifest) ---
-t "version emits the plugin version" '"plugin_version": "1\.9\.2"' $scripts/version
+t "version emits the plugin version" '"plugin_version": "1\.9\.3"' $scripts/version
 t "version manifest parses with all four keys" '^true$' \
     fish -c "$scripts/version | jq -e 'has(\"plugin_version\") and has(\"git_commit\") and has(\"cr_effective\") and has(\"keywords_classified_sha\")'"
 

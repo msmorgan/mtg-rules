@@ -1,0 +1,210 @@
+#!/usr/bin/env fish
+# ensure-data — provision the small hook runtime once per persistent data ABI.
+#
+# The runtime is base rules/catalogs plus MTGJSON AllPrintings.sqlite. Downloads
+# happen in a private staging directory; files move into place only after the
+# complete tier succeeds, and the ABI marker is written last. A mkdir-based lock
+# serializes concurrent sessions across Codex, Claude Code, and agy.
+
+set -g runtime_data_abi 1
+set -g runtime_marker .mtg-rules-runtime-v1
+set -g runtime_rules \
+    cr.txt cr.json keywords.json glossary.json unofficial-glossary.json mtr.json
+set -g runtime_catalogs \
+    card-names artist-names word-bank supertypes card-types artifact-types \
+    battle-types creature-types enchantment-types land-types planeswalker-types \
+    spell-types powers toughnesses loyalties keyword-abilities keyword-actions \
+    ability-words flavor-words watermarks
+
+function usage
+    echo "usage: ensure-data [--dest DIR] [--help]"
+end
+
+argparse h/help dest= -- $argv
+or begin
+    usage >&2
+    exit 1
+end
+if set -q _flag_help
+    usage
+    exit 0
+end
+if test (count $argv) -gt 0
+    echo >&2 "ensure-data: unexpected argument: $argv[1]"
+    usage >&2
+    exit 1
+end
+
+set -l here (path resolve (status dirname))
+set -l skill_root (path dirname $here)
+set -l codex_root "$HOME/.codex"
+if set -q CODEX_HOME; and test -n "$CODEX_HOME"
+    set codex_root (path normalize "$CODEX_HOME")
+end
+
+if set -q _flag_dest
+    set -g ensure_dest $_flag_dest
+else if set -q MTG_RULES_DATA; and test -n "$MTG_RULES_DATA"
+    set -g ensure_dest $MTG_RULES_DATA
+else if set -q PLUGIN_DATA; and test -n "$PLUGIN_DATA"
+    set -g ensure_dest $PLUGIN_DATA
+else if set -q CLAUDE_PLUGIN_DATA; and test -n "$CLAUDE_PLUGIN_DATA"
+    set -g ensure_dest $CLAUDE_PLUGIN_DATA
+else if string match -q -- "$codex_root/*" "$skill_root"
+    set -g ensure_dest $codex_root/plugins/data/mtg-rules/data
+else if string match -q -- "$HOME/.gemini/*" "$skill_root"
+    set -g ensure_dest $HOME/.gemini/config/plugins/mtg-rules/data
+else if string match -q -- "$HOME/.claude/*" "$skill_root"
+    set -g ensure_dest $HOME/.claude/plugins/data/mtg-rules/data
+else
+    set -g ensure_dest (path dirname (path dirname $skill_root))/data
+end
+set -g ensure_dest (path normalize $ensure_dest)
+
+function runtime_ready --argument-names candidate
+    test -r $candidate/$runtime_marker; or return 1
+    test (string trim < $candidate/$runtime_marker) = $runtime_data_abi; or return 1
+    for file in $runtime_rules
+        test -s $candidate/rules/$file; or return 1
+    end
+    for catalog in $runtime_catalogs
+        test -s $candidate/catalogs/$catalog.json; or return 1
+    end
+    test -s $candidate/mtgjson/AllPrintings.sqlite; or return 1
+end
+
+function staged_runtime_valid --argument-names candidate
+    for file in $runtime_rules
+        test -s $candidate/rules/$file; or return 1
+        if string match -q '*.json' -- $file
+            jq -e . $candidate/rules/$file >/dev/null 2>&1; or return 1
+        end
+    end
+    for catalog in $runtime_catalogs
+        test -s $candidate/catalogs/$catalog.json; or return 1
+        jq -e . $candidate/catalogs/$catalog.json >/dev/null 2>&1; or return 1
+    end
+    test -s $candidate/mtgjson/AllPrintings.sqlite; or return 1
+    sqlite3 $candidate/mtgjson/AllPrintings.sqlite \
+        'SELECT 1 FROM cards LIMIT 1;' >/dev/null 2>&1; or return 1
+end
+
+runtime_ready $ensure_dest; and exit 0
+
+mkdir -p $ensure_dest
+or begin
+    echo >&2 "ensure-data: cannot create $ensure_dest"
+    exit 1
+end
+
+set -g ensure_lock $ensure_dest/.mtg-rules-runtime.lock
+set -g ensure_lock_owned 0
+set -g ensure_stage ""
+
+function ensure_cleanup --on-event fish_exit
+    if test -n "$ensure_stage"; and test -d $ensure_stage
+        rm -rf -- $ensure_stage
+    end
+    if test $ensure_lock_owned -eq 1; and test -d $ensure_lock
+        if test -r $ensure_lock/pid; and test (string trim < $ensure_lock/pid) = $fish_pid
+            rm -f -- $ensure_lock/pid
+            rmdir -- $ensure_lock 2>/dev/null
+        end
+    end
+end
+
+# Wait for another session's first-run download. Dead, malformed, and missing
+# owner records are reclaimed after a short grace period so an interruption
+# between mkdir and writing pid cannot permanently wedge the runtime.
+set -l orphan_ticks 0
+for attempt in (seq 1 580)
+    runtime_ready $ensure_dest; and exit 0
+    if mkdir $ensure_lock 2>/dev/null
+        printf '%s\n' $fish_pid >$ensure_lock/pid
+        set ensure_lock_owned 1
+        break
+    end
+    if test -r $ensure_lock/pid
+        set -l owner (string trim < $ensure_lock/pid)
+        if string match -rq '^[0-9]+$' -- $owner; and not kill -0 $owner 2>/dev/null
+            rm -f -- $ensure_lock/pid
+            rmdir -- $ensure_lock 2>/dev/null
+            continue
+        else if string match -rq '^[0-9]+$' -- $owner
+            set orphan_ticks 0
+        else
+            set orphan_ticks (math $orphan_ticks + 1)
+        end
+    else
+        set orphan_ticks (math $orphan_ticks + 1)
+    end
+    if test $orphan_ticks -ge 3
+        rm -f -- $ensure_lock/pid
+        rmdir -- $ensure_lock 2>/dev/null
+        set orphan_ticks 0
+        continue
+    end
+    sleep 1
+end
+
+if test $ensure_lock_owned -ne 1
+    echo >&2 "ensure-data: timed out waiting for $ensure_lock"
+    exit 1
+end
+
+# The winner rechecks after taking the lock in case the previous owner finished
+# between our readiness probe and mkdir.
+runtime_ready $ensure_dest; and exit 0
+
+set ensure_stage (mktemp -d "$ensure_dest/.mtg-rules-runtime.XXXXXX")
+or begin
+    echo >&2 "ensure-data: cannot create a staging directory in $ensure_dest"
+    exit 1
+end
+
+set -l setup $here/setup-data
+if set -q MTG_RULES_SETUP_DATA; and test -n "$MTG_RULES_SETUP_DATA"
+    set setup $MTG_RULES_SETUP_DATA
+end
+
+echo >&2 "ensure-data: preparing MTG rules and SQLite card data in $ensure_dest"
+if not fish --no-config $setup --dest $ensure_stage --runtime
+    echo >&2 "ensure-data: automatic data setup failed; retry with $here/setup-data --runtime"
+    exit 1
+end
+
+staged_runtime_valid $ensure_stage
+or begin
+    echo >&2 "ensure-data: staged runtime failed JSON or SQLite validation"
+    exit 1
+end
+
+mkdir -p $ensure_dest/rules $ensure_dest/catalogs $ensure_dest/mtgjson
+or begin
+    echo >&2 "ensure-data: cannot create runtime directories under $ensure_dest"
+    exit 1
+end
+for file in $runtime_rules
+    mv -f -- $ensure_stage/rules/$file $ensure_dest/rules/$file; or exit 1
+end
+for catalog in $runtime_catalogs
+    mv -f -- $ensure_stage/catalogs/$catalog.json $ensure_dest/catalogs/$catalog.json; or exit 1
+end
+mv -f -- $ensure_stage/mtgjson/AllPrintings.sqlite $ensure_dest/mtgjson/AllPrintings.sqlite
+or exit 1
+
+set -l marker_tmp $ensure_dest/$runtime_marker.tmp.$fish_pid
+printf '%s\n' $runtime_data_abi >$marker_tmp
+and mv -f -- $marker_tmp $ensure_dest/$runtime_marker
+or begin
+    rm -f -- $marker_tmp
+    echo >&2 "ensure-data: cannot write runtime ABI marker"
+    exit 1
+end
+
+rm -rf -- $ensure_stage
+set ensure_stage ""
+rm -f -- $ensure_lock/pid
+rmdir -- $ensure_lock 2>/dev/null
+set ensure_lock_owned 0
+echo >&2 "ensure-data: runtime ready"
