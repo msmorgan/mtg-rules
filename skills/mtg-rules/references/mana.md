@@ -1,6 +1,6 @@
 # Mana — The Mana Subsystem
 
-*Synthesized from the Comprehensive Rules effective 2026-06-19
+*Synthesized from the Comprehensive Rules effective 2026-08-07
 (`data/rules/cr.json`). Orientation only — verify load-bearing specifics
 with `scripts/rule` before citing. Run `scripts/cite check` after CR
 refreshes.*
@@ -78,7 +78,8 @@ mana in it (106.4b).
 
 **Mana abilities** are CR 605's classification, not this doc's: an
 activated ability is a mana ability if it requires no target, could add
-mana on resolution, and isn't a loyalty ability (605.1a); a triggered mana
+mana on resolution, isn't a loyalty ability, and its cost/effect moves no
+card to or from a library (605.1a); a triggered mana
 ability must additionally trigger off a mana ability or off mana being
 added (605.1b). They can be activated whenever a rule or effect asks for a
 mana payment, even mid-cast or mid-resolution (605.3a), don't use the

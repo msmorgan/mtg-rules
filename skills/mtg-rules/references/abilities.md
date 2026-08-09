@@ -1,6 +1,6 @@
 # Abilities — Taxonomy
 
-*Synthesized from the Comprehensive Rules effective 2026-06-19
+*Synthesized from the Comprehensive Rules effective 2026-08-07
 (`data/rules/cr.json`). Orientation only — verify load-bearing specifics
 with `scripts/rule` before citing. Run `scripts/cite check` after CR
 refreshes.*
@@ -51,7 +51,7 @@ an engine must special-case.
 
 | Sub-kind | Defining rule | Underlies kind(s) | Recognize by |
 |---|---|---|---|
-| Mana ability (activated) | 605.1a | activated | no target, could add mana, not a loyalty ability |
+| Mana ability (activated) | 605.1a | activated | no target, could add mana, not loyalty, doesn't move cards to/from a library |
 | Mana ability (triggered) | 605.1b | triggered | no target, triggers off a mana ability / mana added, could add mana |
 | Loyalty ability | 606.2 | activated | loyalty symbol in the cost |
 | Characteristic-defining (CDA) | 604.3a | static | states a defining characteristic (color/subtype/P/T) about itself |
@@ -62,8 +62,9 @@ an engine must special-case.
 | Reflexive triggered | 603.12 | triggered | "When you do, ..." referring to an action taken during the same resolution |
 
 **Mana abilities** (605.1) — two disjoint definitions:
-- *Activated*: no target, *could* add mana on resolution, and not a loyalty
-  ability (605.1a). *Triggered*: no target, could add mana, and triggers
+- *Activated*: no target, *could* add mana on resolution, not a loyalty
+  ability, and its cost/effect moves no card to or from a library (605.1a).
+  *Triggered*: no target, could add mana, and triggers
   off activating/resolving a mana ability or off mana being added (605.1b).
 - Special behavior: neither uses the stack — each resolves immediately and
   can't be targeted, countered, or responded to (605.3b, 605.4a). An

@@ -29,6 +29,10 @@ function fetch_rules
         mtr:mtr.json
 
     academyruins download $wanted_files_map
+    or return 1
+
+    fish --no-config (path resolve (status dirname))/../skills/mtg-rules/scripts/normalize-glossary \
+        $rules_dir/glossary.json
 end
 
 function fetch_scryfall_catalogs

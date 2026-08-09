@@ -1,6 +1,6 @@
 # Designations — The Scattered Global Flags, Unified
 
-*Synthesized from the Comprehensive Rules effective 2026-06-19
+*Synthesized from the Comprehensive Rules effective 2026-08-07
 (`data/rules/cr.json`). Orientation only — verify load-bearing specifics
 with `scripts/rule` before citing. Run `scripts/cite check` after CR
 refreshes.*
@@ -57,7 +57,8 @@ persistence**, **effect**, **CR home**.
 
 ### City's blessing
 - **Carrier:** a player; **any number** of players may have it simultaneously
-  (702.131c) — the only player designation that is not single-holder.
+  (702.131c). It is one of the multi-holder player designations, along with
+  enduring story (702.195b).
 - **Gained by:** the ascend keyword. On an instant/sorcery (spell ability) or
   on a permanent (static ability): if you control ten or more permanents and
   don't have it, you get it for the rest of the game (702.131a, 702.131b).
@@ -67,6 +68,21 @@ persistence**, **effect**, **CR home**.
   (702.131c). Gaining it reapplies continuous effects before trigger conditions
   are checked (702.131d).
 - **CR home:** 702.131a–702.131d.
+
+### Enduring story
+- **Carrier:** a player; **any number** of players may have it simultaneously
+  (702.195b).
+- **Gained by:** the storied keyword. If you control three or more permanents
+  that are artifacts, Sagas, and/or legendary permanents and don't have an
+  enduring story, you gain one for the rest of the game (702.195a). This is a
+  three-permanent threshold across the union of those qualities, not three of
+  each.
+- **Lost by / persistence:** never — "for the rest of the game" (702.195a).
+  No lose path is defined.
+- **Effect:** pure marker, no inherent rules meaning; other cards can check for
+  it (702.195b). Gaining it reapplies continuous effects before trigger
+  conditions are checked (702.195c).
+- **CR home:** 702.195a–702.195c.
 
 ### Planar controller
 - **Carrier:** a player (single); exactly one whenever a face-up plane or
@@ -256,6 +272,7 @@ State location terms cross-ref `state.md` (player state §2, per-object state
 | Monarch | player (single) | game flag = player ref (`state.md` §8) |
 | Initiative | player (single) | game flag = player ref (`state.md` §8) |
 | City's blessing | player (multi) | per-player flag (`state.md` §2) |
+| Enduring story | player (multi) | per-player flag (`state.md` §2) |
 | Planar controller | player (single) | per-player flag (`state.md` §2) |
 | Day / Night | game | game flag (tri-state) (`state.md` §8) |
 | Ring-bearer (+ Ring emblem, count) | permanent + player | object flag + per-player emblem/count (`state.md` §6, §8) |

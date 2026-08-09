@@ -1,16 +1,16 @@
 # Keyword Classification — Intrinsic / Composite / Marker
 
-*Synthesized from the Comprehensive Rules effective 2026-06-19
+*Synthesized from the Comprehensive Rules effective 2026-08-07
 (`data/rules/cr.json`). Orientation only — verify load-bearing specifics
 with `scripts/rule` before citing. Run `scripts/cite check` after CR
 refreshes.*
 
 Every keyword ability (CR 702) and keyword action (CR 701) is classified by
-**what an engine has to build for it**. The full per-keyword data (all 263
+**what an engine has to build for it**. The full per-keyword data (all 265
 rows, `how` rationale, cites, `core_referenced` flag) lives in
 `../keywords-classified.json`; this doc holds the rubric, the engine
 primitive basis, and the closed-class tables. The JSON is the authority for
-the 218-row composite enumeration — only highlights appear below.
+the 220-row composite enumeration — only highlights appear below.
 
 ## Rubric (rubric_version 1)
 
@@ -157,8 +157,8 @@ Each decomposes once its `given` primitive exists; grouped by primitive.
 
 ## Composite highlights
 
-The full 218-row composite enumeration lives in
-`../keywords-classified.json`. Twelve instructive ones:
+The full 220-row composite enumeration lives in
+`../keywords-classified.json`. Fourteen instructive ones:
 
 | name | rule | decomposition | cites |
 |---|---|---|---|
@@ -174,19 +174,21 @@ The full 218-row composite enumeration lives in
 | Goad | 701.15 | Applies the "goaded" designation = attack requirement (must attack if able) + direction restriction (a player other than the goader). | 701.15a, 701.15b, 701.15c |
 | Proliferate | 701.34 | Choose any number of permanents/players with a counter, give each one more of each kind it has (2HG poison sharing). | 701.34a, 701.34b |
 | Protection | 702.16 | Bundle of restrictions/prevention: can't be targeted/enchanted/equipped (with SBA detach), damage prevented, can't be blocked — all by qualified sources. | 702.16b, 702.16c, 702.16e, 702.16f |
+| Recruit | 701.70 | Draw, discard, then conditionally create a 1/1 white Human Soldier creature token if the discarded card was nonland. | 701.70a |
+| Storied | 702.195 | Threshold-gated static that grants a permanent player marker, then reapplies continuous effects before checking trigger conditions. | 702.195a, 702.195b, 702.195c |
 
 ## Counts
 
 | class | count |
 |---|---|
 | intrinsic | 25 (9 ability, 16 action) |
-| composite | 218 (170 ability, 48 action) |
+| composite | 220 (171 ability, 49 action) |
 | composite-given | 19 (14 ability, 5 action) |
 | marker | 1 |
-| **total** | **263** (194 ability, 69 action) |
+| **total** | **265** (195 ability, 70 action) |
 
-`core_referenced` (named in CR outside its own 70x section): **64** of 263
-rows are true, 199 false. Per row in the JSON. The 16 intrinsic actions and
+`core_referenced` (named in CR outside its own 70x section): **64** of 265
+rows are true, 201 false. Per row in the JSON. The 16 intrinsic actions and
 several intrinsic abilities (deathtouch→510.1c/704.5h, trample→510.1, etc.)
 are core-referenced; most composite *abilities* are self-contained.
 

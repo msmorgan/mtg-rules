@@ -191,6 +191,14 @@ for entry in $rules_map
     or exit 1
 end
 
+# Academy Ruins currently exposes the official glossary as one document in a
+# `{glossary: {term, definition}}` envelope. Normalize it to the stable
+# term-keyed data contract used by define/keyword/lookup. Older flat responses
+# pass through unchanged.
+fish --no-config (path resolve (status dirname))/normalize-glossary \
+    $rules_dir/glossary.json
+or exit 1
+
 for cat in $catalogs
     fetch_to $scryfall_base/catalog/$cat $catalogs_dir/$cat.json
     or exit 1

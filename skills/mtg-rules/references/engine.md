@@ -1,6 +1,6 @@
 # Engine Sketch — Pseudo-code Model and the Damage Pipeline
 
-*Synthesized from the Comprehensive Rules effective 2026-06-19
+*Synthesized from the Comprehensive Rules effective 2026-08-07
 (`data/rules/cr.json`). Orientation only — verify load-bearing specifics
 with `scripts/rule` before citing. Run `scripts/cite check` after CR
 refreshes.*
@@ -203,7 +203,7 @@ Reflection / wither+lifelink, and Awe Strike / Worship).
 **After.** Damage does not destroy (120.5); destruction is an SBA. So the
 priority handshake (below) runs the SBA fixpoint — lethal marked damage (704.5g),
 the deathtouch flag (704.5h), 0-loyalty planeswalkers (704.5i), 0-defense
-battles (704.5v) — and only then do the damage triggers from step B reach the
+Sieges/non-Sieges (704.5v–w) — and only then do the damage triggers from step B reach the
 stack. Excess-damage trigger conditions read the amount over lethal/loyalty/
 defense computed at deal time (120.10).
 

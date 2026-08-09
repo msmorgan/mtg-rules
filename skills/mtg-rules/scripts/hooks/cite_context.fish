@@ -33,7 +33,7 @@ function _cite_ctx_cleanup --on-event fish_exit
 end
 set -g ccwork (mktemp -d); or exit 0
 
-cat > $ccwork/payload.json
+cat >$ccwork/payload.json
 test -s $ccwork/payload.json; or exit 0
 
 set -l tool (jq -r '.tool_name // ""' < $ccwork/payload.json 2>/dev/null)
@@ -59,9 +59,9 @@ switch $tool
         # Matched two ways: any path carrying "mtg-rules" (how the docs invoke
         # them), and a bare command-position script name (symlinked installs).
         # tests/test_skill_scripts.fish asserts this list covers scripts/.
-        jq -r '.tool_input.command // ""' < $ccwork/payload.json > $ccwork/cmd.txt 2>/dev/null
-        grep -qF 'mtg-rules' $ccwork/cmd.txt; and exit 0
-        grep -qE '(^|[;&|(]|env( +[A-Za-z_][A-Za-z0-9_]*=[^ ]*)+ +)[[:space:]]*(\./)*(rule-search|underdetermined|setup-data|ensure-data|classify|corpus|rulings|keyword|version|define|health|lookup|card|cite|rule|mtr)([[:space:]]|$)' \
+        jq -r '.tool_input.command // ""' <$ccwork/payload.json >$ccwork/cmd.txt 2>/dev/null
+        grep -qF mtg-rules $ccwork/cmd.txt; and exit 0
+        grep -qE '(^|[;&|(]|env( +[A-Za-z_][A-Za-z0-9_]*=[^ ]*)+ +)[[:space:]]*(\./)*(rule-search|underdetermined|setup-data|ensure-data|normalize-glossary|classify|corpus|rulings|keyword|version|define|health|lookup|card|cite|rule|mtr)([[:space:]]|$)' \
             $ccwork/cmd.txt; and exit 0
         set selector 'if (.tool_response | type) == "string" then .tool_response else (.tool_response.stdout? // "") end'
     case '*'
@@ -82,7 +82,7 @@ while test -n "$d" -a "$d" != /
 end
 test -n "$root"; or exit 0
 
-jq -r "$selector" < $ccwork/payload.json > $ccwork/text.txt 2>/dev/null
+jq -r "$selector" <$ccwork/payload.json >$ccwork/text.txt 2>/dev/null
 test -s $ccwork/text.txt; or exit 0
 
 # --- gate on content: skip the cite invocation when there is nothing to find ---
@@ -107,9 +107,8 @@ if set -q CITE_CONTEXT_MAX; and string match -qr '^\d+$' -- "$CITE_CONTEXT_MAX"
     set -a opts --max $CITE_CONTEXT_MAX
 end
 
-$cite --config $root/cite-config.json context $opts < $ccwork/text.txt > $ccwork/out.txt 2>/dev/null
+$cite --config $root/cite-config.json context $opts <$ccwork/text.txt >$ccwork/out.txt 2>/dev/null
 test -s $ccwork/out.txt; or exit 0
 
-jq -Rs '{hookSpecificOutput: {hookEventName: "PostToolUse", additionalContext: .}}' \
-    < $ccwork/out.txt
+jq -Rs '{hookSpecificOutput: {hookEventName: "PostToolUse", additionalContext: .}}' <$ccwork/out.txt
 exit 0

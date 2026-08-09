@@ -7,6 +7,28 @@ re-run your alignment pass against the new taxonomy and data before
 re-pinning. Taxonomy-meaning changes (reclassifications, primitive
 mints/retirements, notation changes) are always called out explicitly.
 
+## 1.10.0 — 2026-08-09
+
+- **Comprehensive Rules re-sync (effective 2026-08-07).** Revalidated the
+  reference corpus and citation lock against the new CR. Updated Battle
+  protector, attachment, and Siege numbering; modeled the split Siege,
+  non-Siege, missing-protector, and invalid-protector state-based actions;
+  moved Role and speed SBAs to their new rule numbers; added protector changes
+  to removal from combat; and captured the new rule that a mana ability cannot
+  move a card to or from a library.
+- **Recruit, Storied, and enduring story.** Classified Recruit and Storied as
+  composite and added the enduring story player designation. Keyword coverage
+  is now **265** (195 abilities, 70 actions), with **220 composite** rows. No
+  existing keyword changed class and no primitive was minted or retired.
+- **Double-letter rule lookup.** `scripts/rule` now accepts and enumerates rule
+  suffixes such as `704.5aa`, so citations remain directly inspectable as the
+  CR's lettered families grow.
+- **Glossary feed compatibility.** Normalized Academy Ruins' new whole-document
+  glossary response back to the plugin's term-keyed data contract. Runtime data
+  ABI 2 forces existing Codex, Claude, and agy installations to refresh once,
+  preventing glossary-backed `define`, `keyword`, and `lookup` failures after
+  this CR update.
+
 ## 1.9.3 — 2026-08-09
 
 - **Automatic persistent data bootstrap.** Codex and Claude Code now provision

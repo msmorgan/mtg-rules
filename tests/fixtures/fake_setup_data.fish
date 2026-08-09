@@ -22,9 +22,10 @@ end
 mkdir -p $_flag_dest/rules $_flag_dest/catalogs $_flag_dest/mtgjson
 echo 'Magic: The Gathering Comprehensive Rules' >$_flag_dest/rules/cr.txt
 echo '{"100.1":{"ruleNumber":"100.1","examples":null,"ruleText":"Fixture rule text.","fragment":"1","navigation":{"previousRule":null,"nextRule":null}}}' >$_flag_dest/rules/cr.json
-for file in keywords.json glossary.json unofficial-glossary.json mtr.json
+for file in keywords.json unofficial-glossary.json mtr.json
     echo '{}' >$_flag_dest/rules/$file
 end
+echo '{"fixture":{"term":"Fixture","definition":"Fixture glossary entry."}}' >$_flag_dest/rules/glossary.json
 for catalog in \
     card-names artist-names word-bank supertypes card-types artifact-types \
     battle-types creature-types enchantment-types land-types planeswalker-types \

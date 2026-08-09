@@ -55,6 +55,8 @@ t "lib resolves rules dir" 'data/rules$' fish -c "source $scripts/lib.fish; or e
 t "rule prints a subrule" 'concedes leaves the game' $scripts/rule 104.3a
 t "rule walks rule family" '601\.2a' $scripts/rule 601.2
 t "rule family excludes neighbors" '^0$' fish -c "$scripts/rule 601.2 | grep -c '^601\.3' ; true"
+t "rule walks through double-lettered subrules" '704\.5aa' $scripts/rule 704.5
+t "rule prints an exact double-lettered subrule" 'speed becomes 1' $scripts/rule 704.5aa
 t "rule prints examples" 'Example:' $scripts/rule 702.19c
 t "rule prints whole section" '120\.6' $scripts/rule 120
 t_fails "rule rejects bogus number" $scripts/rule 999.9
@@ -62,14 +64,14 @@ t_fails "rule rejects garbage arg" $scripts/rule abc
 
 # --- rule-search ---
 t "rule-search finds deathtouch rules" '702\.2' $scripts/rule-search deathtouch
-t "rule-search truncation notice" 'more matches' $scripts/rule-search --max 1 'the'
-t_fails "rule-search misses garbage" $scripts/rule-search 'zzqqxyzzy'
+t "rule-search truncation notice" 'more matches' $scripts/rule-search --max 1 the
+t_fails "rule-search misses garbage" $scripts/rule-search zzqqxyzzy
 t_fails "rule-search rejects --max abc" $scripts/rule-search --max abc deathtouch
 
 # --- define ---
 t "define deathtouch cites 702.2" '702\.2' $scripts/define deathtouch
 t "define handles multiword terms" '[Aa]ctive [Pp]layer' $scripts/define active player
-t "define falls back to unofficial" 'unofficial' $scripts/define battalion
+t "define falls back to unofficial" unofficial $scripts/define battalion
 t_fails "define misses garbage" $scripts/define zzgrok
 
 t "define normalizes apostrophe input" '[Cc]ity.s [Bb]lessing' $scripts/define "city's blessing"
@@ -166,7 +168,8 @@ t_fails "rulings bogus card" $scripts/rulings Zzgrokk the Unreal
 t_fails "rulings empty arg" $scripts/rulings ''
 
 # --- data resolution chain ---
-mkdir -p /tmp/mtg-data-test/rules; echo '{}' > /tmp/mtg-data-test/rules/cr.json
+mkdir -p /tmp/mtg-data-test/rules
+echo '{}' >/tmp/mtg-data-test/rules/cr.json
 t "lib honors MTG_RULES_DATA" '/tmp/mtg-data-test/rules$' fish -c "set -x MTG_RULES_DATA /tmp/mtg-data-test; source $scripts/lib.fish; or exit 1; echo \$rules_dir"
 t "lib ignores invalid MTG_RULES_DATA" 'data/rules$' fish -c "set -x MTG_RULES_DATA /nonexistent; source $scripts/lib.fish; or exit 1; echo \$rules_dir"
 rm -rf /tmp/mtg-data-test
@@ -180,7 +183,7 @@ rm -rf $plugin_data_test
 
 set -l codex_test_root (mktemp -d)
 set -l codex_test_home $codex_test_root/home
-set -l codex_test_skill $codex_test_home/plugins/cache/mtg-rules/mtg-rules/1.9.3/skills/mtg-rules
+set -l codex_test_skill $codex_test_home/plugins/cache/mtg-rules/mtg-rules/1.10.0/skills/mtg-rules
 mkdir -p $codex_test_skill/scripts $codex_test_home/plugins/data/mtg-rules/data/rules
 cp $scripts/lib.fish $codex_test_skill/scripts/lib.fish
 echo '{}' >$codex_test_home/plugins/data/mtg-rules/data/rules/cr.json
@@ -196,13 +199,19 @@ t "setup-data exposes the automatic runtime tier" \
     '(?s)--runtime.*AllPrintings\.sqlite' $scripts/setup-data --help
 t_fails "setup-data rejects bogus flag" $scripts/setup-data --bogus
 
+set -l glossary_tmp (mktemp)
+cp $fixtures/glossary-envelope.json $glossary_tmp
+t "glossary normalizer converts the whole-document API envelope" '^Active Player\|City’s Blessing$' fish -c \
+    "fish --no-config $scripts/normalize-glossary $glossary_tmp; jq -r '[.[\"active player\"].term, .[\"city’s blessing\"].term] | join(\"|\")' $glossary_tmp"
+rm -f $glossary_tmp
+
 # --- automatic data bootstrap ---
 set -l ensure $scripts/ensure-data
 set -l ensure_hook $scripts/hooks/ensure_data.fish
 set -l ensure_tmp (mktemp -d)
 set -l ensure_count $ensure_tmp/count
 t "ensure-data installs the complete runtime and ABI marker" '(?s)^1.*READY$' fish -c \
-    "env MTG_RULES_SETUP_DATA=$fixtures/fake_setup_data.fish MTG_RULES_FAKE_SETUP_COUNT=$ensure_count $ensure --dest $ensure_tmp; cat $ensure_count; test -s $ensure_tmp/mtgjson/AllPrintings.sqlite; and test (cat $ensure_tmp/.mtg-rules-runtime-v1) = 1; and echo READY"
+    "env MTG_RULES_SETUP_DATA=$fixtures/fake_setup_data.fish MTG_RULES_FAKE_SETUP_COUNT=$ensure_count $ensure --dest $ensure_tmp; cat $ensure_count; test -s $ensure_tmp/mtgjson/AllPrintings.sqlite; and test (cat $ensure_tmp/.mtg-rules-runtime-v2) = 2; and echo READY"
 t "ensure-data fast path does not re-run setup" '^1$' fish -c \
     "env MTG_RULES_SETUP_DATA=$fixtures/fake_setup_data.fish MTG_RULES_FAKE_SETUP_COUNT=$ensure_count $ensure --dest $ensure_tmp; cat $ensure_count"
 t "fresh automatic runtime supports SQLite card lookup" '3 damage to any target' \
@@ -213,6 +222,14 @@ t "ensure-data repairs a missing runtime file" '^2$' fish -c \
     "rm $ensure_tmp/catalogs/card-names.json; env MTG_RULES_SETUP_DATA=$fixtures/fake_setup_data.fish MTG_RULES_FAKE_SETUP_COUNT=$ensure_count $ensure --dest $ensure_tmp; cat $ensure_count"
 rm -rf $ensure_tmp
 
+set -l ensure_v1 (mktemp -d)
+mkdir -p $ensure_v1
+echo 1 >$ensure_v1/.mtg-rules-runtime-v1
+set -l ensure_v1_count $ensure_v1/count
+t "data ABI v1 is refreshed to normalized-glossary ABI v2" '(?s)^1.*READY$' fish -c \
+    "env MTG_RULES_SETUP_DATA=$fixtures/fake_setup_data.fish MTG_RULES_FAKE_SETUP_COUNT=$ensure_v1_count $ensure --dest $ensure_v1; cat $ensure_v1_count; test (cat $ensure_v1/.mtg-rules-runtime-v2) = 2; and echo READY"
+rm -rf $ensure_v1
+
 set -l ensure_concurrent (mktemp -d)
 set -l concurrent_count $ensure_concurrent/count
 t "ensure-data serializes concurrent first-run sessions" '^1$' bash -c \
@@ -222,13 +239,13 @@ rm -rf $ensure_concurrent
 set -l ensure_stale (mktemp -d)
 mkdir $ensure_stale/.mtg-rules-runtime.lock
 t "ensure-data reclaims an ownerless stale lock" '^READY$' fish -c \
-    "env MTG_RULES_SETUP_DATA=$fixtures/fake_setup_data.fish $ensure --dest $ensure_stale; test -s $ensure_stale/.mtg-rules-runtime-v1; and echo READY"
+    "env MTG_RULES_SETUP_DATA=$fixtures/fake_setup_data.fish $ensure --dest $ensure_stale; test -s $ensure_stale/.mtg-rules-runtime-v2; and echo READY"
 rm -rf $ensure_stale
 
 set -l ensure_fail (mktemp -d)
 t "bootstrap hook warns but exits zero on setup failure" '(?s)non-blocking.*HOOK_OK$' fish -c \
     "printf '{}' | env PLUGIN_DATA=$ensure_fail MTG_RULES_SETUP_DATA=$fixtures/fake_setup_data.fish MTG_RULES_FAKE_SETUP_FAIL=1 fish --no-config $ensure_hook; and echo HOOK_OK"
-t "agy bootstrap failure uses PreInvocation output" 'injectSteps' fish -c \
+t "agy bootstrap failure uses PreInvocation output" injectSteps fish -c \
     "printf '{\"invocationNum\":0}' | env PLUGIN_DATA=$ensure_fail MTG_RULES_SETUP_DATA=$fixtures/fake_setup_data.fish MTG_RULES_FAKE_SETUP_FAIL=1 fish --no-config $ensure_hook"
 rm -rf $ensure_fail
 
@@ -239,31 +256,33 @@ t "agy registers PreInvocation bootstrap" '^command$' \
 
 set -l host_tmp (mktemp -d)
 set -l codex_root $host_tmp/codex
-set -l codex_ensure $codex_root/plugins/cache/mtg-rules/mtg-rules/1.9.3/skills/mtg-rules/scripts/ensure-data
+set -l codex_ensure $codex_root/plugins/cache/mtg-rules/mtg-rules/1.10.0/skills/mtg-rules/scripts/ensure-data
 mkdir -p (path dirname $codex_ensure)
 cp $ensure $codex_ensure
 t "Codex path fallback provisions persistent plugin data" '^true$' fish -c \
-    "env -u MTG_RULES_DATA -u PLUGIN_DATA -u CLAUDE_PLUGIN_DATA HOME=$host_tmp/home CODEX_HOME=$codex_root MTG_RULES_SETUP_DATA=$fixtures/fake_setup_data.fish fish --no-config $codex_ensure; test -s $codex_root/plugins/data/mtg-rules/data/.mtg-rules-runtime-v1; and echo true"
+    "env -u MTG_RULES_DATA -u PLUGIN_DATA -u CLAUDE_PLUGIN_DATA HOME=$host_tmp/home CODEX_HOME=$codex_root MTG_RULES_SETUP_DATA=$fixtures/fake_setup_data.fish fish --no-config $codex_ensure; test -s $codex_root/plugins/data/mtg-rules/data/.mtg-rules-runtime-v2; and echo true"
 
 set -l claude_home $host_tmp/claude-home
-set -l claude_ensure $claude_home/.claude/plugins/cache/mtg-rules/mtg-rules/1.9.3/skills/mtg-rules/scripts/ensure-data
+set -l claude_ensure $claude_home/.claude/plugins/cache/mtg-rules/mtg-rules/1.10.0/skills/mtg-rules/scripts/ensure-data
 mkdir -p (path dirname $claude_ensure)
 cp $ensure $claude_ensure
 t "Claude path fallback provisions persistent plugin data" '^true$' fish -c \
-    "env -u MTG_RULES_DATA -u PLUGIN_DATA -u CLAUDE_PLUGIN_DATA -u CODEX_HOME HOME=$claude_home MTG_RULES_SETUP_DATA=$fixtures/fake_setup_data.fish fish --no-config $claude_ensure; test -s $claude_home/.claude/plugins/data/mtg-rules/data/.mtg-rules-runtime-v1; and echo true"
+    "env -u MTG_RULES_DATA -u PLUGIN_DATA -u CLAUDE_PLUGIN_DATA -u CODEX_HOME HOME=$claude_home MTG_RULES_SETUP_DATA=$fixtures/fake_setup_data.fish fish --no-config $claude_ensure; test -s $claude_home/.claude/plugins/data/mtg-rules/data/.mtg-rules-runtime-v2; and echo true"
 
 set -l agy_home $host_tmp/agy-home
 set -l agy_ensure $agy_home/.gemini/config/plugins/mtg-rules/skills/mtg-rules/scripts/ensure-data
 mkdir -p (path dirname $agy_ensure)
 cp $ensure $agy_ensure
 t "agy path fallback provisions persistent plugin data" '^true$' fish -c \
-    "env -u MTG_RULES_DATA -u PLUGIN_DATA -u CLAUDE_PLUGIN_DATA -u CODEX_HOME HOME=$agy_home MTG_RULES_SETUP_DATA=$fixtures/fake_setup_data.fish fish --no-config $agy_ensure; test -s $agy_home/.gemini/config/plugins/mtg-rules/data/.mtg-rules-runtime-v1; and echo true"
+    "env -u MTG_RULES_DATA -u PLUGIN_DATA -u CLAUDE_PLUGIN_DATA -u CODEX_HOME HOME=$agy_home MTG_RULES_SETUP_DATA=$fixtures/fake_setup_data.fish fish --no-config $agy_ensure; test -s $agy_home/.gemini/config/plugins/mtg-rules/data/.mtg-rules-runtime-v2; and echo true"
 rm -rf $host_tmp
 
 # --- keyword classification ---
 t "keywords-classified.json parses" '^valid$' fish -c "jq -e . skills/mtg-rules/keywords-classified.json >/dev/null; and echo valid"
 t "keyword classes are all in enum" '^0$' fish -c 'jq -r "[.keywords[].class] - [\"intrinsic\",\"composite\",\"composite-given\",\"marker\"] | length" skills/mtg-rules/keywords-classified.json'
-t "keyword count covers both lists" '^263$' fish -c "jq -r '.keywords | length' skills/mtg-rules/keywords-classified.json"
+t "keyword count covers both lists" '^265$' fish -c "jq -r '.keywords | length' skills/mtg-rules/keywords-classified.json"
+t "classified names exactly cover the live keyword catalogs" '^0$' fish -c \
+    "source $scripts/lib.fish; jq -n --slurpfile c $repo/skills/mtg-rules/keywords-classified.json --slurpfile k \$rules_dir/keywords.json '((([\$k[0].keywordAbilities[], \$k[0].keywordActions[]] - [\$c[0].keywords[].name]) + ([\$c[0].keywords[].name] - [\$k[0].keywordAbilities[], \$k[0].keywordActions[]])) | length)'"
 # Lint (the Enlist-bug class): a composite-given row whose `how` never names
 # its `given` primitive is exactly how a tag/rationale mismatch survives
 # review. Normalized comparison: lowercase, hyphens treated as spaces.
@@ -277,6 +296,8 @@ t "lookup deathtouch spans rule and keyword sources" '(?s)\[rule\] 702\.2.*\[key
 t_fails "lookup rejects invalid regex" $scripts/lookup '['
 t_fails "lookup misses garbage" $scripts/lookup zzqqxyzzy
 t "classify Cascade is composite" 'Cascade.*composite' $scripts/classify Cascade
+t "classify Recruit is composite" 'Recruit.*composite' $scripts/classify Recruit
+t "classify Storied is composite" 'Storied.*composite' $scripts/classify Storied
 t_fails "classify bogus keyword" $scripts/classify zzgrok
 t "cite defaults to the skill-relative config" '0 stale' $scripts/cite check
 t "health reports effective date and exits 0" '(?s)effective.*HEALTH_OK' fish -c "$scripts/health; and echo HEALTH_OK"
@@ -392,12 +413,12 @@ set -g hook $scripts/hooks/cite_context.fish
 set -g hookdata $citetmp/data
 set -g hookenv
 set -g hookclean -u CITE_ON_READ -u CITE_ON_BASH -u CITE_CONTEXT_FULL -u CITE_CONTEXT_MAX -u CITE_CONTEXT_OFF
-set -g hookrepo (mktemp -d)      # consumer repo: cite-config.json beside a VCS marker
+set -g hookrepo (mktemp -d) # consumer repo: cite-config.json beside a VCS marker
 mkdir -p $hookrepo/.git
-echo '{"format":"bracketed","lockfile":"lock.json","sources":{"globs":["*.md"]}}' > $hookrepo/cite-config.json
-set -g nomarker (mktemp -d)      # config, but no VCS root
-echo '{"format":"bracketed","lockfile":"lock.json","sources":{"globs":["*.md"]}}' > $nomarker/cite-config.json
-set -g noconfig (mktemp -d)      # VCS root, but no config
+echo '{"format":"bracketed","lockfile":"lock.json","sources":{"globs":["*.md"]}}' >$hookrepo/cite-config.json
+set -g nomarker (mktemp -d) # config, but no VCS root
+echo '{"format":"bracketed","lockfile":"lock.json","sources":{"globs":["*.md"]}}' >$nomarker/cite-config.json
+set -g noconfig (mktemp -d) # VCS root, but no config
 mkdir -p $noconfig/.git
 
 # `fish --no-config` throughout: CITE_ON_READ/CITE_ON_BASH are the kind of
@@ -483,7 +504,7 @@ set -g hookenv
 set -g bigfile (mktemp)
 for i in (seq 4000)
     echo "line $i filler text padding this well past the argv limit [CR#702.22a] tail"
-end > $bigfile
+end >$bigfile
 t "hook handles a payload past the single-argument limit" 'Banding is a static' \
     fish -c "jq -nc --arg c $hookrepo --rawfile v $bigfile '{session_id:\"e15\",cwd:\$c,tool_name:\"Edit\",tool_input:{new_string:\$v}}' | env $hookclean MTG_RULES_DATA=$hookdata TMPDIR=$hookrepo fish --no-config $hook"
 rm -f $bigfile
@@ -497,14 +518,14 @@ rm -rf $hookrepo $nomarker $noconfig
 rm -rf $citetmp
 
 # --- version (conformance manifest) ---
-t "version emits the plugin version" '"plugin_version": "1\.9\.3"' $scripts/version
+t "version emits the plugin version" '"plugin_version": "1\.10\.0"' $scripts/version
 t "version manifest parses with all four keys" '^true$' \
     fish -c "$scripts/version | jq -e 'has(\"plugin_version\") and has(\"git_commit\") and has(\"cr_effective\") and has(\"keywords_classified_sha\")'"
 
 # --- keyword idents (machine enum spellings) ---
-t "idents: all 263 records carry a string ident" '^263$' \
+t "idents: all 265 records carry a string ident" '^265$' \
     jq -r '[.keywords[].ident | select(type == "string")] | length' $repo/skills/mtg-rules/keywords-classified.json
-t "idents: all 263 unique" '^263$' \
+t "idents: all 265 unique" '^265$' \
     jq -r '[.keywords[].ident] | unique | length' $repo/skills/mtg-rules/keywords-classified.json
 t "idents: all match ^[A-Z][A-Za-z0-9]*\$" '^0$' \
     jq -r '[.keywords[].ident | select(test("^[A-Z][A-Za-z0-9]*$") | not)] | length' $repo/skills/mtg-rules/keywords-classified.json

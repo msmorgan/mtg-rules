@@ -1,6 +1,6 @@
 # Turn Structure, Priority, and Combat
 
-*Synthesized from the Comprehensive Rules effective 2026-06-19
+*Synthesized from the Comprehensive Rules effective 2026-08-07
 (`data/rules/cr.json`). Orientation only — verify load-bearing specifics
 with `scripts/rule` before citing. Run `scripts/cite check` after CR
 refreshes.*
@@ -96,7 +96,7 @@ response"; the newer object resolves first (117.7).
 Only creatures attack/block; only a player, planeswalker, or battle can be
 attacked (506.3). AP is the attacking player; in a two-player game the
 nonactive player is the defending player (506.2). A permanent is removed from
-combat if it leaves the battlefield, changes controller, phases out, an
+combat if it leaves the battlefield, changes controller or protector, phases out, an
 effect removes it, the attacked planeswalker/battle stops being one, or an
 attacker/blocker regenerates, stops being a creature, or becomes a battle
 (506.4).

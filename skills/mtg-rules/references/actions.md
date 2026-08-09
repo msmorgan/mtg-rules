@@ -1,6 +1,6 @@
 # Game Actions — Everything the Game Can Do
 
-*Synthesized from the Comprehensive Rules effective 2026-06-19
+*Synthesized from the Comprehensive Rules effective 2026-08-07
 (`data/rules/cr.json`). Orientation only — verify load-bearing specifics
 with `scripts/rule` before citing. Run `scripts/cite check` after CR
 refreshes.*
@@ -78,11 +78,12 @@ permanent leaving via an SBA uses last-known-info from before the batch
 | 704.5s | Saga at/past final chapter (no pending trigger) is sacrificed |
 | 704.5t | Venture marker on bottom room (no pending trigger) → dungeon removed from game |
 | 704.5u | Space sculptor: assign sector designations to creatures lacking one |
-| 704.5v | Battle with 0 defense (no pending trigger) → owner's graveyard |
-| 704.5w | Battle with no protector and no attackers → choose protector or graveyard |
-| 704.5x | Siege whose controller is its protector → choose opponent protector or graveyard |
-| 704.5y | Multiple same-controller Roles on a permanent: keep newest, rest → graveyard |
-| 704.5z | Permanent with start your engines! and no speed → speed becomes 1 |
+| 704.5v | Siege with 0 defense (no pending trigger) → owner's graveyard |
+| 704.5w | Non-Siege battle with 0 defense → owner's graveyard |
+| 704.5x | Unattacked battle with no protector → choose one allowed by its type (controller if typeless), or graveyard if none |
+| 704.5y | Battle with an ineligible protector → choose an eligible one, or graveyard if none |
+| 704.5z | Multiple same-controller Roles on a permanent: keep newest, rest → graveyard |
+| 704.5aa | Permanent with start your engines! and no speed → speed becomes 1 |
 
 **Variant SBAs** (apply only in those formats) (704.6): Two-Headed Giant
 team at 0 life loses (704.6a); 2HG team with 15+ poison loses (704.6b);
@@ -117,7 +118,7 @@ that player gets priority again (116.3). Full list (116.2a–m):
 
 Specialized verbs in rules text with defined meanings (701.1). The
 machine-readable list is `data/rules/keywords.json` (`.keywordActions`).
-Full enumeration (701.2–701.68), grouped thematically:
+Full enumeration (701.2–701.70), grouped thematically:
 
 - **Casting & the stack** — Activate (701.2), Cast (701.5), Play (701.18),
   Counter (701.6).
@@ -138,7 +139,7 @@ Full enumeration (701.2–701.68), grouped thematically:
 - **Card advantage / value** — Investigate (701.16), Populate (701.36),
   Explore (701.44), Learn (701.48), Connive (701.50), Discover (701.57),
   Collect Evidence (701.59), Forage (701.61), Manifest Dread (701.62),
-  Harness (701.64).
+  Harness (701.64), Heal (701.69), Recruit (701.70).
 - **Choices / votes / dice** — Vote (701.38), Clash (701.30), Assemble
   (701.45), Face a Villainous Choice (701.55), The Ring Tempts You (701.54),
   Time Travel (701.56).

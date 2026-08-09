@@ -6,8 +6,8 @@
 # complete tier succeeds, and the ABI marker is written last. A mkdir-based lock
 # serializes concurrent sessions across Codex, Claude Code, and agy.
 
-set -g runtime_data_abi 1
-set -g runtime_marker .mtg-rules-runtime-v1
+set -g runtime_data_abi 2
+set -g runtime_marker .mtg-rules-runtime-v2
 set -g runtime_rules \
     cr.txt cr.json keywords.json glossary.json unofficial-glossary.json mtr.json
 set -g runtime_catalogs \
@@ -80,6 +80,10 @@ function staged_runtime_valid --argument-names candidate
             jq -e . $candidate/rules/$file >/dev/null 2>&1; or return 1
         end
     end
+    jq -e '
+        type == "object" and length > 0 and (.glossary | not)
+        and all(.[]; (.term | type) == "string" and (.definition | type) == "string")
+    ' $candidate/rules/glossary.json >/dev/null 2>&1; or return 1
     for catalog in $runtime_catalogs
         test -s $candidate/catalogs/$catalog.json; or return 1
         jq -e . $candidate/catalogs/$catalog.json >/dev/null 2>&1; or return 1

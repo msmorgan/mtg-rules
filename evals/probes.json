@@ -90,7 +90,7 @@
       "cards": ["Invasion of Alara"],
       "frame_docs": [],
       "question": "Invasion of Alara is a Siege battle with printed defense 7. How many defense counters does it enter the battlefield with, and through what rules mechanism? Who is chosen as its protector and by whom? Can the Siege's own controller attack it? What is the Siege's intrinsic triggered ability when the last defense counter is removed, and what happens to a battle at 0 defense when that trigger isn't pending? Cite rules.",
-      "expected_citations": ["310.4b", "310.8b", "310.11a", "310.11b", "310.7"],
+      "expected_citations": ["310.4b", "310.9b", "310.12a", "310.12b", "310.7"],
       "expected_verdict_keywords": ["protector", "opponent", "exile", "transformed"],
       "notes": "Frame is CR 310 directly (no sibling doc). Enters with 7 defense counters via a 614.1c replacement (310.4b); controller chooses an opponent as protector and can itself attack the Siege; last-counter trigger exiles it and allows casting transformed for free; otherwise 0 defense puts it in the graveyard as an SBA. Official ruling [2023-04-14]."
     },

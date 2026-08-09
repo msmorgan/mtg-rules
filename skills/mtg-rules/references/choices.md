@@ -1,6 +1,6 @@
 # Choices — Decision Points
 
-*Synthesized from the Comprehensive Rules effective 2026-06-19
+*Synthesized from the Comprehensive Rules effective 2026-08-07
 (`data/rules/cr.json`). Orientation only — verify load-bearing specifics
 with `scripts/rule` before citing. Run `scripts/cite check` after CR
 refreshes.*
@@ -43,7 +43,7 @@ delegation) develops this; the resolution steps:
   may let the copy's controller choose new targets (707.10c).
 - **Role rebinding.** A battle's protector, not its controller, is the
   "defending player" for every rule and effect about attacks on that battle
-  (310.8d) — a whole decision *class* re-rooted to another player.
+  (310.9d) — a whole decision *class* re-rooted to another player.
 - **Whole-player control.** While controlling another player, you make all
   choices and decisions that player is allowed or required to make by rules
   or objects (723.5) — but only those: no choices outside the game, none

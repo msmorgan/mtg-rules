@@ -1,0 +1,48 @@
+#!/usr/bin/env fish
+# normalize-glossary <glossary.json> — convert Academy Ruins' CR glossary
+# envelope into the term-keyed object consumed by the lookup scripts.
+
+test (count $argv) -eq 1; or begin
+    echo >&2 "usage: normalize-glossary <glossary.json>"
+    exit 2
+end
+
+set -l source $argv[1]
+test -s $source; or begin
+    echo >&2 "normalize-glossary: missing or empty input: $source"
+    exit 1
+end
+
+set -l tmp $source.tmp.$fish_pid
+if not jq '
+    if ((.glossary.definition? | type) == "string") then
+      .glossary.definition
+      | split("\u00a0\n")
+      | map(
+          select(length > 0)
+          | split("\n")
+          | {term: .[0], definition: (.[1:] | join("\n") | sub("\n+$"; ""))}
+        )
+      | map({key: (.term | ascii_downcase), value: .})
+      | from_entries
+    else
+      .
+    end
+' $source >$tmp
+    echo >&2 "normalize-glossary: failed to parse $source"
+    rm -f -- $tmp
+    exit 1
+end
+
+if not jq -e '
+    type == "object"
+    and length > 0
+    and (.glossary | not)
+    and all(.[]; (.term | type) == "string" and (.definition | type) == "string")
+' $tmp >/dev/null
+    echo >&2 "normalize-glossary: normalized glossary failed validation"
+    rm -f -- $tmp
+    exit 1
+end
+
+mv -f -- $tmp $source

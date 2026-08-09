@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_from": "CR effective 2026-06-19",
+    "generated_from": "CR effective 2026-08-07",
     "rubric_version": 1,
     "classes": [
       "intrinsic",
@@ -15,9 +15,39 @@
       "cost-modification-hook": "A permission that edits how the generic/colored mana of an already-determined total cost is paid (601.2f-h) \u2014 neither an additional nor an alternative cost.",
       "face-down-objects": "A primitive for objects existing face down (708): put/cast face down as a 2/2, secret-identity memory, and a special action to turn face up."
     },
-    "ident_rule": "ident = PascalCase engine-enum spelling derived from name: drop apostrophes, treat every other non-alphanumeric run (spaces, hyphens, punctuation, symbols like \u221e) as a word break, uppercase each word's first letter, keep the rest as printed, join. First Strike\u2192FirstStrike; Jump-Start\u2192JumpStart; For Mirrodin!\u2192ForMirrodin; \u221e (Infinity)\u2192Infinity. Idents are unique across all 263 records and match ^[A-Z][A-Za-z0-9]*$ (harness-pinned); consumers drift-guard their keyword enums against them."
+    "ident_rule": "ident = PascalCase engine-enum spelling derived from name: drop apostrophes, treat every other non-alphanumeric run (spaces, hyphens, punctuation, symbols like \u221e) as a word break, uppercase each word's first letter, keep the rest as printed, join. First Strike\u2192FirstStrike; Jump-Start\u2192JumpStart; For Mirrodin!\u2192ForMirrodin; \u221e (Infinity)\u2192Infinity. Idents are unique across all 265 records and match ^[A-Z][A-Za-z0-9]*$ (harness-pinned); consumers drift-guard their keyword enums against them."
   },
   "keywords": [
+    {
+      "name": "Recruit",
+      "ident": "Recruit",
+      "kind": "action",
+      "rule": "701.70",
+      "class": "composite",
+      "given": null,
+      "how": "Keyword action sequence: draw a card, discard a card, then conditionally create a 1/1 white Human Soldier creature token if the discarded card was nonland — existing draw, discard, and token-create operations plus a predicate.",
+      "cites": [
+        "701.70a"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
+    {
+      "name": "Storied",
+      "ident": "Storied",
+      "kind": "ability",
+      "rule": "702.195",
+      "class": "composite",
+      "given": null,
+      "how": "Static threshold over artifacts, Sagas, and legendary permanents that grants the enduring story player designation for the rest of the game, then reapplies continuous effects before trigger checks — predicate plus durable marker flag plus existing continuous-effect and trigger ordering.",
+      "cites": [
+        "702.195a",
+        "702.195b",
+        "702.195c"
+      ],
+      "core_referenced": false,
+      "confidence": "high"
+    },
     {
       "name": "Heal",
       "ident": "Heal",

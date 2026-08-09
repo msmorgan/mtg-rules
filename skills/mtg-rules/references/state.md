@@ -1,6 +1,6 @@
 # Game State — Component Taxonomy
 
-*Synthesized from the Comprehensive Rules effective 2026-06-19
+*Synthesized from the Comprehensive Rules effective 2026-08-07
 (`data/rules/cr.json`). Orientation only — verify load-bearing specifics
 with `scripts/rule` before citing. Run `scripts/cite check` after CR
 refreshes.*
@@ -36,12 +36,13 @@ Per-player state the rules reference:
   counter has a timestamp (613.7c).
 - **Speed** — a player has none until a rule/effect sets it (702.179b); values
   run 1–4, "max speed" = 4 (702.179e). Start your engines! sets a player with
-  no speed to 1 as an SBA (704.5z, 702.179a). The inherent triggered ability
+  no speed to 1 as an SBA (704.5aa, 702.179a). The inherent triggered ability
   raises speed by 1 when an opponent loses life on the player's turn, only once
   each turn, only while speed < 4 (702.179d). No speed counts as 0 for effects
   that read it (702.179f).
 - **Designations a player can have** — monarch (725.1), initiative (726.1),
-  city's blessing (702.131c), planar controller (901.6). The *game* can have
+  city's blessing (702.131c), enduring story (702.195b), planar controller
+  (901.6). The *game* can have
   day/night (731.1). Full enumeration with mechanics: see `designations.md`.
 - **Maximum hand size** — normally seven; excess discarded in cleanup (402.2, 514.1).
 - **Ownership vs control** — owner = who started the game with the card in

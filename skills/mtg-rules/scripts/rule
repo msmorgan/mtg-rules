@@ -13,8 +13,8 @@ set -l pat
 if string match -rq '^\d{3}$' -- $num
     set pat '^'$num'\.'
 else if string match -rq '^\d{3}\.\d+$' -- $num
-    set pat '^'(string escape --style=regex -- $num)'[a-z]?$'
-else if string match -rq '^\d{3}\.\d+[a-z]$' -- $num
+    set pat '^'(string escape --style=regex -- $num)'[a-z]*$'
+else if string match -rq '^\d{3}\.\d+[a-z]+$' -- $num
     set pat '^'(string escape --style=regex -- $num)'$'
 else
     die "rule: '$num' does not look like a CR rule number"
@@ -26,7 +26,7 @@ jq -r --arg pat $pat '
       then "rule: no CR entry matches \($pat)\n" | halt_error(1)
       else empty end,
       ( $hits[] | .value
-        | (if (.ruleNumber | test("[a-z]$")) then .ruleNumber + " " else .ruleNumber + ". " end)
+        | (if (.ruleNumber | test("[a-z]+$")) then .ruleNumber + " " else .ruleNumber + ". " end)
           + .ruleText
           + (if .examples
              then "\n" + (.examples | map("    Example: " + .) | join("\n"))

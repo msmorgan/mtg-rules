@@ -1,6 +1,6 @@
 # Rulings Check — The Model vs Official Rulings
 
-*Synthesized from the Comprehensive Rules effective 2026-06-19
+*Synthesized from the Comprehensive Rules effective 2026-08-07
 (`data/rules/cr.json`). Orientation only — verify load-bearing specifics
 with `scripts/rule` before citing. Run `scripts/cite check` after CR
 refreshes.*
@@ -234,18 +234,24 @@ a locked door … That door becomes unlocked. This is a special action."
 ## 10. Invasion of Alara — battles / Sieges
 
 **Q:** How does a Siege enter, get attacked, and flip? **Frame:** 310
-(battles) + 310.11 (Sieges).
+(battles) + 310.12 (Sieges).
 
 - A battle enters with defense counters equal to its printed defense via a
   **614.1c** replacement from its intrinsic ability (310.4b); Invasion of
   Alara enters with 7.
 - As a Siege enters, its controller chooses an **opponent** as protector
-  (310.11a, 310.8a); the protector can never attack it, and a Siege's own
-  controller *can* attack it (310.8b). Only the protector's creatures may
-  block attackers of that battle (310.8c).
+  (310.12a, 310.9a); the protector can never attack it, and a Siege's own
+  controller *can* attack it (310.9b). Only the protector's creatures may
+  block attackers of that battle (310.9c).
+- If an unattacked battle has no protector, or if a battle's protector is
+  ineligible, its controller chooses an eligible protector or puts it into its
+  owner's graveyard if none exists (310.11, 704.5x–y). A missing protector is
+  repaired only while the battle is unattacked; an ineligible protector is
+  repaired immediately. Changing protector removes the battle—not its attackers—from
+  combat (506.4, 506.4c).
 - Damage removes that many defense counters (310.6); a Siege has the intrinsic
   trigger "when the last defense counter is removed … exile it, then you may
-  cast it transformed without paying its mana cost" (310.11b). At 0 defense
+  cast it transformed without paying its mana cost" (310.12b). At 0 defense
   (and not the source of a pending trigger) the battle is put into the
   graveyard as an SBA (310.7).
 
@@ -256,6 +262,13 @@ exile it, then you may cast it transformed without paying its mana cost.'" And:
 this means a Siege's controller can attack it." And: "As a Siege enters the
 battlefield, its controller chooses an opponent to be its protector."
 **MATCH.**
+
+The same 2023 ruling bundle says that an attacked Siege whose protector becomes
+ineligible waits to choose a new protector until it is no longer being attacked.
+That statement is **superseded** by the current CR: 704.5y has no
+not-being-attacked condition, and a protector change removes the battle from
+combat under 506.4. The wait condition survives only for a battle with **no**
+protector (704.5x).
 
 ## 11. Trinisphere — total-cost pipeline and the 601.2f lock
 
