@@ -145,20 +145,20 @@ After WotC publishes updated rules or card data:
 | `health` | `skills/mtg-rules/scripts/health` |
 | `version` | `skills/mtg-rules/scripts/version` (conformance manifest — consumers pin this) |
 
-## Bracketed Card Context Hook
+## Double-Bracketed Card Context Hook
 
-Write an exact card name in square brackets to inject its full card data into
-the same turn's model context before the prompt is processed:
+Write an exact card name in double square brackets to inject its full card data
+into the same turn's model context before the prompt is processed:
 
 ```text
-How does [Brazen Cannonade] interact with [Rest in Peace]?
+How does [[Brazen Cannonade]] interact with [[Rest in Peace]]?
 ```
 
 The `UserPromptSubmit` hook performs case-insensitive exact-name lookups with
 the local `card` command. It ignores bracketed text that is not a card name,
 deduplicates repeated names, and requires a multifaced card's canonical
 combined name, including its ` // ` separator—for example,
-`[Start // Finish]`. Combined names render every face. The card data tier must
+`[[Start // Finish]]`. Combined names render every face. The card data tier must
 be installed (see First-Run Data Setup above).
 
 ## Citation Context Hook (consumer repos)

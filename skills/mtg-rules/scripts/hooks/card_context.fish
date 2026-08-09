@@ -1,13 +1,13 @@
 #!/usr/bin/env fish
-# UserPromptSubmit hook — inject exact card lookups for [Card Name] tokens.
-# Invalid bracketed text is ignored, and hook failures never block the prompt.
+# UserPromptSubmit hook — inject exact card lookups for [[Card Name]] tokens.
+# Invalid double-bracketed text is ignored, and hook failures never block the prompt.
 
 set -l payload (cat)
 set -l prompt (printf '%s' "$payload" | jq -r '.prompt // empty' 2>/dev/null)
 test -n "$prompt"; or exit 0
 
 set -l names (printf '%s' "$prompt" | jq -Rrs '
-    scan("\\\\[([^][\\\\r\\\\n]+)\\\\]")
+    scan("\\\\[\\\\[([^][\\\\r\\\\n]+)\\\\]\\\\]")
     | .[0]
 ' 2>/dev/null)
 test (count $names) -gt 0; or exit 0
@@ -29,7 +29,7 @@ end
 test (count $cards) -gt 0; or exit 0
 
 begin
-    printf '%s\n\n' 'Authoritative card data resolved from bracketed names in the user prompt:'
+    printf '%s\n\n' 'Authoritative card data resolved from double-bracketed names in the user prompt:'
     for rendered in $cards
         printf '%s\n\n' "$rendered"
     end

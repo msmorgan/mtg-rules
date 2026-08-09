@@ -7,7 +7,7 @@
             "type": "command",
             "command": "fish \"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/skills/mtg-rules/scripts/hooks/card_context.fish\"",
             "timeout": 15,
-            "statusMessage": "Resolving bracketed Magic cards",
+            "statusMessage": "Resolving double-bracketed Magic cards",
             "additionalContextLimit": 100000
           }
         ]

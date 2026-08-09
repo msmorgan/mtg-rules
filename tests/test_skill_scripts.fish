@@ -120,16 +120,18 @@ function cardhookcount --argument-names prompt pattern
     cardhookrun "$prompt" | grep -c -- $pattern
 end
 
-t "card hook injects an exact bracketed card" 'Whenever an attacking creature' \
-    cardhookrun 'Explain [Brazen Cannonade].'
+t "card hook injects an exact double-bracketed card" 'Whenever an attacking creature' \
+    cardhookrun 'Explain [[Brazen Cannonade]].'
 t "card hook emits UserPromptSubmit additionalContext" '^UserPromptSubmit$' \
-    fish -c "jq -nc --arg p '[Brazen Cannonade]' '{prompt:\$p}' | fish --no-config $cardhook | jq -r .hookSpecificOutput.hookEventName"
+    fish -c "jq -nc --arg p '[[Brazen Cannonade]]' '{prompt:\$p}' | fish --no-config $cardhook | jq -r .hookSpecificOutput.hookEventName"
+t "card hook ignores a single-bracketed card" '^$' \
+    cardhookrun 'Explain [Brazen Cannonade].'
 t "card hook renders both faces of a canonical combined name" \
-    '(?s)face: Start.*face: Finish' cardhookrun '[Start // Finish]'
-t "card hook rejects a lone multiface face" '^$' cardhookrun '[Start]'
-t "card hook ignores non-card brackets" '^$' cardhookrun 'See [the previous section].'
+    '(?s)face: Start.*face: Finish' cardhookrun '[[Start // Finish]]'
+t "card hook rejects a lone multiface face" '^$' cardhookrun '[[Start]]'
+t "card hook ignores non-card double brackets" '^$' cardhookrun 'See [[the previous section]].'
 t "card hook deduplicates repeated names case-insensitively" '^1$' \
-    cardhookcount '[Brazen Cannonade] and [brazen cannonade]' '^# Brazen Cannonade$'
+    cardhookcount '[[Brazen Cannonade]] and [[brazen cannonade]]' '^# Brazen Cannonade$'
 t "card hook survives malformed stdin" '^$' \
     fish -c "printf 'not json' | fish --no-config $cardhook; true"
 t "plugin hooks.json registers UserPromptSubmit" '^command$' \
@@ -160,7 +162,7 @@ rm -rf /tmp/mtg-data-test
 
 set -l codex_test_root (mktemp -d)
 set -l codex_test_home $codex_test_root/home
-set -l codex_test_skill $codex_test_home/plugins/cache/mtg-rules/mtg-rules/1.9.0/skills/mtg-rules
+set -l codex_test_skill $codex_test_home/plugins/cache/mtg-rules/mtg-rules/1.9.1/skills/mtg-rules
 mkdir -p $codex_test_skill/scripts $codex_test_home/plugins/data/mtg-rules/data/rules
 cp $scripts/lib.fish $codex_test_skill/scripts/lib.fish
 echo '{}' >$codex_test_home/plugins/data/mtg-rules/data/rules/cr.json
@@ -409,7 +411,7 @@ rm -rf $hookrepo $nomarker $noconfig
 rm -rf $citetmp
 
 # --- version (conformance manifest) ---
-t "version emits the plugin version" '"plugin_version": "1\.9\.0"' $scripts/version
+t "version emits the plugin version" '"plugin_version": "1\.9\.1"' $scripts/version
 t "version manifest parses with all four keys" '^true$' \
     fish -c "$scripts/version | jq -e 'has(\"plugin_version\") and has(\"git_commit\") and has(\"cr_effective\") and has(\"keywords_classified_sha\")'"
 

@@ -7,14 +7,15 @@ re-run your alignment pass against the new taxonomy and data before
 re-pinning. Taxonomy-meaning changes (reclassifications, primitive
 mints/retirements, notation changes) are always called out explicitly.
 
-## 1.9.0 — 2026-08-07
+## 1.9.1 — 2026-08-08
 
-- **Bracketed card context.** A `UserPromptSubmit` hook resolves exact card
-  names such as `[Brazen Cannonade]` and injects their full local card data
+- **Double-bracketed card context.** A `UserPromptSubmit` hook resolves exact
+  card names such as `[[Brazen Cannonade]]` and injects their full local card data
   into the same turn's context. Repeated names are deduplicated and invalid
-  bracketed prose is ignored. Canonical combined names such as
-  `[Start // Finish]` render every face; a lone face name is not treated as a
-  full card name. **No taxonomy or CR-data change.**
+  double-bracketed prose is ignored; single brackets do not trigger lookups.
+  Canonical combined names such as `[[Start // Finish]]` render every face; a
+  lone face name is not treated as a full card name. **No taxonomy or CR-data
+  change.**
 
 ## 1.8.4 — 2026-08-04
 

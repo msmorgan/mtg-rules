@@ -1,6 +1,6 @@
 {
   "name": "mtg-rules",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "description": "Judge-grade Magic: The Gathering rules answers and engine/grammar taxonomies, grounded in the Comprehensive Rules with verified citations.",
   "author": {
     "name": "msmorgan",
