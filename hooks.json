@@ -7,5 +7,14 @@
         "timeout": 600
       }
     ]
+  },
+  "mtg-rules-card-context": {
+    "PreInvocation": [
+      {
+        "type": "command",
+        "command": "fish ./skills/mtg-rules/scripts/hooks/card_context.fish",
+        "timeout": 15
+      }
+    ]
   }
 }

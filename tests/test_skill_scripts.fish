@@ -145,12 +145,26 @@ t "card hook rejects a lone multiface face" '^$' cardhookrun '[[Start]]'
 t "card hook ignores non-card double brackets" '^$' cardhookrun 'See [[the previous section]].'
 t "card hook deduplicates repeated names case-insensitively" '^1$' \
     cardhookcount '[[Brazen Cannonade]] and [[brazen cannonade]]' '^# Brazen Cannonade$'
-t "card hook survives malformed stdin" '^$' \
+t "card hook survives malformed stdin" '^\{\}$' \
     fish -c "printf 'not json' | fish --no-config $cardhook; true"
 t "plugin hooks.json registers UserPromptSubmit" '^command$' \
     jq -r '.hooks.UserPromptSubmit[0].hooks[0].type' $repo/hooks/hooks.json
 t "plugin hooks.json points at the card hook script" '^true$' fish -c \
     "test -x $repo/(jq -r '.hooks.UserPromptSubmit[0].hooks[0].command' $repo/hooks/hooks.json | string replace -r '.*PLUGIN_ROOT\}\}?/' '' | string trim -c '\"'); and echo true"
+
+set -l agy_trans_tmp (mktemp -d)
+echo '{"type":"USER_INPUT","content":"Explain [[Brazen Cannonade]]."}' > $agy_trans_tmp/transcript.jsonl
+t "card hook injects cards via AGY transcript into injectSteps" 'Whenever an attacking creature' \
+    fish -c "jq -nc --arg t $agy_trans_tmp/transcript.jsonl '{transcriptPath:\$t,invocationNum:1}' | fish --no-config $cardhook | jq -r '.injectSteps[0].ephemeralMessage // empty'"
+echo '{"type":"USER_INPUT","content":"Explain [Brazen Cannonade]."}' > $agy_trans_tmp/transcript.jsonl
+t "card hook returns empty object for AGY transcript without bracketed cards" '^\{\}$' \
+    fish -c "jq -nc --arg t $agy_trans_tmp/transcript.jsonl '{transcriptPath:\$t,invocationNum:1}' | fish --no-config $cardhook"
+rm -rf $agy_trans_tmp
+
+t "agy hooks.json registers card context PreInvocation" '^command$' \
+    jq -r '."mtg-rules-card-context".PreInvocation[0].type' $repo/hooks.json
+t "agy hooks.json points at the card hook script" '^true$' fish -c \
+    "test -x $repo/(jq -r '.\"mtg-rules-card-context\".PreInvocation[0].command' $repo/hooks.json | string replace -r '^fish \\./' ''); and echo true"
 
 # --- corpus ---
 t "corpus finds deathtouch lines" '[Dd]eathtouch' $scripts/corpus --match deathtouch
