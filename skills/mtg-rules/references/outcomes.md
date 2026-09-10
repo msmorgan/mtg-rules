@@ -1,9 +1,7 @@
 # Outcomes — Ending the Game
 
 *Synthesized from the Comprehensive Rules effective 2026-08-07
-(`data/rules/cr.json`). Orientation only — verify load-bearing specifics
-with `scripts/rule` before citing. Run `scripts/cite check` after CR
-refreshes.*
+(`data/rules/cr.json`).*
 
 A game ends immediately when a player wins, when the game is a draw, or when
 the game is restarted (104.1). Everything below is the machinery behind that

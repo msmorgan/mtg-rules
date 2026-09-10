@@ -1,9 +1,7 @@
 # Variants — Where 8xx/9xx Override the Base Docs (Thin Index)
 
 *Synthesized from the Comprehensive Rules effective 2026-08-07
-(`data/rules/cr.json`). Orientation only — verify load-bearing specifics
-with `scripts/rule` before citing. Run `scripts/cite check` after CR
-refreshes.*
+(`data/rules/cr.json`).*
 
 The sibling reference docs synthesize the **core game + Commander**; the
 multiplayer options (CR 801–805) and variants (806–811, 901–905) silently

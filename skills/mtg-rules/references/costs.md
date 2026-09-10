@@ -1,9 +1,7 @@
 # Costs — The Cost Algebra
 
 *Synthesized from the Comprehensive Rules effective 2026-08-07
-(`data/rules/cr.json`). Orientation only — verify load-bearing specifics
-with `scripts/rule` before citing. Run `scripts/cite check` after CR
-refreshes.*
+(`data/rules/cr.json`).*
 
 What a cost is, where costs attach, what resources they consume, how the
 total is computed and locked, and when payment can fail. The reduction
@@ -31,7 +29,7 @@ The cost-vs-effect boundary, by syntax:
   counter-doublers — which key on *effects* putting counters (614.16) —
   don't touch it, while a planeswalker's entering loyalty (an effect) is
   doubled. That distinction decided the Doubling Season ruling
-  (`rulings-check.md` §6).
+  (official guidance: `scripts/rulings "Doubling Season"`).
 - **Resolution-stage payments** — "Counter target spell unless its
   controller pays {3}" (Mana Leak). The CR is explicit that the unless-action
   *is* a cost, paid when the containing spell or ability resolves

@@ -1,0 +1,14 @@
+{
+  "probes": [
+    {"id": "rules", "question": "In Magic: The Gathering, when does a player receive priority during cleanup?", "invoke": true, "scripts": ["rule"], "docs": []},
+    {"id": "card", "question": "How do Brazen Cannonade and Rest in Peace interact when an attacking creature I control would die?", "invoke": true, "scripts": ["card", "rule", "rulings"], "docs": []},
+    {"id": "policy", "question": "At a Magic tournament, what information must I provide when my opponent asks for my life total?", "invoke": true, "scripts": ["mtr"], "docs": []},
+    {"id": "grammar", "question": "Describe the clause structure a parser needs for Magic Oracle text with activated abilities. Use actual card-text examples.", "invoke": true, "scripts": ["corpus", "rule"], "docs": ["grammar.md"]},
+    {"id": "engine", "question": "Sketch a Magic game engine's representation of object identity across zone changes and last known information.", "invoke": true, "scripts": ["rule"], "docs": ["state.md"]},
+    {"id": "design", "question": "Which asymmetric Magic mechanics suggest generalizing the attachment and host relation in a custom engine?", "invoke": true, "scripts": ["rule"], "docs": ["generalizations.md"]},
+    {"id": "classification", "question": "Is cascade intrinsic or composite in an engine instruction set for Magic, and what does that classification depend on?", "invoke": true, "scripts": ["classify", "rule"], "docs": ["keyword-classification.md"]},
+    {"id": "negative-fiction", "question": "Write a four-line poem about a magician's card trick.", "invoke": false, "scripts": [], "docs": []},
+    {"id": "negative-parser", "question": "Explain how a Pratt parser handles precedence in arithmetic expressions.", "invoke": false, "scripts": [], "docs": []},
+    {"id": "negative-mtg-prose", "question": "Copyedit this sentence without adding factual details: 'Our Magic: The Gathering club meet on friday evenings.'", "invoke": false, "scripts": [], "docs": []}
+  ]
+}

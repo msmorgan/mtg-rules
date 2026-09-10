@@ -1,9 +1,7 @@
 # Choices — Decision Points
 
 *Synthesized from the Comprehensive Rules effective 2026-08-07
-(`data/rules/cr.json`). Orientation only — verify load-bearing specifics
-with `scripts/rule` before citing. Run `scripts/cite check` after CR
-refreshes.*
+(`data/rules/cr.json`).*
 
 Every place the game stops and asks a player something. The CR never defines
 "decision" as a first-class object — there is no glossary entry for "choose";

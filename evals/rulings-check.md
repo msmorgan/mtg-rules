@@ -1,9 +1,6 @@
-# Rulings Check — The Model vs Official Rulings
+# Rulings Check — Maintenance Record
 
-*Synthesized from the Comprehensive Rules effective 2026-08-07
-(`data/rules/cr.json`). Orientation only — verify load-bearing specifics
-with `scripts/rule` before citing. Run `scripts/cite check` after CR
-refreshes.*
+*Synthesized from the Comprehensive Rules effective 2026-08-07.*
 
 This doc validates the skill's model against WotC's own answer key. For
 eighteen subsystem probes it states our **independent** derivation (from the
@@ -19,52 +16,24 @@ number without re-checking it with `scripts/rule`. A verdict of `RULING STALE`
 means the ruling predates a CR change; in that case we cite the current rule,
 not "fix" a doc to match the stale text.
 
-**How to use this doc:** when answering a rules question, imitate these
-derivation patterns — orient with the named reference doc, then quote the
-specific dotted CR rule that does the work, then sanity-check against the
-card's official rulings. Ruling first, citations second.
+**How to use this doc:** during CR refreshes or synthesis review, re-derive
+the affected probes using the Maintenance procedure below. Sibling doc names
+resolve under `../skills/mtg-rules/references/`; script names resolve under
+`../skills/mtg-rules/`. Runtime derivation guidance lives in that skill's
+`SKILL.md`.
 
 All eighteen probes verdict **MATCH** on the current CR; no sibling-doc fixes
 were required. Re-run them (see Maintenance) after each CR refresh.
 
 ## 1. Humility + Opalescence — layers/timestamps
 
-**Q:** Two static base-P/T setters in the same sublayer — what are creatures'
-final P/T, and who controls it? **Frame:** `effects.md` §10 (worked stack) +
-§4 (layers).
-
-- Both set base P/T, which lands in **layer 7b** (613.4b "base P/T" setters);
-  Opalescence's type change is **L4**, Humility's ability-strip is **L6**.
-- 613.6 is the crux: an effect keeps applying to its locked object set in
-  every later layer **even after L6 strips the source's own ability**, so both
-  7b sets survive.
-- Within 7b, earlier timestamp applies first (613.7); the **last** 7b set to
-  apply wins. So Humility-later → **1/1**; Opalescence-later → **4/4**.
-
-Official `[2009-10-01]`: "Layer 7b: Humility becomes 4/4 and Worship becomes
-4/4. (Opalescence). Humility becomes 1/1 and Worship becomes 1/1 (Humility).
-But if Humility entered before Opalescence … Humility becomes 1/1 … Humility
-becomes 4/4 … (Opalescence)." **MATCH.**
+Re-derive both timestamp orders using [effects §10](../skills/mtg-rules/references/effects.md#10-worked-stacks).
+That worked stack owns the derivation and dated official ruling. Recorded verdict: **MATCH**.
 
 ## 2. Blood Moon + Urborg — dependency
 
-**Q:** Do timestamps decide, or does one effect override? **Frame:**
-`effects.md` §10 (worked stack) + §4 dependency (613.8).
-
-- Both are L4 type-changers, neither a CDA — 613.8a(a) same sublayer and (c)
-  CDA-parity hold; dependency turns on (b).
-- Blood Moon sets nonbasics to Mountain *not in addition*, which by **305.7**
-  strips abilities from the land's rules text. Applied to Urborg (a nonbasic),
-  it deletes Urborg's "each land is a Swamp" ability → changes the
-  **existence** of Urborg's effect: **Urborg depends on Blood Moon** (613.8a).
-- The reverse fails — Urborg only *adds* Swamp, changing nothing about Blood
-  Moon. One-directional dependency, so timestamps are irrelevant (613.8):
-  Blood Moon applies first; Urborg then contributes nothing (613.8c).
-
-Official `[2021-03-19]` (Urborg): "If an effect such as that of Magus of the
-Moon causes Urborg to lose its abilities by setting it to a basic land type
-not in addition to its other types, it won't turn lands into Swamps, no matter
-in what order those effects started to apply." **MATCH.**
+Re-derive the dependency using [effects §10](../skills/mtg-rules/references/effects.md#10-worked-stacks).
+That worked stack owns the derivation and dated official ruling. Recorded verdict: **MATCH**.
 
 ## 3. Clone — copy characteristics
 
@@ -463,4 +432,4 @@ disagrees with a current-CR reading, fix the sibling reference doc and commit
 that fix separately before updating this doc. If a *ruling* now looks stale
 relative to a CR change, record `RULING STALE` with the current rule proving
 it — do not edit docs to match a stale ruling. Finish with
-`scripts/cite check` (exit 0).
+both the skill citation check and `scripts/cite --config ../../evals/cite-config.json check` (exit 0, from the skill directory).

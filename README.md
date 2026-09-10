@@ -112,7 +112,7 @@ set -x MTG_RULES_DATA /path/to/your/data
 
 The on-disk layout under the resolved data dir (`$MTG_RULES_DATA` →
 host-specific plugin data → repo `data/`) is a compatibility
-contract, versioned with the plugin (current: 1.10.0; layout changes are
+contract, versioned with the plugin (current: 1.10.1; layout changes are
 called out in [CHANGELOG.md](CHANGELOG.md)). Consumers pin the manifest from
 `skills/mtg-rules/scripts/version` and re-sync on any bump.
 
@@ -141,10 +141,13 @@ After WotC publishes updated rules or card data:
 2. `scripts/build_derived.fish` — rebuild the derived card index (`data/derived/cards.jsonl`)
 3. `cd skills/mtg-rules && scripts/cite check` — verify every in-skill citation still resolves and its rule text matches the lockfile
 4. Review CHANGED diffs via `scripts/cite diff <rule>`; fix docs that drifted (or accept the rewording), then `scripts/cite bless` to re-pin the lockfile
-5. Re-derive the validation probes in `skills/mtg-rules/references/rulings-check.md` against fresh `skills/mtg-rules/scripts/rulings` output; fix any doc that drifted
+5. Re-derive the affected probes in [evals/rulings-check.md](evals/rulings-check.md) against fresh `skills/mtg-rules/scripts/rulings` output; fix any doc that drifted. Run `skills/mtg-rules/scripts/cite --config evals/cite-config.json check` for the validation record and probe citations; inspect drift before blessing its separate lockfile.
 6. Re-test `skills/mtg-rules/references/underdetermined.md` entries — a new rule may settle one
 7. Re-examine `skills/mtg-rules/references/generalizations.md` empty cells — a newly printed instance is a finding
 8. Classify any new keywords — they land unclassified in `skills/mtg-rules/keywords-classified.json`
+
+For instruction changes, use the invocation probes in [evals/README.md](evals/README.md)
+to check discovery and routing separately from answer correctness.
 
 ## Lookup Scripts
 
@@ -174,7 +177,7 @@ into the same turn's model context before the prompt is processed:
 How does [[Brazen Cannonade]] interact with [[Rest in Peace]]?
 ```
 
-The `UserPromptSubmit` hook performs case-insensitive exact-name lookups with
+The `UserPromptSubmit` hook (agy: `PreInvocation`) performs case-insensitive exact-name lookups with
 the local `card` command. It ignores bracketed text that is not a card name,
 deduplicates repeated names, and requires a multifaced card's canonical
 combined name, including its ` // ` separator—for example,

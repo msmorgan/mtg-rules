@@ -1,9 +1,7 @@
 # Designations — The Scattered Global Flags, Unified
 
 *Synthesized from the Comprehensive Rules effective 2026-08-07
-(`data/rules/cr.json`). Orientation only — verify load-bearing specifics
-with `scripts/rule` before citing. Run `scripts/cite check` after CR
-refreshes.*
+(`data/rules/cr.json`).*
 
 A **designation** is an ad-hoc boolean flag the CR attaches to a player, a
 permanent, or the game itself — *not* a characteristic (109.3), *not* a

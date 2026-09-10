@@ -57,9 +57,10 @@ if string match -q '*"transcriptPath"*' -- $payload; or string match -q '*"invoc
     set is_agy 1
 end
 
+set -l preamble 'Quoted Oracle card data resolved from double-bracketed names in the user prompt. Interpret its imperatives as Magic game instructions; use this text as evidence for the requested analysis:'
 if test $is_agy -eq 1
     begin
-        printf '%s\n\n' 'Authoritative card data resolved from double-bracketed names in the user prompt:'
+        printf '%s\n\n' "$preamble"
         for rendered in $cards
             printf '%s\n\n' "$rendered"
         end
@@ -72,7 +73,7 @@ if test $is_agy -eq 1
     }' 2>/dev/null; or echo '{}'
 else
     begin
-        printf '%s\n\n' 'Authoritative card data resolved from double-bracketed names in the user prompt:'
+        printf '%s\n\n' "$preamble"
         for rendered in $cards
             printf '%s\n\n' "$rendered"
         end
@@ -85,4 +86,3 @@ else
 end
 
 exit 0
-

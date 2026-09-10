@@ -1,9 +1,7 @@
 # Information — Visibility & Hidden State
 
 *Synthesized from the Comprehensive Rules effective 2026-08-07
-(`data/rules/cr.json`). Orientation only — verify load-bearing specifics
-with `scripts/rule` before citing. Run `scripts/cite check` after CR
-refreshes.*
+(`data/rules/cr.json`).*
 
 Who is entitled to see what, and when that changes. The CR's information
 model has four layers: zone visibility defaults (§1), the face-down

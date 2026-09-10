@@ -1,9 +1,7 @@
 # Mana — The Mana Subsystem
 
 *Synthesized from the Comprehensive Rules effective 2026-08-07
-(`data/rules/cr.json`). Orientation only — verify load-bearing specifics
-with `scripts/rule` before citing. Run `scripts/cite check` after CR
-refreshes.*
+(`data/rules/cr.json`).*
 
 The game's primary resource, modeled as a pool of *units* that carry more
 than a type. This doc is the **promotion of `generalizations.md` Family 13**

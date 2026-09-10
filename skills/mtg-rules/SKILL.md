@@ -1,126 +1,90 @@
 ---
 name: mtg-rules
-description: "Use for ANY Magic: The Gathering rules question, card interaction or ruling, judge call, tournament-policy (MTR) question, MTG engine design (game-state modeling, action/effect taxonomy), oracle-text grammar/parsing work, and mechanic design-space analysis (asymmetric rule families, generalization feasibility, keyword intrinsic/composite classification). Authoritative local lookups: Comprehensive Rules, glossaries, MTR, exact card oracle text. Never answer MTG specifics from memory — verify with this skill's scripts."
+description: "Magic: The Gathering rules and card interactions, judge calls and tournament policy, engine modeling, Oracle-text parsing, and mechanic design-space analysis including keyword classification."
 ---
 
 # MTG Rules
 
-Answers are grounded in local authoritative data. The Comprehensive Rules
-(CR) text in this repo is the only authority; the reference docs orient you,
-but the CR text is what you cite.
-
 All paths below are relative to this skill's directory.
 
-## First-run data
+## Authority
 
-Installed plugins automatically provision base rules, catalogs, and MTGJSON's
-`AllPrintings.sqlite` in persistent host storage before the first model turn.
-If that bootstrap warns or a lookup reports missing data, run
-`scripts/setup-data --runtime` and retry. Add `--cards` only for `corpus`,
-which also needs AtomicCards and the derived JSONL index. These downloads are
-the authoritative inputs; do not fall back to remembered MTG specifics while
-data is unavailable.
+Use the local Comprehensive Rules (CR) for game mechanics, the Magic Tournament
+Rules (MTR) for tournament policy, and exact Oracle card data for card wording
+and characteristics. Official card rulings provide interpretive checks; their
+embedded CR numbers must be re-resolved against the current rules. If a ruling
+predates a rule change, cite the current rule and explain the discrepancy.
+Synthesized references, keyword classifications, and the unofficial glossary
+orient the search; distinguish engine inferences from rules requirements.
+If a judge call requires a policy document outside the bundled MTR, identify
+the missing source and limit the answer to what the available sources establish.
 
-## Workflow (rigid)
+## Workflow
 
-1. Classify the question: rules mechanics | card-specific | tournament
-   policy | engine taxonomy | grammar | mechanic design-space.
-2. Orient with the matching reference doc (table below). Routing by
-   question type:
+1. Select the applicable routes below. For a card question, obtain exact text
+   with `scripts/card` first; card data injected by this plugin's hook satisfies
+   that lookup. Use reference docs when the question needs their synthesis;
+   direct lookups suffice for straightforward questions.
+2. **Verify every load-bearing specific with the scripts before asserting it.**
+   Follow search hits to full source text. For card interactions, derive the
+   result from card text and applicable rules, then check `scripts/rulings`
+   for relevant official guidance. Absence of a ruling is not confirmation.
+   This step is complete when each conclusion has source support or is explicitly
+   identified as an inference or unresolved point.
+3. Give the ruling or conclusion first, then supporting rule numbers, MTR
+   sections, or card/ruling attribution with brief quotes as appropriate.
 
-   | question type | start here |
-   |---|---|
-   | engine taxonomy | `references/state.md` + `references/actions.md` |
-   | mechanic design-space (generalizing/unifying, custom-mechanic feasibility) | `references/generalizations.md` + `references/engine.md` |
-   | capability/restriction/permission ("can't", "only", "as though", "if able", ward-style tolls) | `references/deontics.md` |
-   | keyword intrinsic/composite class, engine instruction-set | `references/keyword-classification.md`; per-keyword: `scripts/classify cascade` |
-   | cost/payment | `references/costs.md` |
-   | event/trigger schema | `references/events.md` |
-   | decision/choice | `references/choices.md` |
-   | visibility/hidden information | `references/information.md` |
-   | game-ending | `references/outcomes.md` |
-   | predicate/value language | `references/queries.md` |
-   | mana | `references/mana.md` |
-   | duration/lock | `references/temporal.md` |
-   | "rules-defined or engine choice?" | `references/underdetermined.md`; per-entry: `scripts/underdetermined UD-7` |
-   | variant/multiplayer | `references/variants.md` |
-3. **Verify every load-bearing specific with the scripts before asserting
-   it.** Start broad with `scripts/lookup` when unsure where an answer
-   lives. Quote rule text with rule numbers. For card questions, fetch exact
-   oracle text first (`scripts/card`) — never trust memory of a card's
-   wording.
-4. Answer: ruling first, then supporting citations (rule numbers + brief
-   quotes).
+## Routes
 
-## Scripts
-
-| command | purpose |
+| Question | Start here |
 |---|---|
-| `scripts/lookup <query>` | unified meta-search: one regex fanned out over CR rules, glossaries, keywords, MTR, and reference-doc headings, hits labeled by source — recommended FIRST call for orientation |
-| `scripts/rule 601.2` | rule + subrules + examples; `rule 601` = whole section |
-| `scripts/rule-search <regex> [--max N]` | case-insensitive search over all CR rule text |
-| `scripts/define <term>` | official + unofficial glossary |
-| `scripts/keyword <name>` | keyword ability/action → its full CR section |
-| `scripts/card <name>` | exact oracle text + characteristics (MTGJSON SQLite) |
-| `scripts/rulings <name>` | official per-card rulings (MTGJSON), date-stamped — re-resolve any CR numbers they cite |
-| `scripts/mtr 1.7` / `--list` / `--search <re>` | Magic Tournament Rules sections |
-| `scripts/corpus [--type T] [--keyword K] [--match RE] [--all]` | distinct oracle-text lines (grammar corpus) |
-| `scripts/classify <keyword>` | a keyword's intrinsic/composite classification record (class, given, how, cites) from keywords-classified.json |
-| `scripts/underdetermined [<id>]` | the CR-underdetermined registry by durable id (`UD-7`); no arg lists every entry |
-| `scripts/cite check` / `bless` / `show <citation>` / `diff <rule>` | citation staleness guard with text-drift lockfile |
-| `scripts/health` | self-diagnosis: data resolution, CR date, per-doc staleness, data tiers, citation check |
-| `scripts/version` | machine-readable conformance manifest (plugin version, commit, CR date, keywords sha) |
+| Rules question with no known section | `scripts/lookup <regex>`, then the indicated source or doc |
+| Named rule, term, or keyword | `scripts/rule <number>`, `scripts/define <term>`, or `scripts/keyword <name>` |
+| Card text or interaction | `scripts/card <name>`; for interactions, the relevant rules route and `scripts/rulings <name>` |
+| Tournament policy or judge procedure | `scripts/mtr --search <regex>` then `scripts/mtr <section>` |
+| Oracle grammar or parsing | [grammar](references/grammar.md); `scripts/corpus` for attested text |
+| Engine state: players, zones, objects, identity/LKI | [state](references/state.md) |
+| Engine actions: turn-based, state-based, special, keyword; main loop | [actions](references/actions.md) |
+| Engine pseudocode or damage pipeline | [engine](references/engine.md) |
+| Mechanic generalization, asymmetry, custom-mechanic feasibility | [generalizations](references/generalizations.md) |
+| Keyword intrinsic/composite/marker class or primitive basis | [classification](references/keyword-classification.md); `scripts/classify <keyword>` |
+| Permission, restriction, requirement, "as though", "if able", toll | [deontics](references/deontics.md) |
+| Costs, modification, payability | [costs](references/costs.md) |
+| Event schema, cause, composition, trigger matching | [events](references/events.md) |
+| Choice, decider, lock stage, randomness | [choices](references/choices.md) |
+| Visibility, hidden information, face-down objects | [information](references/information.md) |
+| Win, loss, draw, restart, subgame | [outcomes](references/outcomes.md) |
+| Predicate, selector, binding/anaphora, value | [queries](references/queries.md) |
+| Mana production, units, payment, pool policy | [mana](references/mana.md) |
+| Duration, window, lock, reevaluation | [temporal](references/temporal.md) |
+| Rules requirement versus engine choice | [underdetermined](references/underdetermined.md); `scripts/underdetermined <id>` |
+| Multiplayer or variant overrides | [variants](references/variants.md) |
+| Designations: monarch, initiative, day/night, flags | [designations](references/designations.md) |
+| Ability kinds, sub-kinds, where abilities function | [abilities](references/abilities.md) |
+| Effects, layers, timestamps, dependency, replacement/prevention | [effects](references/effects.md) |
+| Casting, activation, resolution, spell copies | [casting](references/casting.md) |
+| Turn structure, priority, combat, cleanup | [turn](references/turn.md) |
 
-## Reference docs
+## Lookup details
 
-| doc | covers |
-|---|---|
-| `references/state.md` | component taxonomy of a game state: players, zones, objects, characteristics, per-object state, identity/LKI, game-level state |
-| `references/engine.md` | pseudo-code game-state model + the damage pipeline (CR 120) |
-| `references/generalizations.md` | asymmetric rule families, the generalized mechanic each implies, and 12 engine modeling directives |
-| `references/keyword-classification.md` | every keyword classified intrinsic / composite / composite-given(P) / marker, + the 5-primitive engine basis (full data: `keywords-classified.json`) |
-| `references/deontics.md` | the deontic layer: May/Cant/Must/Gate/Toll algebra over action legality — "can't", "only", "as though", "if able" unified |
-| `references/costs.md` | the cost algebra: positions, components, modification pipeline, payability |
-| `references/events.md` | event ontology: types, cause triples, composition, trigger interface |
-| `references/choices.md` | decision points: kinds, lock stages, deciders, visibility, randomness |
-| `references/information.md` | visibility & hidden state: zones, face-down, reveals, per-player info sets |
-| `references/outcomes.md` | game end: losses/wins/draws/restart/subgames + outcome modification |
-| `references/queries.md` | the predicate & value language: selectors, bindings/anaphora, stored memory, undefined values — the grammar↔engine contract |
-| `references/mana.md` | the mana subsystem: unit schema, production, payment predicates, pool policy |
-| `references/temporal.md` | durations, windows, and the lock taxonomy |
-| `references/underdetermined.md` | registry of CR-underdetermined semantics, durable `UD-NNN` ids — the engine's ADR seed list (assumed/open/representation-only/settled); consumers ADR-key choices by UD id |
-| `references/variants.md` | which multiplayer/variant rules (CR 8xx–9xx) override base-game claims — lookup-first index |
-| `references/actions.md` | everything the game can do: events; turn-based, state-based, special, and keyword actions; the priority→stack→resolve loop |
-| `references/designations.md` | the scattered global flags, unified: monarch, initiative, day/night, city's blessing, ring-bearer, goaded, suspected, … |
-| `references/abilities.md` | ability kinds + sub-kinds (mana, loyalty, linked, CDA, delayed/state/reflexive triggers), where abilities function |
-| `references/effects.md` | one-shot vs continuous, layers + timestamps + dependency, replacement/prevention and ordering |
-| `references/casting.md` | the 601.2 casting pipeline, costs, activation, resolution, spell copies |
-| `references/turn.md` | turn structure, priority, combat step by step, cleanup |
-| `references/grammar.md` | oracle-text grammar for parsing card text |
-| `references/rulings-check.md` | the model validated against official card rulings — imitate its derivation patterns |
+`lookup` and `rule-search` accept case-insensitive regexes. Search previews
+locate evidence; `rule <number>` prints the full rule and its descendants,
+and `rule <section>` prints a whole section. `define` labels unofficial entries.
+`mtr --list` lists policy sections. `card` accepts an exact card or face name;
+`card --full-name` requires the canonical combined name for multifaced cards.
+`corpus` returns distinct Oracle lines, with `--type`, `--keyword`, and `--match`
+filters. `underdetermined` without an id lists the engine-choice registry.
 
-## Staleness
+## Data and staleness
 
-Reference docs state the CR effective date they were synthesized from; the
-live data's date is reported by `scripts/health`. If
-`scripts/cite check` fails, or a cited rule reads differently than a
-doc claims, trust the CR text, answer from it, and flag the doc for re-sync.
-For a CHANGED citation: inspect the drift with `scripts/cite diff <rule>`,
-fix the doc (or accept the rewording), then `scripts/cite bless` to re-pin
-the lockfile.
+Hooks provision the lookup runtime before the first model turn. If setup warns
+or a lookup reports missing data, run `scripts/setup-data --runtime` and retry;
+use `--cards` for the corpus tier. If the retry fails, report which evidence
+is unavailable and leave dependent conclusions unresolved.
 
-## Data (repo `data/`, refreshed by repo-root `scripts/fetch_data.fish`)
-
-- `rules/cr.{txt,json}` — Comprehensive Rules (json keyed by rule number)
-- `rules/{glossary,unofficial-glossary,keywords}.json` — terms + keyword lists
-- `rules/mtr.json` — Magic Tournament Rules
-- `catalogs/*.json` — Scryfall closed vocabularies (types, keywords, word-bank)
-- `mtgjson/AllPrintings.sqlite` — exact card lookups and rulings;
-  `mtgjson/AtomicCards.json` feeds the `derived/cards.jsonl` corpus index built
-  by repo-root `scripts/build_derived.fish` (rebuild after refreshes)
-
-Installed plugin copies resolve data via `$MTG_RULES_DATA` → `$PLUGIN_DATA` /
-`$CLAUDE_PLUGIN_DATA` → the current host's conventional persistent plugin data
-directory (Codex, agy, or Claude Code) → the plugin/repo layout. The hook
-runtime is populated automatically; manually retry with
-`scripts/setup-data --runtime`, or add `--cards` for the corpus tier.
+`scripts/health` reports the resolved data path, live CR date, data tiers, and
+citation health. `scripts/version` provides the conformance manifest.
+Reference headers record their synthesis date. When a citation check fails or
+a reference disagrees with current source text, answer from the source and
+report the reference drift. Repairing reference docs and repinning citations
+belong to an explicitly requested maintenance task.

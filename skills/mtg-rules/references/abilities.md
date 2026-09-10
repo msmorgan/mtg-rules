@@ -1,9 +1,7 @@
 # Abilities — Taxonomy
 
 *Synthesized from the Comprehensive Rules effective 2026-08-07
-(`data/rules/cr.json`). Orientation only — verify load-bearing specifics
-with `scripts/rule` before citing. Run `scripts/cite check` after CR
-refreshes.*
+(`data/rules/cr.json`).*
 
 How an engine should classify what a card can do. The four general
 categories partition every ability (113.3); the cross-cutting sub-kinds

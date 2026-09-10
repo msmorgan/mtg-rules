@@ -1,0 +1,7 @@
+{
+  "format": "bare",
+  "lockfile": "cr-citations.lock",
+  "sources": {
+    "globs": ["rulings-check.md", "probes.json"]
+  }
+}

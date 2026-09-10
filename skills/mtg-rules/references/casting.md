@@ -1,9 +1,7 @@
 # Casting — The Spell/Ability Pipeline
 
 *Synthesized from the Comprehensive Rules effective 2026-08-07
-(`data/rules/cr.json`). Orientation only — verify load-bearing specifics
-with `scripts/rule` before citing. Run `scripts/cite check` after CR
-refreshes.*
+(`data/rules/cr.json`).*
 
 How an engine moves an object onto the stack, pays for it, and resolves it.
 Casting (601) and activating (602) share one step machine; resolving (608)

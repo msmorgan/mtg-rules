@@ -1,9 +1,7 @@
 # Generalizations — Asymmetric Rule Families and the Mechanics They Imply
 
 *Synthesized from the Comprehensive Rules effective 2026-08-07
-(`data/rules/cr.json`). Orientation only — verify load-bearing specifics
-with `scripts/rule` before citing. Run `scripts/cite check` after CR
-refreshes.*
+(`data/rules/cr.json`).*
 
 **Method.** Every claim below was checked against the live Comprehensive Rules text (effective 2026-08-07, per the local `data/rules/cr.txt`) using the mtg-rules skill's lookup scripts (`rule`, `rule-search`, `keyword`, `card`, `corpus`); reference docs (`state.md`, `actions.md`, `abilities.md`, `effects.md`, `casting.md`, `designations.md`, `grammar.md`, `engine.md`) were used for orientation only. A "family" is admitted only when (a) at least two CR-verified instances share an abstract operation shape, (b) the CR demonstrably permits some parameterizations and not others, and (c) there is at least one *precedent* — a place where the CR has already lifted a similar restriction once — showing the generalization is rules-compatible rather than speculative. Families are ranked by how load-bearing the unification is for an engine data model and oracle-text grammar: a high-ranked family is one where modeling the general operation now (with current rules as parameter constraints) saves the most future schema churn.
 

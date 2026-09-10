@@ -1,9 +1,7 @@
 # Events — The Event Ontology
 
 *Synthesized from the Comprehensive Rules effective 2026-08-07
-(`data/rules/cr.json`). Orientation only — verify load-bearing specifics
-with `scripts/rule` before citing. Run `scripts/cite check` after CR
-refreshes.*
+(`data/rules/cr.json`).*
 
 What "an event" is, the atomic event types an engine needs, the cause tags
 the CR's trigger language distinguishes, how events compose, and the

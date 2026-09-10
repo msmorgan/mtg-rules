@@ -6,7 +6,7 @@
     {
       "name": "mtg-rules",
       "source": "./",
-      "version": "1.10.0",
+      "version": "1.10.1",
       "description": "MTG Comprehensive Rules skill: lookup scripts (CR, glossary, MTR, cards, official rulings) + synthesized taxonomies (game state, actions, effects/layers, designations, oracle grammar)."
     }
   ]

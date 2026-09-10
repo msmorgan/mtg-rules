@@ -7,6 +7,22 @@ re-run your alignment pass against the new taxonomy and data before
 re-pinning. Taxonomy-meaning changes (reclassifications, primitive
 mints/retirements, notation changes) are always called out explicitly.
 
+## 1.10.1 — 2026-09-10
+
+- **Skill routing and authority.** Consolidated question routes, clarified CR,
+  MTR, Oracle, and official-ruling authority, and made verification completion
+  explicit. Hook-provided card text satisfies the card lookup step. Reference
+  headers retain synthesis dates while shared instructions live in `SKILL.md`.
+- **Validation disclosure.** Moved the rulings validation record to `evals/`,
+  with its own citation lock and pointers to shared worked examples. Runtime
+  reference documents and taxonomy meanings remain available unchanged.
+- **Invocation evaluation.** Added positive and negative cold prompts and a
+  trace grader requiring successful skill loads, script calls, and reference
+  reads. Existing numbered probes can use their `frame_docs` as route checks.
+- **agy card context.** Added `PreInvocation` transcript support to the card
+  context hook. Its shared preamble frames Oracle imperatives as game text.
+  **No taxonomy, CR-data, or data-ABI change.**
+
 ## 1.10.0 — 2026-08-09
 
 - **Comprehensive Rules re-sync (effective 2026-08-07).** Revalidated the

@@ -1,9 +1,7 @@
 # Queries — The Predicate & Value Language
 
 *Synthesized from the Comprehensive Rules effective 2026-08-07
-(`data/rules/cr.json`). Orientation only — verify load-bearing specifics
-with `scripts/rule` before citing. Run `scripts/cite check` after CR
-refreshes.*
+(`data/rules/cr.json`).*
 
 The emergent shared layer. Every taxonomy doc parameterizes over an
 informal predicate-and-value language: `deontics.md`'s guards,

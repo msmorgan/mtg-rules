@@ -1,7 +1,45 @@
 # mtg-rules skill evals
 
-Two instruments live here: the **probe eval** (paid, agent-grade) and the
-**corpus coverage report** (free, grep-grade).
+Three instruments live here: invocation probes, answer probes, and the
+corpus coverage report. Model runs are paid; offline grading and self-tests are free.
+
+## Invocation probes
+
+`invocation-probes.json` contains seven positive requests covering rules,
+cards, policy, grammar, engine modeling, mechanic design, and classification,
+plus three negative requests including Magic-themed prose editing. Their prompts
+carry no skill name or instruction to look up sources.
+
+```sh
+python3 evals/invocation.py policy --dry
+python3 evals/invocation.py policy --model sonnet
+python3 evals/invocation.py policy --transcript /path/to/trace.jsonl
+python3 evals/invocation.py 11 --answer-probe --dry
+python3 -m unittest discover -s evals -p 'test_*.py'
+```
+
+Each live run starts Claude in a fresh temporary directory with this checkout
+loaded via `--plugin-dir`, excluding the development `CLAUDE.md` from discovery.
+Provision the runtime and corpus data first. The runner allows skill loading,
+file reads, and literal calls to this checkout's lookup scripts. Permission or
+data failures are evidence gaps; inspect the saved trace before diagnosing routing.
+Host-level settings and other installed skills still affect the run.
+
+The grader requires an init event advertising this skill and a successful final
+result. Positive probes additionally require successful Skill/Read loading and
+the configured script calls and reference reads. Negative probes reject any
+attempt to load or use the MTG skill. Claims in the final prose earn no credit.
+The `--answer-probe` mode uses the numbered questions from `probes.json` unchanged,
+requiring card/rule lookups and the listed `frame_docs` as observable routes.
+
+Evidence recognition covers literal script paths (optionally run with `fish`
+or after `cd &&`) and explicit reference Read calls. Compound pipelines, shell
+wrappers, and alternative valid routes require manual trace review. Tool success
+establishes that evidence was obtained; answer correctness still needs semantic
+review. A passing discovery probe is not an answer-quality verdict.
+
+Run selected positive and negative cases after instruction changes. Each live
+invocation is one paid agent run; offline tests validate the grader, not model behavior.
 
 ## Corpus coverage report (free)
 
@@ -30,11 +68,12 @@ explained.
 ## Probe eval (paid)
 
 Regression eval for the **skill**, not the data: each probe asks a headless
-agent one of the eighteen rulings-check questions cold and grades the answer
+agent one of the eighteen rulings-check questions with explicit skill instructions and grades the answer
 against the citations and verdicts derived in
-`skills/mtg-rules/references/rulings-check.md`. Run after CR refreshes or reference-doc
-edits to catch a skill that stopped routing, citing, or concluding correctly.
-This directory deliberately lives outside `skills/mtg-rules/` so the plugin doesn't ship it.
+`evals/rulings-check.md`. Run after CR refreshes or reference-doc edits to
+spot missing verdict terms or citations. This test does not measure autonomous
+invocation; use the invocation probes above for discovery and route evidence.
+This directory lives outside the skill's runtime reference tree.
 
 **Cost warning:** every non-`--dry` run is one full `claude -p` agent run
 (skill lookups included). Spot-check single probes; don't loop all 18 casually.
@@ -65,6 +104,8 @@ spawned agent's scripts can find it (it propagates through the environment):
 When `rulings-check.md` gains probe N: append an object to `probes.json` with
 `id: N`, the cards, frame docs, a **self-contained** question (answerable
 without reading rulings-check.md), the load-bearing dotted citations from the
-derivation, and 3-6 verdict keywords. Verify each citation appears in section
-N of the doc, run `jq . evals/probes.json`, then `run_probe.fish N --dry`.
-Bump `meta.cr_effective` whenever the doc's header date changes.
+derivation, and 3-6 verdict keywords. Verify each citation against the derivation
+(following its pointer for shared worked examples), run `jq . evals/probes.json`,
+then `run_probe.fish N --dry`. Validate the record with
+`skills/mtg-rules/scripts/cite --config evals/cite-config.json check`.
+After revalidation, bump `meta.cr_effective` with the doc's header date.

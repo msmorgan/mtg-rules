@@ -1,9 +1,7 @@
 # Engine Sketch — Pseudo-code Model and the Damage Pipeline
 
 *Synthesized from the Comprehensive Rules effective 2026-08-07
-(`data/rules/cr.json`). Orientation only — verify load-bearing specifics
-with `scripts/rule` before citing. Run `scripts/cite check` after CR
-refreshes.*
+(`data/rules/cr.json`).*
 
 Read alongside `generalizations.md` — its 12 engine modeling directives prescribe which operations to model as parameterized records.
 

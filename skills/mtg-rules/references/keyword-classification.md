@@ -1,9 +1,7 @@
 # Keyword Classification — Intrinsic / Composite / Marker
 
 *Synthesized from the Comprehensive Rules effective 2026-08-07
-(`data/rules/cr.json`). Orientation only — verify load-bearing specifics
-with `scripts/rule` before citing. Run `scripts/cite check` after CR
-refreshes.*
+(`data/rules/cr.json`).*
 
 Every keyword ability (CR 702) and keyword action (CR 701) is classified by
 **what an engine has to build for it**. The full per-keyword data (all 265

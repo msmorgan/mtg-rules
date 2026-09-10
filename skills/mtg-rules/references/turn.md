@@ -1,9 +1,7 @@
 # Turn Structure, Priority, and Combat
 
 *Synthesized from the Comprehensive Rules effective 2026-08-07
-(`data/rules/cr.json`). Orientation only — verify load-bearing specifics
-with `scripts/rule` before citing. Run `scripts/cite check` after CR
-refreshes.*
+(`data/rules/cr.json`).*
 
 How an engine sequences a turn: five phases, their steps, who gets priority
 when, and the combat sub-machine. A turn = beginning, precombat main,

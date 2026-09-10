@@ -1,9 +1,7 @@
 # Temporal Scope — Durations, Windows, Locks
 
 *Synthesized from the Comprehensive Rules effective 2026-08-07
-(`data/rules/cr.json`). Orientation only — verify load-bearing specifics
-with `scripts/rule` before citing. Run `scripts/cite check` after CR
-refreshes.*
+(`data/rules/cr.json`).*
 
 This doc is an **index-unification**: the pieces are owned elsewhere —
 durations by `effects.md` §3, the announcement pipeline by `casting.md` §1,

@@ -1,9 +1,7 @@
 # Effects — Taxonomy, Layers, Replacement
 
 *Synthesized from the Comprehensive Rules effective 2026-08-07
-(`data/rules/cr.json`). Orientation only — verify load-bearing specifics
-with `scripts/rule` before citing. Run `scripts/cite check` after CR
-refreshes.*
+(`data/rules/cr.json`).*
 
 How an engine models what spells, abilities, and the rules *do*. The layer
 system (§4) is the heart of this doc: it is the deterministic algorithm for

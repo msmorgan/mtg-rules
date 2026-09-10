@@ -1,9 +1,7 @@
 # Underdetermined — The Engine-Choice Registry
 
 *Synthesized from the Comprehensive Rules effective 2026-08-07
-(`data/rules/cr.json`). Orientation only — verify load-bearing specifics
-with `scripts/rule` before citing. Run `scripts/cite check` after CR
-refreshes.*
+(`data/rules/cr.json`).*
 
 Points where the CR underdetermines semantics: a rules-correct engine must
 make a choice the rules don't make for it, and that choice belongs in a
