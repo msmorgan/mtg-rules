@@ -41,6 +41,10 @@ set -l codex_root "$HOME/.codex"
 if set -q CODEX_HOME; and test -n "$CODEX_HOME"
     set codex_root (path normalize "$CODEX_HOME")
 end
+set -l opencode_root "$HOME/.local/share/opencode"
+if set -q XDG_DATA_HOME; and test -n "$XDG_DATA_HOME"
+    set opencode_root (path normalize "$XDG_DATA_HOME")/opencode
+end
 
 if set -q _flag_dest
     set -g ensure_dest $_flag_dest
@@ -56,6 +60,8 @@ else if string match -q -- "$HOME/.gemini/*" "$skill_root"
     set -g ensure_dest $HOME/.gemini/config/plugins/mtg-rules/data
 else if string match -q -- "$HOME/.claude/*" "$skill_root"
     set -g ensure_dest $HOME/.claude/plugins/data/mtg-rules/data
+else if string match -q -- "$opencode_root/*" "$skill_root"; or string match -q -- "$HOME/.config/opencode/*" "$skill_root"
+    set -g ensure_dest $opencode_root/plugins/data/mtg-rules/data
 else
     set -g ensure_dest (path dirname (path dirname $skill_root))/data
 end

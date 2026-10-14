@@ -43,6 +43,12 @@ mkdir -p .agents/plugins
 git clone https://github.com/msmorgan/mtg-rules .agents/plugins/mtg-rules
 ```
 
+### OpenCode
+
+```bash
+opencode plugin add github:msmorgan/mtg-rules
+```
+
 ### Automatic First-Run Data
 
 The plugin automatically downloads its hook runtime—base rules, catalogs, and

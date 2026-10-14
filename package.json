@@ -1,0 +1,10 @@
+{
+  "name": "mtg-rules",
+  "version": "1.10.1",
+  "description": "Judge-grade Magic: The Gathering rules answers and engine/grammar taxonomies, grounded in the Comprehensive Rules with verified citations.",
+  "type": "module",
+  "main": ".opencode/plugins/mtg-rules.js",
+  "exports": {
+    ".": "./.opencode/plugins/mtg-rules.js"
+  }
+}

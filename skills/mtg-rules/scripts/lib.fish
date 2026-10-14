@@ -28,9 +28,14 @@ set -l _codex_root "$HOME/.codex"
 if set -q CODEX_HOME; and test -n "$CODEX_HOME"
     set _codex_root (path normalize "$CODEX_HOME")
 end
+set -l _opencode_root "$HOME/.local/share/opencode"
+if set -q XDG_DATA_HOME; and test -n "$XDG_DATA_HOME"
+    set _opencode_root (path normalize "$XDG_DATA_HOME")/opencode
+end
 set -l _codex_data "$_codex_root/plugins/data/mtg-rules/data"
 set -l _gemini_data "$HOME/.gemini/config/plugins/mtg-rules/data"
 set -l _claude_data "$HOME/.claude/plugins/data/mtg-rules/data"
+set -l _opencode_data "$_opencode_root/plugins/data/mtg-rules/data"
 
 if set -q MTG_RULES_DATA
     set -a _candidates "$MTG_RULES_DATA"
@@ -57,6 +62,8 @@ else if string match -q -- "$HOME/.gemini/*" "$skill_dir"
     set -a _candidates "$_gemini_data"
 else if string match -q -- "$HOME/.claude/*" "$skill_dir"
     set -a _candidates "$_claude_data"
+else if string match -q -- "$_opencode_root/*" "$skill_dir"; or string match -q -- "$HOME/.config/opencode/*" "$skill_dir"
+    set -a _candidates "$_opencode_data"
 end
 
 set -l _plugin_data (path dirname (path dirname $skill_dir))/data
@@ -66,7 +73,8 @@ for _cand in \
     $_legacy_data \
     $_codex_data \
     $_gemini_data \
-    $_claude_data
+    $_claude_data \
+    $_opencode_data
     if not contains -- "$_cand" $_candidates
         set -a _candidates "$_cand"
     end

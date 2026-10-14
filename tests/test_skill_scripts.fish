@@ -47,6 +47,8 @@ t "Codex marketplace has a collision-free development name" '^mtg-rules-dev$' \
     jq -r '.name' $repo/.agents/plugins/marketplace.json
 t "Codex and Claude manifests have the same version" '^true$' fish -c \
     "test (jq -r .version $repo/.codex-plugin/plugin.json) = (jq -r .version $repo/.claude-plugin/plugin.json); and echo true"
+t "OpenCode package manifest matches plugin name and version" '^true$' fish -c \
+    "test (jq -r .name $repo/package.json) = mtg-rules; and test (jq -r .version $repo/package.json) = (jq -r .version $repo/.codex-plugin/plugin.json); and echo true"
 
 # --- lib.fish ---
 t "lib resolves rules dir" 'data/rules$' fish -c "source $scripts/lib.fish; or exit 1; echo \$rules_dir"
