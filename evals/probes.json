@@ -36,18 +36,18 @@
       "cards": ["Yixlid Jailer", "Tarmogoyf"],
       "frame_docs": ["abilities.md"],
       "question": "Yixlid Jailer says cards in graveyards lose all abilities. (a) Tarmogoyf's printed power/toughness is */1+* where * is defined by a characteristic-defining ability counting card types among cards in graveyards — what are a Tarmogoyf's power and toughness while it is in a graveyard with Yixlid Jailer on the battlefield? (b) Does an ability that triggers 'when this card is put into a graveyard from anywhere' still trigger? (c) Does an ability that triggers when a creature dies (is put into a graveyard from the battlefield) still trigger? Cite rules.",
-      "expected_citations": ["113.6a", "113.6c", "113.6k", "603.2g"],
+      "expected_citations": ["113.6a", "113.6k", "603.10a", "603.6c"],
       "expected_verdict_keywords": ["0/1", "battlefield", "trigger"],
-      "notes": "CDAs normally function everywhere (113.6a) but Yixlid strips them: undefined * = 0, so Tarmogoyf is 0/1. From-anywhere graveyard triggers are removed; dies-triggers fire from the battlefield and are unaffected. Official ruling [2021-03-19]."
+      "notes": "CDAs normally function everywhere (113.6a) but Yixlid strips them: undefined * = 0, so Tarmogoyf is 0/1. From-anywhere graveyard triggers (113.6k) are never leaves-the-battlefield abilities (603.6c), so they are checked in the graveyard and removed; dies-triggers look back and fire from the battlefield (603.10a, 603.6c) and are unaffected. Official ruling [2021-03-19]."
     },
     {
       "id": 5,
       "cards": ["Panharmonicon", "Torpor Orb"],
-      "frame_docs": ["actions.md"],
+      "frame_docs": ["events.md"],
       "question": "Panharmonicon reads: if an artifact or creature entering the battlefield causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time. Torpor Orb reads: creatures entering the battlefield don't cause abilities to trigger. Are these replacement effects? Which rules framework actually governs each of them, and does either one affect 'this creature enters the battlefield with counters' effects?",
       "expected_citations": ["603.2d", "603.2g", "603.6b"],
       "expected_verdict_keywords": ["replacement", "additional time", "counter"],
-      "notes": "Neither is a replacement effect (614 wording absent): Panharmonicon is a 603.2d trigger-count modifier, Torpor Orb removes the trigger match (nothing triggers, 603.2g). ETB replacement effects like enters-with-counters are untouched by both. Official rulings [2021-03-19], [2024-04-12]."
+      "notes": "Neither is a replacement effect (614 wording absent): Panharmonicon is a 603.2d trigger-count modifier; Torpor Orb's text overrides 603.2's default that a matching event triggers (101.1) while the entering event still happens (a prevented or replaced event is what triggers nothing, 603.2g). ETB replacement effects like enters-with-counters are untouched by both. Official rulings [2021-03-19], [2024-04-12]."
     },
     {
       "id": 6,
@@ -61,7 +61,7 @@
     {
       "id": 7,
       "cards": ["Teferi's Protection"],
-      "frame_docs": ["actions.md"],
+      "frame_docs": ["events.md", "state.md", "effects.md"],
       "question": "You cast Teferi's Protection: until your next turn your life total can't change, and all permanents you control phase out. (a) Do your permanents' leave-the-battlefield triggered abilities trigger when they phase out, and do counters on them and attached Auras survive? (b) While your life total can't change, an opponent's spell resolves that says you lose 3 life and that opponent gains 3 life — what actually happens? Cite rules.",
       "expected_citations": ["702.26b", "702.26d", "609.3"],
       "expected_verdict_keywords": ["zone", "counter", "resolve", "trigger"],
@@ -79,7 +79,7 @@
     {
       "id": 9,
       "cards": ["Mirror Room // Fractured Realm"],
-      "frame_docs": ["designations.md", "actions.md"],
+      "frame_docs": ["designations.md", "events.md"],
       "question": "Mirror Room // Fractured Realm is a Room enchantment with two doors. (a) While only one door is unlocked, which half's name, mana cost, and rules text does the permanent have? (b) After the Room is on the battlefield, how do you unlock the other door — is doing so a spell, an ability, or something else, and when can you do it? (c) Fractured Realm's unlocked text causes a triggered ability of a permanent you control to trigger an additional time. If you cast the Mirror Room half so that its door becomes unlocked as the Room enters the battlefield, does an effect like Fractured Realm's (or Panharmonicon's) make the 'when you unlock this door' trigger happen an additional time? Cite rules.",
       "expected_citations": ["709.5d", "709.5e", "709.5h", "603.2d"],
       "expected_verdict_keywords": ["special action", "unlock", "additional time"],
@@ -110,7 +110,7 @@
       "question": "Guerrilla Tactics has an ability that triggers when a spell or ability an opponent controls causes you to discard it. (a) You discard Guerrilla Tactics to pay a cost — for example, a cost that says 'discard a card'. Does the ability trigger? (b) An opponent's resolving spell gives you the option to discard a card, and you choose to discard Guerrilla Tactics. Does the ability trigger? Cite rules.",
       "expected_citations": ["701.9a", "701.9b", "601.2h"],
       "expected_verdict_keywords": ["cost", "effect", "trigger"],
-      "notes": "Cause-tag discrimination: cost discards have no spell/ability as causing agent (601.2h) and never match; effect discards match even when optional — optionality and who picks the card (701.9b) are not coordinates. Official rulings [2004-10-04]."
+      "notes": "Cause-tag discrimination: 'discarded' is a verb view spanning cost, effect, cleanup (703.4n) and Circling Vultures (116.2e) routes, so only agency = effect-instruction with an opponent-controlled spell or ability as agent matches; cost discards (601.2h) never do. Effect discards match even when optional — optionality and who picks the card (701.9b) are not coordinates. Official rulings [2004-10-04]."
     },
     {
       "id": 13,
@@ -128,7 +128,7 @@
       "question": "Ixidron enters the battlefield and turns all other creatures face down. (a) What are those face-down creatures' name, types, power, and toughness? (b) May the controller of one of those face-down creatures look at it even though it has no morph ability? May other players? (c) If another creature becomes a copy of one of those face-down creatures, what characteristics does the copy have? Cite rules.",
       "expected_citations": ["708.2a", "708.5", "708.6", "707.2"],
       "expected_verdict_keywords": ["2/2", "controller", "copiable"],
-      "notes": "708.2a defaults: blank 2/2 with no name/text/types/mana cost — and those defaults are the copiable values, so a copy is the blank 2/2, not the hidden card. Controller may look anytime (morph not required, 708.5); others never; differentiation duty (708.6) applies. Official rulings [2006-09-25], [2018-04-27]."
+      "notes": "708.2a defaults: blank 2/2 with no name/text/types/mana cost — and those defaults are the copiable values, so a copy is the blank 2/2, not the hidden card. Controller may look anytime (morph not required, 708.5); others not by default (708.5; card text such as Lens of Clarity can override for face-down creatures, 101.1, but not for face-down spells on the stack); differentiation duty (708.6) applies. Official rulings [2006-09-25], [2018-04-27]."
     },
     {
       "id": 15,
@@ -165,6 +165,15 @@
       "expected_citations": ["115.7e", "601.2c", "608.2b"],
       "expected_verdict_keywords": ["different", "remaining", "can't"],
       "notes": "'Another'/'a third' compile to set-distinctness over the final target set (115.7e): three distinct legal targets required at announcement or the cast rewinds. Amounts are bound per target instance — an illegal target is simply unaffected, nothing reflows (608.2b). Official ruling [2014-07-18]."
+    },
+    {
+      "id": 19,
+      "cards": ["Lich's Mirror"],
+      "frame_docs": ["actions.md", "outcomes.md"],
+      "question": "You control Lich's Mirror (if you would lose the game, instead shuffle your hand, your graveyard, and all permanents you own into your library, then draw seven cards and your life total becomes 20). You are at 1 life with one card in your library, and a spell makes you draw two cards and lose 2 life. (a) At the next state-based-action check, for which reasons would you lose the game, and does Lich's Mirror's replacement apply once or once per reason? (b) If you own Lich's Mirror, can it replace a second loss right after its effect finishes? (c) When do leaves-the-battlefield triggers of the permanents it shuffled away go on the stack? Cite rules.",
+      "expected_citations": ["704.3", "704.7", "704.5a", "704.5b"],
+      "expected_verdict_keywords": ["single", "replace", "once", "simultaneous"],
+      "notes": "704.5a and 704.5b are performed simultaneously as a single event (704.3) and share one result, so a single replacement replaces all of them: Mirror applies once (704.7, whose own example is this case; 614.6). It normally shuffles itself away, so it can't replace a second loss; leaves-the-battlefield triggers go on the stack after its whole effect (603.3, 704.3). Official ruling [2008-10-01]."
     }
   ]
 }

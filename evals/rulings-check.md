@@ -3,11 +3,12 @@
 *Synthesized from the Comprehensive Rules effective 2026-08-07.*
 
 This doc validates the skill's model against WotC's own answer key. For
-eighteen subsystem probes it states our **independent** derivation (from the
+nineteen subsystem probes it states our **independent** derivation (from the
 sibling reference docs + `scripts/rule`), then quotes the official ruling
 (`scripts/rulings`, date-stamped `[YYYY-MM-DD]`) and records a verdict.
-Probes 1–10 validate the original synthesis layer; 11–18 the newer docs
-(costs, events, choices, information, outcomes, mana, temporal, queries).
+Probes 1–10 validate the original synthesis layer; 11–19 the newer docs
+(costs, events, choices, information, outcomes, mana, temporal, queries,
+actions).
 
 **Renumber-drift warning:** official ruling texts embed CR numbers from their
 publication date; the CR renumbers over time. Every CR number below was
@@ -22,7 +23,7 @@ resolve under `../skills/mtg-rules/references/`; script names resolve under
 `../skills/mtg-rules/`. Runtime derivation guidance lives in that skill's
 `SKILL.md`.
 
-All eighteen probes verdict **MATCH** on the current CR; no sibling-doc fixes
+All nineteen probes verdict **MATCH** on the current CR; no sibling-doc fixes
 were required. Re-run them (see Maintenance) after each CR refresh.
 
 ## 1. Humility + Opalescence — layers/timestamps
@@ -67,12 +68,14 @@ shut off? **Frame:** `abilities.md` §"where abilities function" (113.6).
   `*` P/T defines normally — but Yixlid is in layer 6 ability-removal, so it
   strips even the CDA → `*` becomes 0 (the CDA is gone; 613.4a / undefined `*`
   = 0).
-- Abilities that trigger from the graveyard "from anywhere" (113.6k allows the
-  trigger to function there) are removed → they don't trigger (603.2g: no
-  ability, nothing triggers).
-- Abilities that trigger on leaving the *battlefield* trigger from the
-  battlefield (113.6c / 603.6c) — they are gone by the time the card is in the
-  graveyard, so Yixlid doesn't touch them.
+- Abilities that trigger when the card is put into a graveyard "from anywhere"
+  function there (113.6k). That wording is never a leaves-the-battlefield
+  ability, even when the card came from the battlefield (603.6c), so nothing
+  looks back to the battlefield. Yixlid strips them, so they don't trigger.
+- Abilities that trigger on leaving the *battlefield* look back at the
+  abilities the object had immediately before the event (603.10a) and trigger
+  from the battlefield (603.6c); Yixlid applies only once the card is in the
+  graveyard, so it doesn't touch them.
 
 Official `[2021-03-19]`: "If a card in a graveyard has an ability that defines
 a * in its power or toughness, that * is 0 … If an ability triggers when the
@@ -83,19 +86,23 @@ triggers from the battlefield and isn't affected." **MATCH.**
 
 ## 5. Panharmonicon + Torpor Orb — trigger-count, not replacement
 
-**Q:** Are these replacement effects? **Frame:** `actions.md` (trigger
-determination) — verified the CR/rulings use the **603.2** trigger framework,
-NOT replacement effects (614).
+**Q:** Are these replacement effects? **Frame:** `events.md` §6 (the trigger
+interface: 603.2, 603.2d, 603.2g) and §2 (the enters view: 603.6b) — verified
+the CR/rulings use the **603.2** trigger framework, NOT replacement effects
+(614).
 
 - Panharmonicon ("that ability triggers an additional time") is governed by
   **603.2d**: an effect may state a triggered ability triggers additional
   times; you determine how many times it triggers, then it triggers that many
   times. It does **not** invoke itself, and stacks additively across copies
   (603.2d).
-- Torpor Orb ("creatures entering don't cause abilities to trigger") removes
-  the match: with no trigger event, nothing triggers (603.2 / 603.2g). Look at
-  the permanent as it exists on the battlefield to decide whether a trigger
-  condition is met (603.6b).
+- Torpor Orb ("creatures entering don't cause abilities to trigger") cuts the
+  link from a matching event to a trigger: its text contradicts 603.2's default
+  that a matching event triggers the ability, so the card takes precedence
+  (101.1). The entering event still happens, unlike a prevented or replaced
+  event, which "won't trigger anything" (603.2g). Look at the permanent as it
+  exists on the battlefield to decide whether a trigger condition is met
+  (603.6b).
 - Both are **outside** 614: replacement effects use "instead"/"skip"/ETB
   wording (614.1a–e); a trigger *count* modifier and a trigger *suppressor*
   are neither. Hence ETB replacement effects (e.g. "enters with a counter")
@@ -130,7 +137,9 @@ effect." **MATCH.**
 ## 7. Teferi's Protection — phasing + "life total can't change"
 
 **Q:** What does phasing-out + a frozen life total actually do? **Frame:**
-`actions.md` / keyword 702.26 (phasing) + 609.3 (do-as-much-as-possible).
+`events.md` §2 (phase in/out is a status change, not a zone change: 702.26b,
+702.26d, 603.10b) + `state.md` §6 (phased-out status and indirect phasing:
+702.26g, 702.26i) + `effects.md` §1 (do-as-much-as-possible: 609.3).
 
 - Phasing out (702.26b): a phased-out permanent is treated as though it
   doesn't exist — can't be targeted, statics off, can't be attacked/blocked;
@@ -176,12 +185,13 @@ put onto the battlefield transformed." **MATCH.**
 
 **Q:** How do a Room's doors and unlock work, and does Fractured Realm double
 "when you unlock this door" triggers from casting? **Frame:**
-`designations.md` §"Left half / right half unlocked" (709.5) + actions §603.2d.
+`designations.md` §"Left half / right half unlocked" (709.5) + `events.md` §6
+(603.2d).
 
-- A Room is one card (709.5b) with two doors (halves; 709.5j). While a half
-  lacks its unlocked designation, the permanent lacks that half's name, mana
-  cost, and rules text (709.5); its on-battlefield characteristics combine its
-  unlocked doors.
+- A Room is one card (709.2, 709.5) with two doors (halves; 709.5j). While a
+  half lacks its unlocked designation, the permanent lacks that half's name,
+  mana cost, and rules text (709.5); its on-battlefield characteristics
+  combine its unlocked doors.
 - Casting a door unlocks it as the Room enters (709.5d); you may also pay a
   locked door's mana cost as a **special action** with priority on an empty
   stack in your main phase (709.5e). "When you unlock this door" triggers
@@ -264,17 +274,27 @@ to cast a spell, this cost is paid after you've locked in the total cost."
 ## 12. Guerrilla Tactics — discard cause: the agent coordinate
 
 **Q:** Which discards match "a spell or ability an opponent controls causes
-you to discard this card"? **Frame:** `events.md` §3 (cause tags).
+you to discard this card"? **Frame:** `events.md` §2 (the discarded verb
+view) + §3 (cause tags).
 
-- The trigger is a predicate over the discard event's **cause triple**: verb
-  = discard (701.9a), agent kind = spell-or-ability, agent controller = an
+- "Discarded" is a verb-identified view: the discard action from hand counts
+  whether it was a cost, an effect, the cleanup turn-based action (703.4n) or
+  the Circling Vultures special action (116.2e), and wherever the card ends up
+  (701.9a, 701.9c; `events.md` §2). So the verb alone separates none of these
+  routes. The trigger is a predicate over the rest of the discard event's
+  **cause triple** (verb, agency, agent; `events.md` §3): agency =
+  effect-instruction, agent kind = spell-or-ability, agent controller = an
   opponent (`events.md` names this exact oracle family).
-- Discarding **as a cost** carries agency = cost-payment (601.2h), not
-  effect-instruction — no spell or ability is the causing agent — so
-  cost-discards never match. **Optionality is not a coordinate**: an
-  opponent's resolving spell that merely *lets* you discard still has that
-  spell as agent → trigger fires; who picks the card (default: the affected
-  player, 701.9b) doesn't matter either.
+- Every other route fails on agency or agent. Discarding **as a cost**
+  carries agency = cost-payment (601.2h), not effect-instruction; the player
+  who casts or activates pays it and controls the spell or ability (601.2a,
+  602.2a), so even a recorded agent would be that player's own, never an
+  opponent's. The cleanup discard has agency turn-based-action and no agent
+  (703.4n), and Circling Vultures' discard has agency special-action (116.2e).
+- **Optionality is not a coordinate**: an opponent's resolving spell that
+  merely *lets* you discard still has that spell as agent → trigger fires;
+  who picks the card (default: the affected player, 701.9b) doesn't matter
+  either.
 
 Official `[2004-10-04]`: "Discarding as a cost to cast a spell will not
 trigger the ability. Only discarding as an effect will trigger the ability."
@@ -312,8 +332,10 @@ and what does a copy of one copy? **Frame:** `information.md` §2 (face-down).
   the blank 2/2, not the hidden card (707.2, "as modified by … face-down
   status").
 - Look rights: a controller may look at their own face-down permanents at
-  any time — morph not required (708.5); other players never may. The
-  **differentiation duty** (708.6) still applies: every face-down object
+  any time — morph not required (708.5); other players may not by default
+  (708.5), though card text can override that for face-down creatures (101.1;
+  Lens of Clarity `[2014-09-20]`) but not for face-down spells on the stack.
+  The **differentiation duty** (708.6) still applies: every face-down object
   must stay distinguishable.
 
 Official `[2006-09-25]`: "The controller of a face-down creature can look at
@@ -405,12 +427,13 @@ amounts move if a target goes illegal? **Frame:** `queries.md` §2
 ("another"/"other"). *(Substitute for the ruling-less Arc Trail.)*
 
 - Three separate instances of "target": 115.3 alone would *allow* re-picking
-  the same object across instances; the distinctness comes from "another"/"a
-  third" — `queries.md`'s verified finding: templating-level English compiling
-  to a **set-distinctness constraint on the final target set** (115.7e — its
-  CR example is Arc Trail). At announcement the final set is the announced
-  set: three distinct legal targets per 601.2c or the proposal rewinds
-  (601.2e).
+  the same object across instances. The distinctness comes from "another"/"a
+  third", for which the CR has no general rule (`queries.md`: templating-level
+  English). Its effect is a **set-distinctness constraint on the final target
+  set**, as 115.7e's Arc Trail example shows; generalizing the earlier-mention
+  anchor beyond rulings like this one is a registered engine inference
+  (`underdetermined.md`). At announcement the final set is the announced set:
+  three distinct legal targets per 601.2c or the proposal rewinds (601.2e).
 - The amounts are bound per target instance by the spell's own text — nothing
   is "divided," so nothing can reflow. A target illegal at resolution is
   simply unaffected; the parts aimed at the others apply unchanged (608.2b) —
@@ -421,6 +444,37 @@ there aren't three different legal targets available, you can't cast the
 spell." And: "If one or two of Cone of Flame's targets are illegal when it
 resolves, you can't change how much damage will be dealt to the remaining
 legal targets." **MATCH.**
+
+## 19. Lich's Mirror — simultaneous SBA losses, one replacement
+
+**Q:** You control Lich's Mirror, are at 1 life with one card in your library,
+and a spell makes you draw two cards and lose 2 life. What happens? **Frame:**
+`actions.md` §3 (704.3, 704.7) + `outcomes.md` §2 (loss replacement).
+
+- The next SBA check finds 704.5a (0 or less life) and 704.5b (attempted to
+  draw from an empty library) true together, and all applicable SBAs are
+  performed simultaneously as a single event (704.3).
+- Both would have the same result, so a single replacement effect replaces
+  all of them (704.7; the rule's own example is this Lich's Mirror case):
+  Mirror applies once, not once per condition. The replaced loss never
+  happens and the modified event occurs instead (614.6).
+- Mirror shuffles all permanents you own, itself included when you own it, so
+  it leaves the battlefield, the only zone its ability functions in (113.6),
+  and can't replace a second loss (ruling below). Leaves-the-battlefield
+  triggers from the shuffled permanents wait until a player would next get
+  priority (603.3, 704.3), so they go on the stack only after its whole
+  effect is applied.
+
+Official `[2008-10-01]`: "If, during a check of state-based actions, you'd
+lose the game for multiple reasons (for example, if you were at 1 life and
+had one card in your library, then Night's Whisper caused you to draw two
+cards and lose 2 life), a single Lich's Mirror will replace all of them.
+You'll do what Lich's Mirror says just once." And: "As part of Lich's Mirror's
+effect, it typically shuffles itself into your library. If it does, that means
+that if you'd lose the game again immediately after its effect is finished, it
+can't help you a second time." And: "Any abilities that trigger when the
+permanents leave the battlefield will be put on the stack after Lich's
+Mirror's entire effect has been applied." **MATCH.**
 
 ## Maintenance
 
