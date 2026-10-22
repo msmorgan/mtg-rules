@@ -1,0 +1,20 @@
+# jj-kata per-repo config. Requires jj-sensei's workspace boundaries
+# (`setup-immutability`), installed in this repo's jj config.
+
+# Feature workspaces stay inside the coordinator checkout.
+workspace_dir = ".workspaces"
+
+# A fresh workspace lacks the gitignored data/ tree that the scripts, tests and
+# citation checks read; this links it from the default workspace.
+provision_hook = "scripts/provision-workspace"
+
+[items]
+driver = "kanban"
+visibility = "shared"
+
+[kanban]
+root = "docs/tickets"
+wip = "wip"
+done = "done"
+patterns = ["*.md"]
+columns = ["planned", "maybe", "wip", "done"]

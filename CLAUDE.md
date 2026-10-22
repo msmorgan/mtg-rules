@@ -26,6 +26,9 @@ verification workflow.
 ## Working in this repo
 
 - Use jj exclusively. Pushes and bookmark moves require the user's request.
+- Work is tracked with jj-kata (`kata.toml`). Tickets live in `docs/tickets/`
+  (see its README). Claim a ticket or start a named workspace before changing
+  files; the `default` workspace is for coordination.
 - Parallel implementers edit files; the coordinating agent owns jj operations,
   since snapshots include the entire working copy.
 - Invoke fish scripts as executables or with `fish`, regardless of the caller's shell.

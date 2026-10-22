@@ -1,0 +1,11 @@
+#!/bin/sh
+# Kata provision hook: link the default workspace's gitignored data/ tree into
+# a new feature workspace. Usage: provision-workspace WORKSPACE_PATH
+set -eu
+ws="$1"
+root="$(cd "$(dirname "$0")/.." && pwd)"
+if [ ! -d "$root/data" ]; then
+    echo "provision-workspace: $root/data is missing; run skills/mtg-rules/scripts/setup-data in default first" >&2
+    exit 1
+fi
+[ -e "$ws/data" ] || ln -s "$root/data" "$ws/data"
