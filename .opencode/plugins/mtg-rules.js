@@ -7,8 +7,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const pluginRoot = path.resolve(__dirname, "../..");
 const skillsDir = path.join(pluginRoot, "skills");
 const hooksDir = path.join(skillsDir, "mtg-rules", "scripts", "hooks");
-const ensureDataHook = path.join(hooksDir, "ensure_data.fish");
-const cardContextHook = path.join(hooksDir, "card_context.fish");
+const ensureDataHook = path.join(hooksDir, "ensure_data.py");
+const cardContextHook = path.join(hooksDir, "card_context.py");
 const citeContextHook = path.join(hooksDir, "cite_context.py");
 
 function extractAndStripFrontmatter(content) {
@@ -63,8 +63,7 @@ function loadSkills() {
 
 function runHook(script, payload, cwd, timeoutMs = 15_000) {
   try {
-    const python = script.endsWith(".py");
-    const res = spawnSync(python ? "python3" : "fish", python ? [script] : ["--no-config", script], {
+    const res = spawnSync("python3", [script], {
       cwd,
       input: JSON.stringify(payload),
       encoding: "utf8",

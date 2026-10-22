@@ -1,53 +1,11 @@
-#!/usr/bin/env fish
-# rule <number> — print CR rule text with subrules and examples.
-#   rule 601    → whole section 601
-#   rule 601.2  → 601.2 and its lettered subrules
-#   rule 601.2a → that subrule only
+#!/usr/bin/env python3
+"""Run rule from an unpacked plugin."""
+import sys
+from pathlib import Path
 
-source (path resolve (status dirname))/lib.fish; or exit 1
+SKILL = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(SKILL.parents[1] / "src"))
+from mtg_rules.lookups import main  # noqa: E402
 
-test (count $argv) -eq 1; or die "usage: rule <number>   (rule 601 | rule 601.2 | rule 601.2a)"
-set -l num $argv[1]
-
-set -l pat
-if string match -rq '^\d{3}$' -- $num
-    set pat '^'$num'\.'
-else if string match -rq '^\d{3}\.\d+$' -- $num
-    set pat '^'(string escape --style=regex -- $num)'[a-z]*$'
-else if string match -rq '^\d{3}\.\d+[a-z]+$' -- $num
-    set pat '^'(string escape --style=regex -- $num)'$'
-else
-    die "rule: '$num' does not look like a CR rule number"
-end
-
-jq -r --arg pat $pat '
-    [ to_entries[] | select(.key | test($pat)) ] as $hits
-    | if ($hits | length) == 0
-      then "rule: no CR entry matches \($pat)\n" | halt_error(1)
-      else empty end,
-      ( $hits[] | .value
-        | (if (.ruleNumber | test("[a-z]+$")) then .ruleNumber + " " else .ruleNumber + ". " end)
-          + .ruleText
-          + (if .examples
-             then "\n" + (.examples | map("    Example: " + .) | join("\n"))
-             else "" end) )
-' $rules_dir/cr.json
-or exit 1
-
-# Footer: up to 3 map sections citing a specific rule (skipped for a whole
-# section, where the citing set is too broad to be a short pointer).
-if not string match -rq '^\d{3}$' -- $num
-    set -l refs
-    for m in (fish (path resolve (status dirname))/ref --cites $num 2>/dev/null | string match -r '^\[map\] .*' \
-            | awk '{n=$0; sub(/.*\(/, "", n); sub(/ lines?\)$/, "", n); print n "\t" $0}' | sort -s -t (printf '\t') -k1,1nr | cut -f2-)
-        set -l p (string match -r '^\[map\] (\S+) §(.*?)( \(\d+ lines?\))+$' -- $m)
-        test (count $p) -ge 3; or continue
-        test "$p[3]" = "(header)"; and continue
-        set -l label (string match -rg '^(\d+(?:\.\d+)*)[.:)]?\s' -- $p[3])
-        test -n "$label"; or set label (string sub -l 24 -- $p[3])
-        set -a refs "$p[2] §$label"
-        test (count $refs) -ge 3; and break
-    end
-    test (count $refs) -gt 0; and echo "maps: "(string join ', ' -- $refs)" (ref <doc> <n> to read)"
-end
-true
+if __name__ == "__main__":
+    raise SystemExit(main("rule", SKILL))

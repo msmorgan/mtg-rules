@@ -3,7 +3,7 @@
     "PreInvocation": [
       {
         "type": "command",
-        "command": "fish ./skills/mtg-rules/scripts/hooks/ensure_data.fish",
+        "command": "python3 ./skills/mtg-rules/scripts/hooks/ensure_data.py",
         "timeout": 600
       }
     ]
@@ -12,7 +12,7 @@
     "PreInvocation": [
       {
         "type": "command",
-        "command": "fish ./skills/mtg-rules/scripts/hooks/card_context.fish",
+        "command": "python3 ./skills/mtg-rules/scripts/hooks/card_context.py",
         "timeout": 15
       }
     ]

@@ -32,7 +32,7 @@ attempt to load or use the MTG skill. Claims in the final prose earn no credit.
 The `--answer-probe` mode uses the numbered questions from `probes.json` unchanged,
 requiring card/rule lookups and the listed `frame_docs` as observable routes.
 
-Evidence recognition covers literal script paths (optionally run with `fish`
+Evidence recognition covers literal script paths (optionally run with `python3` or, for historical traces, `fish`
 or after `cd &&`) and three kinds of reference read: a Read call, a Bash `cat`,
 `sed`, `head`, `tail`, `less`, `rg` or `grep` on one literal doc path
 (`skills/mtg-rules/references/<doc>.md`, absolute or relative, or

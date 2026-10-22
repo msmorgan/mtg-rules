@@ -1,29 +1,11 @@
-#!/usr/bin/env fish
-# keyword <name> — print the CR section defining a keyword ability or keyword action.
+#!/usr/bin/env python3
+"""Run keyword from an unpacked plugin."""
+import sys
+from pathlib import Path
 
-source (path resolve (status dirname))/lib.fish; or exit 1
+SKILL = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(SKILL.parents[1] / "src"))
+from mtg_rules.lookups import main  # noqa: E402
 
-test (count $argv) -ge 1; or die "usage: keyword <name>   (keyword trample | keyword first strike)"
-set -l name (string lower -- "$argv")
-# glossary keys use curly apostrophes; build a curly variant of ASCII input
-set -l name_curly (string replace -a "'" ’ $name)
-set -l selfdir (path resolve (status dirname))
-
-set -l rulenum (jq -r --arg n $name '
-    to_entries[]
-    | select((.key | test("^70[12][.][0-9]+$"))
-             and ((.value.ruleText | ascii_downcase) == $n))
-    | .key' $rules_dir/cr.json)
-set rulenum $rulenum[1]
-
-if test -z "$rulenum"
-    set rulenum (jq -r --arg n $name --arg nc $name_curly '
-        (.[$n] // .[$nc] // empty) | .definition
-        | [ scan("rule ([0-9]{3}[.][0-9]+)") ] | .[0][0]? // empty
-    ' $rules_dir/glossary.json)
-end
-
-test -n "$rulenum"
-or die "keyword: no CR section found for '$argv' — try scripts/define or scripts/rule-search"
-
-$selfdir/rule $rulenum
+if __name__ == "__main__":
+    raise SystemExit(main("keyword", SKILL))

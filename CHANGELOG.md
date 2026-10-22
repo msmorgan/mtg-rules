@@ -9,6 +9,14 @@ mints/retirements, notation changes) are always called out explicitly.
 
 ## Unreleased
 
+- Port every remaining runtime lookup and bootstrap/card hook to shared
+  standard-library Python modules and thin launchers, following jj-sensei.
+  Remove runtime fish, rg, jq, sha256sum, curl, xz and sqlite3 CLI dependencies.
+  Preserve staged provisioning, lock recovery, data ABI and host protocols.
+- Use Python regex syntax for searches and read-only parameterized SQLite
+  queries. `version.git_commit` reports the jj parent ID or null when unavailable.
+  Keep development fish tooling, using Python `data-path` for discovery.
+
 - Port `cite` and its context hook to standard-library Python, with the shared
   `src/mtg_rules` layout and development-only pytest/Ruff tooling.
 - Expand ranges in CR document order; filter glob sources consistently, skip

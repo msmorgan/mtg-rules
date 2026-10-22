@@ -14,7 +14,7 @@ from .cite import Repository, Snapshot, context
 from .data import discover_data
 
 # Shared with the shell harness's coverage assertion. Command positions only.
-SCRIPT_NAMES = "(rule-search|underdetermined|setup-data|ensure-data|normalize-glossary|classify|corpus|rulings|keyword|version|define|health|lookup|card|cite|ref|rule|mtr)"
+SCRIPT_NAMES = "(data-path|rule-search|underdetermined|setup-data|ensure-data|normalize-glossary|classify|corpus|rulings|keyword|version|define|health|lookup|card|cite|ref|rule|mtr)"
 SKILL_CALL = re.compile(r"(^|[;&|(]|env( +[A-Za-z_][A-Za-z0-9_]*=[^ ]*)+ +)\s*(\./)*" + SCRIPT_NAMES + r"(\s|$)")
 
 

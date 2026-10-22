@@ -64,10 +64,11 @@ class EvidenceTests(unittest.TestCase):
         self.assertEqual(grade(POSITIVE, trace), [])
 
     def test_echo_comments_and_masked_failures_are_not_lookups(self):
-        for command in ["echo /plugin/skills/mtg-rules/scripts/rule 400.7",
+        for command in ["python3 -c scripts/rule 400.7", "echo /plugin/skills/mtg-rules/scripts/rule 400.7",
                         "echo 'x; scripts/rule 400.7'", "# scripts/rule 400.7",
                         "scripts/rule 400.7; true", "scripts/rule 400.7 | head"]:
             self.assertEqual(script_commands(command), set(), command)
+        self.assertEqual(script_commands('python3 "/plugin/skills/mtg-rules/scripts/rule" 400.7'), {"rule"})
         self.assertEqual(script_commands('fish "/plugin/skills/mtg-rules/scripts/rule" 400.7'), {"rule"})
         self.assertEqual(script_commands("cd /plugin/skills/mtg-rules && scripts/rule 400.7"), {"rule"})
 

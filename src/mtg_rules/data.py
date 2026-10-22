@@ -1,4 +1,4 @@
-"""Data discovery shared by Python tools; mirrors scripts/lib.fish."""
+"""Data discovery shared by all runtime commands and hooks."""
 
 import os
 import sys

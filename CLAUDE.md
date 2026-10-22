@@ -31,7 +31,8 @@ verification workflow.
   files; the `default` workspace is for coordination.
 - Parallel implementers edit files; the coordinating agent owns jj operations,
   since snapshots include the entire working copy.
-- Invoke fish scripts as executables or with `fish`, regardless of the caller's shell.
+- Invoke runtime scripts as executables or with `python3`. Development `.fish`
+  scripts require `fish`, regardless of the caller's shell.
 - Script changes use `tests/test_skill_scripts.fish`; eval tooling has
   `python3 -m unittest discover -s evals -p 'test_*.py'`. Before completing skill changes, run
   `fish tests/test_skill_scripts.fish`,

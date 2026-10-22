@@ -39,3 +39,24 @@ VCS executables remain optional for VCS-specific metadata and tracked scans.
 - CLI and hook behavior is checked against fixtures and representative local
   rules/card data. Document deliberate compatibility corrections.
 - Integrate the ticket and move it to `done/` through Kata.
+
+## Completed
+
+All installed commands and hooks now use shared standard-library Python
+modules with executable launchers. Host manifests invoke Python directly;
+`lib.fish` is removed and development consumers use `data-path`. Bootstrap
+retains serialization, stale/ownerless lock recovery, staged validation and
+marker-last publication. SQLite queries are parameterized and read-only.
+
+Validation: 99 pytest tests, 250 shell assertions, 16 evaluation unittests,
+Ruff, and both citation checks pass (7,813 skill and 263 eval citations;
+zero stale). The Python suite exercises every command and hook with only
+Python on PATH, plus concurrent provisioning and failed/live/stale owners.
+Seventeen representative lookups match captured pre-port stdout, stderr and
+exit status exactly. Network downloads were covered with offline fixtures;
+no live download was required for verification.
+
+Deliberate compatibility changes: regex searches use Python `re`; the legacy
+`git_commit` metadata key reports the jj parent ID, or null without jj.
+The card hook accepts whitespace-formatted transcript JSON. Development fish
+harnesses remain outside the installed runtime dependency contract.

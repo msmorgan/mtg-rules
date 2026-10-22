@@ -61,6 +61,8 @@ def skill_script(group):
         group = group[1:]
         if group and group[0] == "--no-config":
             group = group[1:]
+    elif Path(group[0]).name == "python3":
+        group = group[1:]
     if not group:
         return None
     path = group[0].removeprefix("./")
@@ -211,7 +213,7 @@ def main():
                    "--add-dir", str(PLUGIN / "skills/mtg-rules"), "--tools", "Skill,Read,Bash",
                    "--disallowedTools", "Edit,Write", "--allowedTools", "Skill", "Read"]
         for script in ("lookup", "rule", "rule-search", "define", "keyword", "card",
-                       "rulings", "mtr", "corpus", "classify", "underdetermined"):
+                       "rulings", "mtr", "corpus", "classify", "underdetermined", "ref"):
             command.append(f"Bash({PLUGIN / 'skills/mtg-rules/scripts' / script} *)")
         print(f"Running one paid probe; transcript: {transcript}", flush=True)
         with transcript.open("w") as output, (workspace / "stderr.txt").open("w") as error:

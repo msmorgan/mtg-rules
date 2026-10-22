@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "fish \"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/skills/mtg-rules/scripts/hooks/ensure_data.fish\"",
+            "command": "python3 \"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/skills/mtg-rules/scripts/hooks/ensure_data.py\"",
             "timeout": 600,
             "statusMessage": "Preparing MTG rules and card data"
           }
@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "fish \"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/skills/mtg-rules/scripts/hooks/card_context.fish\"",
+            "command": "python3 \"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/skills/mtg-rules/scripts/hooks/card_context.py\"",
             "timeout": 15,
             "statusMessage": "Resolving double-bracketed Magic cards",
             "additionalContextLimit": 100000

@@ -59,7 +59,8 @@ download, payloads are validated in staging, and a data-ABI marker makes
 later session checks local and fast. Hook setup failures produce a warning but
 do not block prompts or tools.
 
-Required local tools are Python 3.11+, `fish`, `curl`, `jq`, `xz`, and `sqlite3`.
+The installed plugin requires Python 3.11+ with its standard-library SQLite
+and LZMA modules. It needs no third-party Python packages or shell utilities.
 
 The first run requires hook trust on hosts that prompt for newly installed hook
 definitions. If automatic setup reports a failure, retry from the plugin root:
@@ -258,8 +259,8 @@ Academy Ruins, Scryfall, MTGJSON) using the bundled tooling.
 
 ## Python tooling
 
-Citation tooling uses Python 3.11+ and its standard library. The executable
-under `skills/mtg-rules/scripts/` imports the shared implementation in
+All runtime tooling uses Python 3.11+ and its standard library. Executables
+under `skills/mtg-rules/scripts/` import the shared implementation in
 `src/mtg_rules/` directly; an unpacked plugin needs no Python install step.
 Keep the plugin tree together when copying it. Development checks:
 
@@ -271,12 +272,15 @@ fish tests/test_skill_scripts.fish
 
 ### Citation checker contracts
 
-`cite`, `setup-data`, and the citation context hook use Python's standard
-library for JSON, regular expressions, SHA-256, downloads, XZ decompression,
-and SQLite validation. They do not require fish, ripgrep, jq, sha256sum, or
-curl. The remaining lookup scripts and bootstrap/card hooks still use the
-local tools listed above. Tracked-source discovery uses jj, with Git as a
-fallback for Git-only consumers.
+All lookup commands, downloads, bootstrap and context hooks use Python's
+standard library. Installed runtime paths need no fish, ripgrep, jq,
+sha256sum, curl, xz, or sqlite3 executable. Development-only `.fish` tools
+and the legacy regression harness still require fish and their shell utilities.
+Tracked-source discovery uses jj, with Git as a fallback for Git-only consumers.
+The `version` command's legacy `git_commit` field reports the jj parent commit
+ID when available, or null without jj metadata. Search expressions use Python
+`re` syntax; invalid expressions produce an error. SQLite lookups bind query
+parameters and open databases read-only.
 
 Citation ranges follow `cr.txt` document order, including lettered children
 and skipped letters. Source discovery skips symlinks and applies `extensions`
