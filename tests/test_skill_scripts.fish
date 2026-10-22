@@ -579,7 +579,7 @@ set -l htree (mktemp -d)
 set -l hskill $htree/skills/mtg-rules
 mkdir -p $hskill/scripts $hskill/references
 cp $scripts/lib.fish $scripts/health $scripts/cite $hskill/scripts/
-cp -r $scripts/cite-lib $hskill/scripts/
+cp -r $repo/src $htree/
 echo '{"format":"bare","lockfile":"cr-citations.lock","sources":{"globs":["references/*.md"]}}' >$hskill/cite-config.json
 printf '# A\n\n*Synthesized from the Comprehensive Rules effective %s.*\n' $live_iso >$hskill/references/a.md
 printf '# B\n\n*Synthesized from the Comprehensive Rules effective 2020-01-01.*\n' >$hskill/references/b.md
@@ -629,7 +629,7 @@ set -l rtree (mktemp -d)
 set -l rskill $rtree/skills/mtg-rules
 mkdir -p $rskill/scripts $rskill/references
 cp $scripts/lib.fish $scripts/ref $scripts/cite $rskill/scripts/
-cp -r $scripts/cite-lib $rskill/scripts/
+cp -r $repo/src $rtree/
 echo '{"format":"bare","lockfile":"cr-citations.lock","sources":{"globs":["references/*.md"]}}' >$rskill/cite-config.json
 printf '%s\n' \
     '# Fixture — Cites' '' \

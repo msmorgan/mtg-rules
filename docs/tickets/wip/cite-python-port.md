@@ -50,3 +50,15 @@ is the base that `cite-xtask-parity` builds on.
 
 - **Minimum Python version.** jj-kata already requires 3.11. The plugin's
   hosts run `python3` for the evals today.
+
+## Completion
+
+Implemented with Python 3.11+ and the jj-sensei layout: a thin executable,
+`src/mtg_rules`, `pyproject.toml`, and a development-only pytest/Ruff toolchain.
+The citation runtime uses only the standard library (plus jj for tracked-file
+listing and interactive diff acquisition). The existing lockfiles are unchanged.
+
+Validation: 250 shell assertions and 23 Python tests passed; Ruff passed.
+The skill and eval citation checks retain their original results: 7,813 and
+263 checked citations respectively, both with zero stale. Fixture setup now
+copies `src/` instead of the removed jq library; existing assertions are intact.

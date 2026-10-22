@@ -9,3 +9,11 @@ __pycache__/
 
 # jj-kata feature workspaces live inside the coordinator checkout.
 /.workspaces/
+
+# Python development environments and tooling caches.
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/

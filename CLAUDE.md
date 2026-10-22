@@ -34,8 +34,9 @@ verification workflow.
 - Invoke fish scripts as executables or with `fish`, regardless of the caller's shell.
 - Script changes use `tests/test_skill_scripts.fish`; eval tooling has
   `python3 -m unittest discover -s evals -p 'test_*.py'`. Before completing skill changes, run
-  `fish tests/test_skill_scripts.fish` and
-  `skills/mtg-rules/scripts/cite check` (both exit 0).
+  `fish tests/test_skill_scripts.fish`,
+  `uv run --extra dev pytest`, `uv run --extra dev ruff check .`, and
+  `skills/mtg-rules/scripts/cite check` (all exit 0).
   Changes to validation records also require
   `skills/mtg-rules/scripts/cite --config evals/cite-config.json check`.
 - Prefer the most capable model tier for synthesis/review subagents; cheap

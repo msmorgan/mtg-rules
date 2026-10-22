@@ -59,7 +59,7 @@ download, payloads are validated in staging, and a data-ABI marker makes
 later session checks local and fast. Hook setup failures produce a warning but
 do not block prompts or tools.
 
-Required local tools are `fish`, `curl`, `jq`, `xz`, and `sqlite3`.
+Required local tools are Python 3.11+, `fish`, `curl`, `jq`, `xz`, and `sqlite3`.
 
 The first run requires hook trust on hosts that prompt for newly installed hook
 definitions. If automatic setup reports a failure, retry from the plugin root:
@@ -255,3 +255,16 @@ the Magic: The Gathering Comprehensive Rules and official card rulings in
 not covered by the MIT license. The repository ships no card data; users
 fetch rules text and card data themselves from public sources (Wizards via
 Academy Ruins, Scryfall, MTGJSON) using the bundled tooling.
+
+## Python tooling
+
+Citation tooling uses Python 3.11+ and its standard library. The executable
+under `skills/mtg-rules/scripts/` imports the shared implementation in
+`src/mtg_rules/` directly; an unpacked plugin needs no Python install step.
+Keep the plugin tree together when copying it. Development checks:
+
+```sh
+uv run --extra dev pytest
+uv run --extra dev ruff check .
+fish tests/test_skill_scripts.fish
+```
