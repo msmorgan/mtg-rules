@@ -15,7 +15,7 @@ from pathlib import Path
 
 from . import cite
 from .cards import card_text, ruling_text
-from .data import discover_data
+from .data import locate_data
 from .references import USAGE, Maps, rule_pattern
 from .setup_data import normalize_glossary
 
@@ -40,8 +40,12 @@ class Runtime:
         self.skill = skill.resolve()
 
     @cached_property
+    def located(self):
+        return locate_data(self.skill)
+
+    @property
     def data(self):
-        return discover_data(self.skill)
+        return self.located[0]
 
     @cached_property
     def rules(self):
@@ -248,8 +252,7 @@ def version(runtime):
 
 def health(runtime):
     data = runtime.data
-    via = next(('$' + key for key in ('MTG_RULES_DATA', 'PLUGIN_DATA', 'CLAUDE_PLUGIN_DATA') if str(data) == os.environ.get(key)), 'repo-relative')
-    print(f'data: {data} (via {via})')
+    print(f'data: {data} (via {runtime.located[1]})')
     try:
         text = (data / 'rules/cr.txt').read_text(encoding='utf-8')
         date = cite.effective_date(text)

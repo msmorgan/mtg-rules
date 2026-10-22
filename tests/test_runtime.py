@@ -257,3 +257,18 @@ def test_bootstrap_concurrency_with_only_python_on_path(tmp_path):
                 process.wait()
     assert count.read_text().strip() == '1'
     assert bootstrap.ready(dest)
+
+
+def test_health_labels_the_source_discovery_used(plugin, monkeypatch, tmp_path):
+    root, skill, data = plugin
+    monkeypatch.setenv('MTG_RULES_DATA', str(data) + '/')
+    assert 'via $MTG_RULES_DATA' in invoke(skill, 'health')[1]
+    home = tmp_path / 'home'
+    host = home / '.claude/plugins/data/mtg-rules/data'
+    host.parent.mkdir(parents=True)
+    shutil.move(data, host)
+    for key in ('MTG_RULES_DATA', 'PLUGIN_DATA'):
+        monkeypatch.delenv(key)
+    monkeypatch.setenv('HOME', str(home))
+    code, out, err = invoke(skill, 'health')
+    assert f'data: {host} (via host plugin data)' in out, (out, err)

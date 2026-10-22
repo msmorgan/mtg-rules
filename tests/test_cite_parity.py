@@ -307,3 +307,74 @@ def test_failed_xz_download_does_not_replace_existing_file(tmp_path):
         download(source.as_uri(), target, compressed=True)
     assert target.read_bytes() == b'keep me'
     assert {p.name for p in tmp_path.iterdir()} == {'bad.xz', 'existing'}
+
+
+def _tty_stdin():
+    stdin = io.StringIO("")
+    stdin.isatty = lambda: True
+    return stdin
+
+
+def test_interactive_audit_diff_falls_back_to_git(repo, capsys):
+    diff = "+++ b/src/good.md\n@@ -0,0 +1,1 @@\n+Good citations: [CR#702.22a]\n"
+    results = [FileNotFoundError(), subprocess.CompletedProcess([], 0, stdout=diff)]
+    with patch.object(sys, "stdin", _tty_stdin()), patch("subprocess.run", side_effect=results) as run:
+        assert main(["--config", str(repo.root / "cfg-good.json"), "audit", "--diff"]) == 0
+    assert run.call_args.args[0][:3] == ["git", "-C", str(repo.root)]
+    assert "audited 2 citation site(s)" in capsys.readouterr().out
+
+
+def test_interactive_audit_diff_falls_back_when_jj_is_not_a_repo(repo, capsys):
+    diff = "+++ b/src/good.md\n@@ -0,0 +1,1 @@\n+Good citations: [CR#702.22a]\n"
+    results = [subprocess.CompletedProcess([], 1, stdout="", stderr="There is no jj repo"),
+               subprocess.CompletedProcess([], 0, stdout=diff)]
+    with patch.object(sys, "stdin", _tty_stdin()), patch("subprocess.run", side_effect=results) as run:
+        assert main(["--config", str(repo.root / "cfg-good.json"), "audit", "--diff"]) == 0
+    assert run.call_args.args[0][:3] == ["git", "-C", str(repo.root)]
+    assert "audited 2 citation site(s)" in capsys.readouterr().out
+
+
+def test_interactive_audit_diff_reports_missing_tools(repo, capsys):
+    with patch.object(sys, "stdin", _tty_stdin()), patch("subprocess.run", side_effect=FileNotFoundError()):
+        assert main(["--config", str(repo.root / "cfg-good.json"), "audit", "--diff"]) == 1
+    assert "neither jj nor git" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("source", [
+    "const K: &'static str = \"100.1\"; // cite: allow-noncompliant-line -- parser's key\n",
+    "fn f<'a, 'b>(x: &'a str) -> &'b str { r\"\\\" } // cite: allow-noncompliant-line -- it's fine\n",
+    "let p = r\"\\\"; // cite: allow-noncompliant-line -- raw backslash\nlet q = \"x\";\n",
+])
+def test_exemption_lexer_handles_lifetimes_and_zero_hash_raw_strings(source):
+    assert exempt_lines(source) == {1}
+
+
+def test_exemption_lexer_still_quotes_apostrophe_strings():
+    source = "echo 'a b' # cite: allow-noncompliant-line -- shell\nx = 'it // not'\n"
+    assert exempt_lines(source) == {1}
+    assert exempt_lines("x = '// cite: allow-noncompliant-line -- quoted'\n") == set()
+
+
+def test_context_matches_dotted_out_of_scope_keys(repo, capsys):
+    config = json.loads((repo.root / "cfg-good.json").read_text())
+    config["coverage"] = {"out_of_scope": {"702.22": "x", "100": "y", "800..999": "z", "bogus": "w", "100.1": "v"}}
+    (repo.root / "cfg-good.json").write_text(json.dumps(config))
+    with patch.dict(os.environ, {"MTG_RULES_DATA": str(repo.root / "data")}), \
+            patch.object(sys, "stdin", io.StringIO("[CR#702.22a]")):
+        assert main(["--config", str(repo.root / "cfg-good.json"), "context"]) == 0
+    captured = capsys.readouterr()
+    assert "[CR#702.22a]  ·  out-of-scope range" in captured.out
+    assert "bogus" in captured.err
+
+
+def test_download_reports_each_url_on_stderr(tmp_path, capsys):
+    source = tmp_path / "source.txt"
+    source.write_text("data")
+    download(source.as_uri(), tmp_path / "out")
+    assert source.as_uri() in capsys.readouterr().err
+
+
+def test_setup_reports_destination_on_stderr(tmp_path, capsys):
+    with patch("mtg_rules.setup_data.download", side_effect=OSError("stop")), pytest.raises(OSError):
+        setup(tmp_path / "dest")
+    assert str(tmp_path / "dest") in capsys.readouterr().err

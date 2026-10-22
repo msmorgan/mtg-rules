@@ -45,6 +45,7 @@ def default_destination(skill: Path) -> Path:
 def download(url: str, target: Path, *, compressed=False) -> None:
     """Stream large downloads; publish only after the transfer/decode succeeds."""
     target.parent.mkdir(parents=True, exist_ok=True)
+    print(f"setup-data: fetching {url}", file=sys.stderr)
     for attempt in range(3):
         temp = None
         try:
@@ -122,6 +123,7 @@ def build_cards(source: Path, target: Path) -> None:
 
 def setup(dest: Path, *, runtime=False, cards=False, rulings=False) -> None:
     dest.mkdir(parents=True, exist_ok=True)
+    print(f"setup-data: destination {dest}", file=sys.stderr)
     with tempfile.TemporaryDirectory(prefix=".setup-", dir=dest) as staging:
         stage = Path(staging)
         for endpoint, filename in RULES.items():

@@ -257,6 +257,17 @@ def bless(repo: Repository, snapshot: Snapshot, sites: list[dict]) -> int:
     return 0
 
 
+def out_of_scope(rule: str, key: str) -> bool:
+    """A key is a section (123), a section range (800..999) or a rule prefix (103.4)."""
+    section = int(rule.split(".")[0])
+    if ".." in key:
+        low, high = (int(x) for x in key.split(".."))
+        return low <= section <= high
+    if "." not in key:
+        return section == int(key)
+    return rule == key or (rule.startswith(key) and rule[len(key)].isalpha())
+
+
 def context(repo: Repository, snapshot: Snapshot, args, *, text: str | None = None) -> int:
     if not re.fullmatch(r"[0-9]+", args.max):
         raise ValueError("cite context: --max wants a non-negative integer")
@@ -274,16 +285,18 @@ def context(repo: Repository, snapshot: Snapshot, args, *, text: str | None = No
         known = repo.lock("context").get("checksums", {}) if repo.lock_path.is_file() else batch
     except (ValueError, OSError):
         known = {}
+    scope_keys = []
+    for key in repo.config.get("coverage", {}).get("out_of_scope", {}):
+        if re.fullmatch(r"[0-9]+(?:\.\.[0-9]+|\.[0-9]+)?", key):
+            scope_keys.append(key)
+        else:
+            print(f"cite context: skipping unrecognized coverage.out_of_scope key {key!r}", file=sys.stderr)
     print(f"mtg-rules · {len(shown)} CR citation{'s' if len(shown) != 1 else ''} referenced for the first time this session:")
     for rule in shown:
         body = normalize(snapshot.texts.get(rule, ""))
         tag = "  ·  NOT FOUND IN THE CR" if rule not in snapshot.texts else "  ·  new to this repo" if rule not in known else ""
-        section = int(rule.split(".")[0])
-        for span in repo.config.get("coverage", {}).get("out_of_scope", {}):
-            endpoints = [int(x) for x in span.split("..")]
-            if endpoints[0] <= section <= endpoints[-1]:
-                tag += "  ·  out-of-scope range"
-                break
+        if any(out_of_scope(rule, key) for key in scope_keys):
+            tag += "  ·  out-of-scope range"
         if rule in known and not args.full and len(body) > 240:
             cut = body.rfind(" ", 0, 240)
             body = body[:cut if cut > 0 else 239] + " …"
@@ -421,8 +434,17 @@ def run(args) -> int:
         return 0
     if args.diff:
         if sys.stdin.isatty():
-            result = subprocess.run(["jj", "--no-pager", "diff", "--git"], cwd=repo.root, capture_output=True, text=True, check=True)
-            diff = result.stdout
+            diff = None
+            for command in (["jj", "--no-pager", "diff", "--git"], ["git", "-C", str(repo.root), "diff"]):
+                try:
+                    result = subprocess.run(command, cwd=repo.root, capture_output=True, text=True, check=False)
+                except FileNotFoundError:
+                    continue
+                if result.returncode == 0:
+                    diff = result.stdout
+                    break
+            if diff is None:
+                raise ValueError(f"cite: cannot diff (neither jj nor git is available in {repo.root})")
         else:
             diff = sys.stdin.read()
         selected = added_diff_lines(diff)

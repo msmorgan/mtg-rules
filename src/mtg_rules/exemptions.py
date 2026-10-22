@@ -1,7 +1,7 @@
 """Explicit, language-independent exemptions for citation-looking source text.
 
 Markers live in //, #, --, or HTML comments. Ordinary, triple-quoted and Rust
-raw strings are skipped before looking for comments, so quoted markers do not
+raw strings (Rust lifetimes are not strings) are skipped before looking for comments, so quoted markers do not
 suppress diagnostics. This is a lexical guard, not a programming-language parser.
 The allow- prefix distinguishes this contract from xtask's Rust-AST exemptions.
 """
@@ -9,9 +9,11 @@ The allow- prefix distinguishes this contract from xtask's Rust-AST exemptions.
 import re
 
 # Order matters: consume complete strings before treating their contents as
-# comments. Rust lifetimes aren't character literals (a closing quote is needed).
+# comments. A Rust lifetime ('a after & or <, or before , or >) is not a string
+# opener; raw strings may have zero hashes.
 LEX = re.compile(
-    r'(?P<raw>\br(?P<hashes>\#+)".*?"(?P=hashes))'
+    r'(?P<raw>\br(?P<hashes>\#*)".*?"(?P=hashes))'
+    r"|(?P<lifetime>(?<=[&<])'[A-Za-z_]\w*(?![\w'])|'[A-Za-z_]\w*(?=[,>]))"
     r'|(?P<triple>""".*?"""|\'\'\'.*?\'\'\')'
     r'|(?P<string>"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\\n])*\')'
     r'|(?P<block>/\*.*?\*/)'

@@ -11,7 +11,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from mtg_rules.cite import Repository, Snapshot, checksum, main, scan, stale
-from mtg_rules.data import discover_data
+from mtg_rules.data import discover_data, locate_data
 
 FIXTURES = Path(__file__).parent / "fixtures/cite"
 
@@ -90,6 +90,18 @@ class CiteTests(unittest.TestCase):
         env["MTG_RULES_DATA"] = str(self.root / "data")
         self.assertEqual(discover_data(skill, env), self.root / "data")
         self.assertEqual(discover_data(skill, {"HOME": str(home)}), host)
+
+    def test_locate_data_reports_the_source_used(self):
+        home = self.root / "home"
+        skill = home / ".codex/plugins/cache/mtg-rules/skills/mtg-rules"
+        host = home / ".codex/plugins/data/mtg-rules/data"
+        (host / "rules").mkdir(parents=True)
+        (host / "rules/cr.json").write_text("{}")
+        self.assertEqual(locate_data(skill, {"HOME": str(home)}), (host, "host plugin data"))
+        env = {"HOME": str(home), "MTG_RULES_DATA": str(self.root / "data") + "/"}
+        self.assertEqual(locate_data(skill, env), (self.root / "data", "$MTG_RULES_DATA"))
+        repo_skill = self.root / "skills/mtg-rules"
+        self.assertEqual(locate_data(repo_skill, {"HOME": str(self.root / "none")}), (self.root / "data", "repo-relative"))
 
 
 if __name__ == "__main__":
