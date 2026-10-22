@@ -7,6 +7,49 @@ re-run your alignment pass against the new taxonomy and data before
 re-pinning. Taxonomy-meaning changes (reclassifications, primitive
 mints/retirements, notation changes) are always called out explicitly.
 
+## 1.11.0 — 2026-10-21
+
+- **Taxonomy-meaning changes (re-sync your alignment pass).**
+  - Empower Jace (701.71) is classified as composite, so `keywords-classified.json` now has 266 rows.
+  - Convert moves from intrinsic to composite over Transform, so intrinsic goes from 25 to 24.
+  - `progress-track` is redefined as a game-maintained value that changes in both directions (day/night, speed); counts are unchanged.
+  - `cost-modification-hook` is redefined as a payment substitution with two scopes. Convoke, delve, improvise and assist use the whole locked total; waterbend uses one cost component, wherever that component is paid.
+  - `core_referenced` is recomputed from rule text, and the rule is recorded in `meta.core_referenced_rule`.
+- **Engine-choice registry.**
+  - New entries UD-13 to UD-39. UD-40 and UD-41 are filed as settled.
+  - UD-6, UD-7, UD-8, UD-9, UD-11 and UD-12 are narrowed where CR text settles part of the question.
+- **Comprehensive Rules re-sync (effective 2026-09-25).**
+  - Every map is re-verified, and its synthesis header is updated.
+  - The new 506.6 ("attacks a player alone") and the 506.7/506.8 renumbering are covered.
+  - Both citation locks are re-blessed.
+- **Map corrections.** An audit checked every map against the current CR and official rulings. Its verified corrections are applied, including:
+  - skip is a replacement effect (614.1b);
+  - 601.6 rewinds only a completed proposal;
+  - last-known-information scope, plus 608.2b;
+  - two-pass trigger batching (603.3b);
+  - the card-type and supertype lists are closed (205.2a, 205.4a);
+  - pronoun binding follows rulings, not recency;
+  - the anchor of "another" may be anaphoric or cataphoric;
+  - Two-Headed Giant team outcomes (810.8a);
+  - the first-turn draw skip (103.8a).
+
+  Rules derivations from a consumer engine's workbench are backfilled. Every claim keeps its dotted citation.
+- **New map: `oracle-style.md`.** An Oracle text style guide written as a copy-editing manual, for writing, templating or copy-editing card text. `grammar.md` stays the parsing map and points to it for noun-phrase conventions.
+- **Routing.**
+  - `SKILL.md` splits verdict work from model work, and model work reads the matching map section.
+  - A Maps table in consumer vocabulary comes before Lookups.
+  - New authority lines: numbered rules outrank glossary entries, a citation must support its claim, and placement claims need a typed corpus probe.
+- **Scripts.**
+  - New `ref` section reader (`ref <map> <n|heading>`, `--cites`, `--grep`), with a map-not-source banner.
+  - `lookup` searches map bodies and prints `[map]` lines.
+  - `rule` names the map sections that cite a rule.
+  - `health` prints one map-sync summary line and warns about unclassified keywords.
+  - `define` prints the numbered rule a glossary entry points to.
+  - A harness test requires a classification row for every 701/702 keyword.
+- **Evals.**
+  - The invocation grader credits map reads made through Bash (`cat`, `sed`, `head`, `rg`, …) and `ref`.
+  - Rulings-check probes 4, 5, 7, 9, 12, 14 and 18 are re-derived, and probe 19 (Lich's Mirror) is added.
+
 ## 1.10.1 — 2026-09-10
 
 - **Skill routing and authority.** Consolidated question routes, clarified CR,

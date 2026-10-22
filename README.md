@@ -118,7 +118,7 @@ set -x MTG_RULES_DATA /path/to/your/data
 
 The on-disk layout under the resolved data dir (`$MTG_RULES_DATA` →
 host-specific plugin data → repo `data/`) is a compatibility
-contract, versioned with the plugin (current: 1.10.1; layout changes are
+contract, versioned with the plugin (current: 1.11.0; layout changes are
 called out in [CHANGELOG.md](CHANGELOG.md)). Consumers pin the manifest from
 `skills/mtg-rules/scripts/version` and re-sync on any bump.
 
