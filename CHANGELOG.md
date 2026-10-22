@@ -7,6 +7,21 @@ re-run your alignment pass against the new taxonomy and data before
 re-pinning. Taxonomy-meaning changes (reclassifications, primitive
 mints/retirements, notation changes) are always called out explicitly.
 
+## Unreleased
+
+- Port `cite` and its context hook to standard-library Python, with the shared
+  `src/mtg_rules` layout and development-only pytest/Ruff tooling.
+- Expand ranges in CR document order; filter glob sources consistently, skip
+  symlinks, and preserve spaced paths in diff audits. Add `cite list --json`.
+- Add language-independent, reasoned `allow-noncompliant` comment exemptions;
+  retain configured path exemptions. Existing Rust-specific consumer markers
+  require an explicit migration.
+- Port `setup-data` to standard-library downloads, XZ decoding and SQLite
+  validation. Retain the previous CR edition locally for `cite diff`; reject
+  HTML fallbacks. Repository base-data refresh uses the same implementation.
+- Add fixtures mapped to all 33 deckmaste.rs citation tests, documenting the
+  deliberate exemption-contract differences, plus plugin regression tests.
+
 ## 1.11.0 — 2026-10-21
 
 - **Taxonomy-meaning changes (re-sync your alignment pass).**

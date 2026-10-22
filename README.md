@@ -268,3 +268,52 @@ uv run --extra dev pytest
 uv run --extra dev ruff check .
 fish tests/test_skill_scripts.fish
 ```
+
+### Citation checker contracts
+
+`cite`, `setup-data`, and the citation context hook use Python's standard
+library for JSON, regular expressions, SHA-256, downloads, XZ decompression,
+and SQLite validation. They do not require fish, ripgrep, jq, sha256sum, or
+curl. The remaining lookup scripts and bootstrap/card hooks still use the
+local tools listed above. Tracked-source discovery uses jj, with Git as a
+fallback for Git-only consumers.
+
+Citation ranges follow `cr.txt` document order, including lettered children
+and skipped letters. Source discovery skips symlinks and applies `extensions`
+and path-prefix `exclude` filters in both tracked and glob modes.
+`cite list --json` returns a JSON array with `file`, `line`, `token`, `status`,
+and `members` for every site. Status is `ok`, `gone`, `malformed`, or
+`placeholder`; a syntactically valid single rule has status `ok` even if it
+has vanished, which `check` detects. Malformed and placeholder sites have no
+members. Text-mode `list` retains its existing format and omits non-ok sites.
+
+`setup-data` (also used by `scripts/fetch_data.fish` for base data) retains
+`rules/previous/cr.json` and `rules/previous/cr.txt` when the effective date
+changes. Repeating a refresh of the same edition preserves that previous
+edition. `cite diff` uses it when its date matches the lockfile, otherwise
+it tries the locked URL. An HTML landing page is an error, not an empty CR.
+
+For source fixtures containing citation-looking text, use explicit comment
+markers with a reason:
+
+```text
+// cite: allow-noncompliant begin -- verbatim parser fixture
+... fixture containing loose rule numbers ...
+// cite: allow-noncompliant end
+
+value = "100.1"; // cite: allow-noncompliant-line -- machine-readable parser key
+```
+
+The comment delimiters `//`, `#`, `--`, and `<!-- ... -->` are supported.
+Scope delimiters occupy their own lines; nesting, missing ends, and malformed
+markers fail the scan. Line markers exempt the entire line, so keep independent
+rules claims on separate lines. Markers inside ordinary quoted, triple-quoted,
+or Rust raw strings are ignored. This is a lexical guard, not language parsing.
+Exemptions apply only to `check --list-noncompliant`; they never suppress
+canonical citation checking. The existing `noncompliant_exempt` path-suffix
+config remains supported.
+
+These `allow-noncompliant` markers deliberately differ from deckmaste.rs's
+Rust-specific `noncompliant` markers. Migrating a consumer requires explicitly
+adopting the broader line/scope contract; its old markers do not silently gain
+new meaning.

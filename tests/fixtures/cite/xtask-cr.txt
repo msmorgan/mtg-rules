@@ -1,0 +1,15 @@
+Magic: The Gathering Comprehensive Rules
+These rules are effective as of January 2, 2026.
+Contents
+100. General
+200. General
+
+1. Game Concepts
+100. General
+100.1. Alpha   rule.
+     Continued definition.
+     Example: This illustrative text is excluded.
+100.1a First child.
+100.1c Third child after a skipped letter.
+200. General
+200.1. Another rule.

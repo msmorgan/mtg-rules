@@ -32,7 +32,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "fish \"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/skills/mtg-rules/scripts/hooks/cite_context.fish\"",
+            "command": "python3 \"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/skills/mtg-rules/scripts/hooks/cite_context.py\"",
             "timeout": 15
           }
         ]

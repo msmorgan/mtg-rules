@@ -21,6 +21,7 @@ import urllib.request
 from pathlib import Path
 
 from .data import discover_data
+from .exemptions import exempt_lines
 
 BRACKETED = re.compile(r"\[CR#([^\]]*)\]")
 BARE = re.compile(r"\b[1-9][0-9]{2}\.[0-9]+[a-z]?\b")
@@ -51,6 +52,24 @@ def effective_date(text: str) -> str:
     return f"{int(year):04d}-{months.index(month) + 1:02d}-{int(day):02d}"
 
 
+def parse_rule_text(text: str) -> tuple[dict[str, str], list[str]]:
+    """Read document order and full bodies, excluding illustrative examples."""
+    texts, order = {}, []
+    target = None
+    for line in text.splitlines():
+        match = re.match(r"^([0-9]{1,3}(?:\.[0-9]+[a-z]*)?)\.? (.+)$", line)
+        if match:
+            target, body = match.groups()
+            if "." in target and target not in texts:
+                order.append(target)
+            texts[target] = normalize(body)
+        elif line[:1].isspace() and normalize(line) and not line.strip().startswith("Example:") and target:
+            texts[target] += " " + normalize(line)
+        else:
+            target = None
+    return texts, order
+
+
 class Snapshot:
     def __init__(self, rules_dir: Path):
         rules = json.loads((rules_dir / "cr.json").read_text(encoding="utf-8"))
@@ -58,7 +77,9 @@ class Snapshot:
         self.date = effective_date(text)
         self.texts = {m[1]: m[2] for m in re.finditer(r"^([0-9]{1,3})\. (.*)$", text, re.M)}
         self.texts.update({key: value["ruleText"] for key, value in rules.items()})
-        self.order = list(rules)
+        self.order = list(parse_rule_text(text)[1])
+        if not self.order:
+            raise ValueError("cite: no numbered rules found in cr.txt")
         self.index = {key: n for n, key in enumerate(self.order)}
 
     def resolve(self, raw: str) -> tuple[str, list[str]]:
@@ -81,8 +102,12 @@ class Snapshot:
 
 def scan(text: str, file: str, fmt: str, snapshot: Snapshot) -> list[dict]:
     sites = []
+    if fmt == "bracketed" and "[CR#" not in text:
+        return sites
     pattern = BRACKETED if fmt == "bracketed" else BARE
     for n, line in enumerate(text.splitlines(), 1):
+        if fmt == "bracketed" and "[CR#" not in line:
+            continue
         for match in pattern.finditer(line):
             raw = match[1] if fmt == "bracketed" else match[0]
             status, members = snapshot.resolve(raw)
@@ -92,7 +117,10 @@ def scan(text: str, file: str, fmt: str, snapshot: Snapshot) -> list[dict]:
 
 def noncompliant_hits(text: str) -> list[tuple[int, str, str]]:
     hits = []
+    exempt = exempt_lines(text)
     for n, line in enumerate(text.splitlines(), 1):
+        if n in exempt:
+            continue
         blanked = BRACKETED.sub("§", line)
         matches = {}
         for pattern in NONCOMPLIANT:
@@ -100,6 +128,18 @@ def noncompliant_hits(text: str) -> list[tuple[int, str, str]]:
                 matches.setdefault(match.start(), match[0])
         hits.extend((n, matches[offset], line.strip()) for offset in sorted(matches))
     return hits
+
+
+def tracked_files(root: Path) -> list[str]:
+    """Prefer jj; retain support for consumers that use Git without jj."""
+    for command in (["jj", "--no-pager", "file", "list"], ["git", "ls-files"]):
+        try:
+            result = subprocess.run(command, cwd=root, capture_output=True, text=True, check=False)
+        except FileNotFoundError:
+            continue
+        if result.returncode == 0 and result.stdout.strip():
+            return result.stdout.splitlines()
+    raise ValueError(f"cite: no tracked files (neither jj nor git answered in {root})")
 
 
 class Repository:
@@ -116,26 +156,23 @@ class Repository:
     def sources(self) -> list[Path]:
         source = self.config.get("sources", {})
         if source.get("tracked"):
-            result = subprocess.run(["jj", "--no-pager", "file", "list"], cwd=self.root,
-                                    capture_output=True, text=True, check=False)
-            if result.returncode or not result.stdout.strip():
-                raise ValueError(f"cite: no tracked files (jj did not answer in {self.root})")
-            names = result.stdout.splitlines()
-            names = [name for name in names if
-                     not any(name.startswith(p) for p in source.get("exclude", [])) and
-                     (not source.get("extensions") or Path(name).suffix[1:] in source["extensions"])]
+            names = tracked_files(self.root)
+
         else:
             names = [str(p.relative_to(self.root)) for p in self.root.rglob("*")
                      if p.is_file() and not p.is_symlink() and
                      any(fnmatch.fnmatchcase(str(p.relative_to(self.root)), g) for g in source.get("globs", []))]
-        files = [self.root / name for name in sorted(set(names)) if (self.root / name).is_file()]
+        files = [self.root / name for name in sorted(set(names), key=lambda name: Path(name).parts if source.get("tracked") else name)
+                 if not any(name.startswith(p) for p in source.get("exclude", []))
+                 and (not source.get("extensions") or Path(name).suffix[1:] in source["extensions"])
+                 and (self.root / name).is_file() and not (self.root / name).is_symlink()]
         if not files:
             raise ValueError("cite: no source files matched the config")
         return files
 
     def sites(self, snapshot: Snapshot) -> list[dict]:
         return [site for path in self.sources() for site in
-                scan(path.read_text(encoding="utf-8"), path.relative_to(self.root).as_posix(), self.fmt, snapshot)]
+                scan(path.read_text(encoding="utf-8"), str(path).removeprefix(str(self.root) + os.sep), self.fmt, snapshot)]
 
     def lock(self, command: str) -> dict:
         if not self.lock_path.is_file():
@@ -151,8 +188,8 @@ class Repository:
 
 
 def hashes(sites: list[dict], snapshot: Snapshot) -> dict[str, str]:
-    return {member: checksum(snapshot.texts[member]) for site in sites if site["status"] == "ok"
-            for member in site["members"] if member in snapshot.texts}
+    members = {member for site in sites if site["status"] == "ok" for member in site["members"]}
+    return {member: checksum(snapshot.texts[member]) for member in members if member in snapshot.texts}
 
 
 def stale(sites: list[dict], current: dict, locked: dict) -> list[str]:
@@ -177,7 +214,7 @@ def added_diff_lines(text: str) -> set[tuple[str, int]]:
     file, n = "", 0
     for line in text.splitlines():
         if line.startswith("+++ "):
-            file = line[4:].split()[0].removeprefix("b/")
+            file = line[4:].split("\t", 1)[0].removeprefix("b/")
         elif match := re.match(r"@@ .*?\+(\d+)(?:,\d+)? @@", line):
             n = int(match[1]) - 1
         elif line.startswith("+"):
@@ -220,10 +257,10 @@ def bless(repo: Repository, snapshot: Snapshot, sites: list[dict]) -> int:
     return 0
 
 
-def context(repo: Repository, snapshot: Snapshot, args) -> int:
+def context(repo: Repository, snapshot: Snapshot, args, *, text: str | None = None) -> int:
     if not re.fullmatch(r"[0-9]+", args.max):
         raise ValueError("cite context: --max wants a non-negative integer")
-    sites = scan(sys.stdin.read(), "", repo.fmt, snapshot)
+    sites = scan(sys.stdin.read() if text is None else text, "", repo.fmt, snapshot)
     batch = list(dict.fromkeys(m for s in sites if s["status"] == "ok" for m in s["members"]))
     seen_path = Path(args.seen) if args.seen else None
     seen = set(seen_path.read_text(encoding="utf-8").splitlines()) if seen_path and seen_path.is_file() else set()
@@ -233,7 +270,10 @@ def context(repo: Repository, snapshot: Snapshot, args) -> int:
     held = len(new) - len(shown)
     if not shown:
         return 0
-    known = repo.lock("context").get("checksums", {}) if repo.lock_path.is_file() else batch
+    try:
+        known = repo.lock("context").get("checksums", {}) if repo.lock_path.is_file() else batch
+    except (ValueError, OSError):
+        known = {}
     print(f"mtg-rules · {len(shown)} CR citation{'s' if len(shown) != 1 else ''} referenced for the first time this session:")
     for rule in shown:
         body = normalize(snapshot.texts.get(rule, ""))
@@ -265,12 +305,13 @@ def parser() -> argparse.ArgumentParser:
     check = commands.add_parser("check")
     check.add_argument("--list-noncompliant", action="store_true")
     commands.add_parser("bless")
-    commands.add_parser("list")
+    listing = commands.add_parser("list")
+    listing.add_argument("--json", action="store_true")
     show = commands.add_parser("show")
-    show.add_argument("citation")
+    show.add_argument("citation", nargs="?")
     show.add_argument("--plain", action="store_true")
     diff = commands.add_parser("diff")
-    diff.add_argument("rule")
+    diff.add_argument("rule", nargs="?")
     audit = commands.add_parser("audit")
     audit.add_argument("--diff", action="store_true")
     audit.add_argument("files", nargs="*")
@@ -303,6 +344,8 @@ def run(args) -> int:
     if command == "context":
         return context(repo, snapshot, args)
     if command == "show":
+        if not args.citation:
+            raise ValueError("cite show: missing citation argument")
         raw = args.citation.strip()
         if raw.startswith("[") and raw.endswith("]"):
             raw = raw[1:-1]
@@ -312,7 +355,12 @@ def run(args) -> int:
         if status in errors:
             raise ValueError(f"cite show: {errors[status]}: {args.citation}")
         missing = 0
-        width = int(os.environ.get("COLUMNS", "80"))
+        try:
+            width = int(os.environ.get("COLUMNS", "80"))
+        except ValueError:
+            width = 80
+        if width <= 20:
+            width = 80
         for member in members:
             text = snapshot.texts.get(member)
             if not text:
@@ -325,16 +373,29 @@ def run(args) -> int:
                 print(textwrap.indent(textwrap.fill(text, width=max(21, width) - 4), "    "))
         return int(bool(missing))
     if command == "diff":
-        url = repo.lock("diff").get("wizards_url")
-        if not url:
-            raise ValueError("cite diff: no wizards_url in the lockfile (legacy lock? re-bless)")
-        with urllib.request.urlopen(url, timeout=60) as response:
-            old = response.read().decode("utf-8-sig")
+        if not args.rule:
+            raise ValueError("cite diff: missing rule number")
+        lock = repo.lock("diff")
+        previous = data / "rules/previous"
+        old_json, old_txt = previous / "cr.json", previous / "cr.txt"
         oldtext = ""
-        for line in old.splitlines():
-            for prefix in (args.rule + " ", args.rule + ". "):
-                if line.startswith(prefix):
-                    oldtext = line[len(prefix):]
+        if old_json.is_file() and old_txt.is_file() and effective_date(old_txt.read_text(encoding="utf-8")) == lock.get("cr_date"):
+            oldtext = Snapshot(previous).texts.get(args.rule, "")
+        else:
+            url = lock.get("wizards_url")
+            if not url:
+                raise ValueError("cite diff: no matching previous edition and no wizards_url in the lockfile")
+            with urllib.request.urlopen(url, timeout=60) as response:
+                media = response.headers.get_content_type()
+                old = response.read().decode("utf-8-sig")
+            # A successful HTTP response can be an HTML landing page. Never
+            # present that as an edition with every rule missing.
+            if media not in ("text/plain", "application/octet-stream") or re.search(r"<(?:!doctype|html)\b", old, re.I):
+                raise ValueError("cite diff: URL did not serve plain CR text; refresh with setup-data to retain a local previous edition")
+            texts, order = parse_rule_text(old)
+            if not order:
+                raise ValueError("cite diff: URL contains no numbered rules")
+            oldtext = texts.get(args.rule, "")
         print(f"[CR#{args.rule}]\n- {oldtext or '(absent in old version)'}\n+ {snapshot.texts.get(args.rule, '(absent in current CR)')}")
         return 0
     sites = repo.sites(snapshot)
@@ -349,6 +410,11 @@ def run(args) -> int:
     if command == "bless":
         return bless(repo, snapshot, sites)
     if command == "list":
+        if args.json:
+            print(json.dumps([dict(file=s["file"], line=s["line"], token=token(s, repo.fmt),
+                                   status="malformed" if s["status"] == "skip" else s["status"],
+                                   members=s["members"]) for s in sites], ensure_ascii=False))
+            return 0
         for site in sites:
             if site["status"] == "ok":
                 print(f"{site['file']}:{site['line']}  {token(site, repo.fmt)}  -> {', '.join(site['members'])}")

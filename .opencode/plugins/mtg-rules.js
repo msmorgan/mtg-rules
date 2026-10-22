@@ -9,7 +9,7 @@ const skillsDir = path.join(pluginRoot, "skills");
 const hooksDir = path.join(skillsDir, "mtg-rules", "scripts", "hooks");
 const ensureDataHook = path.join(hooksDir, "ensure_data.fish");
 const cardContextHook = path.join(hooksDir, "card_context.fish");
-const citeContextHook = path.join(hooksDir, "cite_context.fish");
+const citeContextHook = path.join(hooksDir, "cite_context.py");
 
 function extractAndStripFrontmatter(content) {
   const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
@@ -61,9 +61,10 @@ function loadSkills() {
   return skills;
 }
 
-function runFishHook(script, payload, cwd, timeoutMs = 15_000) {
+function runHook(script, payload, cwd, timeoutMs = 15_000) {
   try {
-    const res = spawnSync("fish", ["--no-config", script], {
+    const python = script.endsWith(".py");
+    const res = spawnSync(python ? "python3" : "fish", python ? [script] : ["--no-config", script], {
       cwd,
       input: JSON.stringify(payload),
       encoding: "utf8",
@@ -185,7 +186,7 @@ export const MtgRulesPlugin = async ({ directory }) => {
     "experimental.chat.system.transform": async (input, output) => {
       if (!ensured) {
         ensured = true;
-        const out = runFishHook(ensureDataHook, {}, cwd, 600_000);
+        const out = runHook(ensureDataHook, {}, cwd, 600_000);
         if (out) {
           try {
             const parsed = JSON.parse(out);
@@ -242,7 +243,7 @@ async function setup(ctx) {
           if (!event || event.status !== "completed") return;
           const payload = buildCitePayload(event, defaultCwd);
           if (!payload) return;
-          const out = runFishHook(citeContextHook, payload, defaultCwd, 15_000);
+          const out = runHook(citeContextHook, payload, defaultCwd, 15_000);
           if (!out) return;
           const parsed = JSON.parse(out);
           const extra = parsed?.hookSpecificOutput?.additionalContext;
@@ -266,7 +267,7 @@ async function setup(ctx) {
       try {
         if (!ensured) {
           ensured = true;
-          const out = runFishHook(ensureDataHook, {}, defaultCwd, 600_000);
+          const out = runHook(ensureDataHook, {}, defaultCwd, 600_000);
           if (out) {
             try {
               const parsed = JSON.parse(out);
@@ -286,7 +287,7 @@ async function setup(ctx) {
         const sessionID = event.sessionID || "opencode";
         const promptText = extractLatestUserPrompt(event.messages);
         if (promptText && promptText.includes("[[")) {
-          const cardOut = runFishHook(
+          const cardOut = runHook(
             cardContextHook,
             { session_id: sessionID, prompt: promptText },
             defaultCwd,

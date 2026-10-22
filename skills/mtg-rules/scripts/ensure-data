@@ -178,7 +178,7 @@ if set -q MTG_RULES_SETUP_DATA; and test -n "$MTG_RULES_SETUP_DATA"
 end
 
 echo >&2 "ensure-data: preparing MTG rules and SQLite card data in $ensure_dest"
-if not fish --no-config $setup --dest $ensure_stage --runtime
+if not $setup --dest $ensure_stage --runtime
     echo >&2 "ensure-data: automatic data setup failed; retry with $here/setup-data --runtime"
     exit 1
 end

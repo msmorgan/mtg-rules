@@ -19,36 +19,8 @@ function fetch_mtgjson
     mtgjson download $wanted_files
 end
 
-function fetch_rules
-    set wanted_files_map \
-        link/cr:cr.txt \
-        cr:cr.json \
-        cr/keywords:keywords.json \
-        cr/glossary:glossary.json \
-        cr/unofficial-glossary:unofficial-glossary.json \
-        mtr:mtr.json
-
-    academyruins download $wanted_files_map
-    or return 1
-
-    fish --no-config (path resolve (status dirname))/../skills/mtg-rules/scripts/normalize-glossary \
-        $rules_dir/glossary.json
-end
-
-function fetch_scryfall_catalogs
-    set wanted_catalogs \
-        card-names artist-names word-bank supertypes card-types artifact-types \
-        battle-types creature-types enchantment-types land-types planeswalker-types \
-        spell-types powers toughnesses loyalties keyword-abilities keyword-actions \
-        ability-words flavor-words watermarks
-
-    for catalog in $wanted_catalogs
-        set -a wanted_files_map catalog/$catalog:$catalog.json
-    end
-
-    scryfall download $wanted_files_map
-end
-
+# Shared refresh retains the previous CR edition for citation diffs and also
+# downloads the base catalogs. Card downloads above remain the repo's full tier.
 fetch_mtgjson
-fetch_rules
-fetch_scryfall_catalogs
+set -l setup_data (path resolve (status dirname))/../skills/mtg-rules/scripts/setup-data
+$setup_data --dest $data_dir

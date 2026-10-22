@@ -1,0 +1,212 @@
+[
+  {
+    "origin": "cr_txt_is_the_only_rules_source_and_normalizes_hash_text",
+    "kind": "parse",
+    "rule": "100.1",
+    "text": "Alpha rule. Continued definition."
+  },
+  {
+    "origin": "indented_rule_continuations_are_hashed_but_examples_are_not",
+    "kind": "parse",
+    "rule": "100.1",
+    "text": "Alpha rule. Continued definition.",
+    "excluded": "illustrative"
+  },
+  {
+    "origin": "ranges_expand_in_document_order_across_skipped_letters",
+    "kind": "resolve",
+    "raw": "100.1a..100.1c",
+    "status": "ok",
+    "members": [
+      "100.1a",
+      "100.1c"
+    ]
+  },
+  {
+    "origin": "stale_hashes_and_malformed_tokens_are_distinct_failures",
+    "kind": "stale"
+  },
+  {
+    "origin": "noncompliant_scan_blanks_brackets_and_rejects_loose_forms",
+    "kind": "noncompliant",
+    "source": "[CR#100.1,200.1]\ndocument --per-rule 200 here\nCR 100.1 and rule 200.1\n[CR#rule 100.1]",
+    "matches": [
+      "CR 100.1",
+      "100.1",
+      "rule 200.1",
+      "200.1"
+    ]
+  },
+  {
+    "origin": "noncompliant_scan_accepts_exact_parser_key_and_fixture_markers",
+    "kind": "noncompliant",
+    "source": "// CR 100.1\nparse_list_rule(&lines, \"100.1\", // cite: allow-noncompliant-line -- parser key\n);\n// cite: allow-noncompliant begin -- verbatim CR parser fixture, not prose claims\nconst CR_FIXTURE: &str = \"rule 200.1\";\n// cite: allow-noncompliant end\n// rule 400.1",
+    "matches": [
+      "CR 100.1",
+      "100.1",
+      "rule 400.1",
+      "400.1"
+    ]
+  },
+  {
+    "origin": "noncompliant_scan_rejects_rule_key_in_unrelated_free_call",
+    "kind": "legacy",
+    "source": "unrelated(&lines, \"100.1\", // cite: noncompliant-line -- machine-readable parser key\n);"
+  },
+  {
+    "origin": "noncompliant_scan_rejects_rule_key_in_method_call",
+    "kind": "legacy",
+    "source": "parser.numbered_rule(&lines, \"100.1\", // cite: noncompliant-line -- machine-readable parser key\n);"
+  },
+  {
+    "origin": "noncompliant_scan_rejects_rule_key_in_wrong_helper_argument",
+    "kind": "legacy",
+    "source": "parse_list_rule(\"100.1\", // cite: noncompliant-line -- machine-readable parser key\n&lines);"
+  },
+  {
+    "origin": "noncompliant_scan_rejects_cr_helper_in_wrong_file",
+    "kind": "legacy",
+    "source": "numbered_rule(&lines, \"100.1\", // cite: noncompliant-line -- machine-readable parser key\n\"examples\");"
+  },
+  {
+    "origin": "noncompliant_scan_reports_loose_claims_beside_exempt_literals",
+    "kind": "noncompliant",
+    "source": "/* rule 900.1 */\n\"100.1\", // cite: allow-noncompliant-line -- parser key",
+    "matches": [
+      "rule 900.1",
+      "900.1"
+    ],
+    "adaptation": "Line markers exempt an entire line; keep claims on a separate line."
+  },
+  {
+    "origin": "noncompliant_scan_rejects_a_shadowed_parser_helper",
+    "kind": "legacy",
+    "source": "fn numbered_rule() {}\nnumbered_rule((), \"100.1\", // cite: noncompliant-line -- machine-readable parser key\n);"
+  },
+  {
+    "origin": "noncompliant_scan_rejects_parser_helper_shadows_in_nested_modules",
+    "kind": "legacy",
+    "source": "mod nested { use super::*; numbered_rule((), \"100.1\", // cite: noncompliant-line -- machine-readable parser key\n); }"
+  },
+  {
+    "origin": "noncompliant_scan_rejects_license_fixture_scope",
+    "kind": "legacy",
+    "source": "// cite: noncompliant begin -- verbatim CR parser fixture, not prose claims\nconst LICENSE_FIXTURE: &str = \"rule 100.1\";\n// cite: noncompliant end"
+  },
+  {
+    "origin": "noncompliant_scan_rejects_other_named_fixture_scope",
+    "kind": "legacy",
+    "source": "// cite: noncompliant begin -- verbatim CR parser fixture, not prose claims\nconst PARSER_FIXTURE: &str = \"rule 100.1\";\n// cite: noncompliant end"
+  },
+  {
+    "origin": "noncompliant_scan_rejects_cr_fixture_scope_in_wrong_file",
+    "kind": "legacy",
+    "source": "// cite: noncompliant begin -- verbatim CR parser fixture, not prose claims\nconst CR_FIXTURE: &str = \"rule 100.1\";\n// cite: noncompliant end"
+  },
+  {
+    "origin": "noncompliant_scan_rejects_fixture_outside_the_direct_tests_module",
+    "kind": "legacy",
+    "source": "// cite: noncompliant begin -- verbatim CR parser fixture, not prose claims\nconst CR_FIXTURE: &str = \"rule 100.1\";\n// cite: noncompliant end"
+  },
+  {
+    "origin": "noncompliant_scan_rejects_second_or_nested_cr_fixtures",
+    "kind": "legacy",
+    "source": "// cite: noncompliant begin -- verbatim CR parser fixture, not prose claims\nconst CR_FIXTURE: &str = \"rule 100.1\";\n// cite: noncompliant end\nmod nested { const CR_FIXTURE: &str = \"rule 300.1\"; }"
+  },
+  {
+    "origin": "noncompliant_scan_rejects_nested_fixture_scope",
+    "kind": "marker-error",
+    "source": "// cite: allow-noncompliant begin -- verbatim CR parser fixture, not prose claims\n// cite: allow-noncompliant begin -- verbatim CR parser fixture, not prose claims"
+  },
+  {
+    "origin": "noncompliant_scan_rejects_unmatched_fixture_scope_end",
+    "kind": "marker-error",
+    "source": "// cite: allow-noncompliant end"
+  },
+  {
+    "origin": "noncompliant_scan_rejects_unclosed_fixture_scope",
+    "kind": "marker-error",
+    "source": "// cite: allow-noncompliant begin -- verbatim CR parser fixture, not prose claims\n\"100.1\";"
+  },
+  {
+    "origin": "noncompliant_scan_rejects_malformed_markers",
+    "kind": "marker-error",
+    "source": "// cite: allow-noncompliant beginning -- fixture"
+  },
+  {
+    "origin": "noncompliant_scan_rejects_line_marker_on_prose_or_non_key_code",
+    "kind": "marker-error",
+    "source": "// cite: allow-noncompliant-line",
+    "adaptation": "Language-independent markers require a reason instead of Rust AST validation."
+  },
+  {
+    "origin": "noncompliant_scan_rejects_scope_around_prose_or_non_fixture_code",
+    "kind": "marker-error",
+    "source": "fn f() {} // cite: allow-noncompliant begin -- verbatim CR parser fixture, not prose claims",
+    "adaptation": "Scope markers must occupy a whole comment line."
+  },
+  {
+    "origin": "noncompliant_scan_rejects_markers_outside_rust",
+    "kind": "noncompliant",
+    "source": "# cite: allow-noncompliant begin -- fixture\nrule 100.1\n# cite: allow-noncompliant end",
+    "matches": [],
+    "adaptation": "The plugin deliberately supports languages other than Rust."
+  },
+  {
+    "origin": "noncompliant_scan_rejects_line_markers_spoofed_inside_rust_strings",
+    "kind": "noncompliant",
+    "source": "const SPOOF: &str = \"// CR 100.1 // cite: allow-noncompliant-line -- parser key\";",
+    "matches": [
+      "CR 100.1",
+      "100.1"
+    ]
+  },
+  {
+    "origin": "noncompliant_scan_rejects_scope_markers_spoofed_inside_rust_strings",
+    "kind": "noncompliant",
+    "source": "const SPOOF: &str = r#\"\n// cite: allow-noncompliant begin -- verbatim CR parser fixture, not prose claims\nrule 100.1\n// cite: allow-noncompliant end\n\"#;",
+    "matches": [
+      "rule 100.1",
+      "100.1"
+    ]
+  },
+  {
+    "origin": "bless_rebuilds_lock_from_current_citation_members",
+    "kind": "bless"
+  },
+  {
+    "origin": "obsolete_file_exemption_key_cannot_bypass_noncompliant_scan",
+    "kind": "file-exemption",
+    "adaptation": "Retain noncompliant_exempt as explicitly required by the plugin ticket; xtask removed it."
+  },
+  {
+    "origin": "audit_file_selection_accepts_relative_and_absolute_paths",
+    "kind": "audit-selection"
+  },
+  {
+    "origin": "added_diff_lines_keeps_a_path_containing_spaces",
+    "kind": "diff",
+    "source": "+++ b/cards/Luminarch Aspirant.ron\t2026-01-02\n@@ -0,0 +1,1 @@\n+// [CR#506.1]\n",
+    "added": [
+      [
+        "cards/Luminarch Aspirant.ron",
+        1
+      ]
+    ]
+  },
+  {
+    "origin": "added_diff_lines_tracks_new_file_line_numbers",
+    "kind": "diff",
+    "source": "+++ b/src/a.rs\n@@ -2,2 +2,3 @@\n context\n+added\n-deleted\n context two\n",
+    "added": [
+      [
+        "src/a.rs",
+        3
+      ]
+    ]
+  },
+  {
+    "origin": "a_symlink_to_an_exempt_or_scanned_file_adds_nothing",
+    "kind": "symlink"
+  }
+]

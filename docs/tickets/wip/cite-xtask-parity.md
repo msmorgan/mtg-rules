@@ -89,3 +89,35 @@ Switching deckmaste.rs over is a separate deckmaste.rs ticket: `xtask cite`
 becomes a shim that runs the plugin's `cite` at a version pinned in
 `cite-config.json` and checked against `scripts/version`, with a CI checkout of
 mtg-rules at that tag.
+
+## Completion
+
+Implemented every listed gap. `cite`, its PostToolUse hook, and `setup-data`
+now use Python's standard library; the remaining lookup/bootstrap/card scripts
+are unchanged. Repository base-data refresh delegates to the shared fetcher.
+Previous CR pairs live under `rules/previous/`; diffs select them by the locked
+CR date and reject HTML URL fallbacks.
+
+The language-independent markers are `cite: allow-noncompliant-line -- reason`
+and `cite: allow-noncompliant begin -- reason` / `cite: allow-noncompliant end`.
+They opt into whole-line/scope exemptions. Legacy Rust-AST-specific markers are
+intentionally not reinterpreted. The README documents delimiters, lexical
+string guards, structural errors, and the retained path-suffix exemptions.
+All 33 upstream test names map to executable fixtures; contract adaptations
+are recorded with those fixtures.
+
+Validation against deckmaste.rs on 2026-10-22 (its corpus has grown since the
+original ticket):
+
+- All 14,959 text `list` lines are byte-for-byte identical to the Rust checker.
+- Both checkers validate 18,395 citations with zero stale; consumer and plugin
+  lockfiles are unchanged.
+- Noncompliance output is exactly the 54 existing catalog hits: 11 in `cr.rs`,
+  22 in `lib.rs`, and 21 in `legacy.rs`.
+- Python `list` / `check`: 0.60 / 0.61 seconds in the final local run.
+- Consumer comparisons use the existing tracked snapshot with jj's
+  `--ignore-working-copy`, keeping the other repository read-only.
+- 78 Python tests, Ruff, 250 shell assertions, JavaScript/Fish syntax checks,
+  and both local citation checks pass (7,813 / 263 citations, zero stale).
+
+No consumer migration, coverage ratchet, release, or push is included.
