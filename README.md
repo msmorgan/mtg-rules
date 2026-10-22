@@ -72,7 +72,7 @@ skills/mtg-rules/scripts/setup-data --runtime
 
 | Tier | Flag | Size | Enables |
 |------|------|------|---------|
-| Base rules + catalogs | *(default)* | ~4 MB | `rule`, `define`, `keyword`, `mtr`, `cite` |
+| Base rules + catalogs | *(default)* | ~4 MB | `rule`, `define`, `keyword`, `mtr`, `ref`, `cite` |
 | Hook runtime | `--runtime` | large | base + `card`, `rulings`, hooks |
 | Card corpus | `--cards` | ~790 MB | runtime + `corpus` |
 | Official rulings DB | `--rulings` | large | `rulings` |
@@ -124,7 +124,7 @@ called out in [CHANGELOG.md](CHANGELOG.md)). Consumers pin the manifest from
 
 | Tier | Files | Built by | Enabling scripts |
 |------|-------|----------|------------------|
-| base | `rules/cr.txt`, `rules/cr.json`, `rules/glossary.json`, `rules/unofficial-glossary.json`, `rules/keywords.json`, `rules/mtr.json`, `catalogs/*.json` | fetched: `skills/mtg-rules/scripts/setup-data` or repo `scripts/fetch_data.fish` | `rule`, `rule-search`, `define`, `keyword`, `mtr`, `lookup`, `classify`, `underdetermined`, `cite`, `health`, `version` |
+| base | `rules/cr.txt`, `rules/cr.json`, `rules/glossary.json`, `rules/unofficial-glossary.json`, `rules/keywords.json`, `rules/mtr.json`, `catalogs/*.json` | fetched: `skills/mtg-rules/scripts/setup-data` or repo `scripts/fetch_data.fish` | `rule`, `rule-search`, `define`, `keyword`, `mtr`, `lookup`, `ref`, `classify`, `underdetermined`, `cite`, `health`, `version` |
 | runtime | base + `mtgjson/AllPrintings.sqlite` | automatic hook bootstrap or `setup-data --runtime` | all base scripts, `card` (SQLite), `rulings`, hooks |
 | cards | runtime + `mtgjson/AtomicCards.json` (fetched), `derived/cards.jsonl` (**built, never fetched**) | fetched: `setup-data --cards` or `fetch_data.fish`; derived: `setup-data --cards` builds it inline, repo checkouts run `scripts/build_derived.fish` | `card` (SQLite), `rulings`, `corpus`, `evals/coverage.fish` |
 | rulings | `mtgjson/AllPrintings.sqlite` (shared with the cards tier) | fetched: `setup-data --rulings`, `setup-data --cards`, or `fetch_data.fish` | `rulings` |
@@ -136,8 +136,10 @@ themselves after every `AtomicCards.json` refresh — either re-run
 `scripts/build_derived.fish`. A fetched-but-underived data dir makes `corpus`
 fail with a pointer to this step; `card` queries `AllPrintings.sqlite` directly.
 `skills/mtg-rules/scripts/health`
-reports which tiers are present and warns per reference doc whose stated
-synthesis date lags the live CR effective date.
+reports which tiers are present, summarizes how many reference docs state the
+live CR effective date as their synthesis date (naming any that lag or carry no
+date; warning only), and warns about any CR 701.x/702.x keyword heading with no
+row in `keywords-classified.json`.
 
 ## Maintenance (post-refresh checklist)
 
@@ -150,7 +152,7 @@ After WotC publishes updated rules or card data:
 5. Re-derive the affected probes in [evals/rulings-check.md](evals/rulings-check.md) against fresh `skills/mtg-rules/scripts/rulings` output; fix any doc that drifted. Run `skills/mtg-rules/scripts/cite --config evals/cite-config.json check` for the validation record and probe citations; inspect drift before blessing its separate lockfile.
 6. Re-test `skills/mtg-rules/references/underdetermined.md` entries — a new rule may settle one
 7. Re-examine `skills/mtg-rules/references/generalizations.md` empty cells — a newly printed instance is a finding
-8. Classify any new keywords — they land unclassified in `skills/mtg-rules/keywords-classified.json`
+8. Classify any new keywords — they land unclassified in `skills/mtg-rules/keywords-classified.json`. `health` now warns about unclassified keywords, and a harness test enforces coverage
 
 For instruction changes, use the invocation probes in [evals/README.md](evals/README.md)
 to check discovery and routing separately from answer correctness.
@@ -168,6 +170,7 @@ to check discovery and routing separately from answer correctness.
 | `corpus` | `skills/mtg-rules/scripts/corpus --type Creature --match 'deals damage'` |
 | `rulings` | `skills/mtg-rules/scripts/rulings Humility` |
 | `lookup` | `skills/mtg-rules/scripts/lookup 'last known information'` |
+| `ref` | `skills/mtg-rules/scripts/ref events 2` (reference-doc sections; `--cites 603.7e`, `--grep 'regex'`) |
 | `classify` | `skills/mtg-rules/scripts/classify cascade` |
 | `underdetermined` | `skills/mtg-rules/scripts/underdetermined UD-7` |
 | `cite` | `cd skills/mtg-rules && scripts/cite check` |

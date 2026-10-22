@@ -32,3 +32,22 @@ jq -r --arg pat $pat '
              then "\n" + (.examples | map("    Example: " + .) | join("\n"))
              else "" end) )
 ' $rules_dir/cr.json
+or exit 1
+
+# Footer: up to 3 map sections citing a specific rule (skipped for a whole
+# section, where the citing set is too broad to be a short pointer).
+if not string match -rq '^\d{3}$' -- $num
+    set -l refs
+    for m in (fish (path resolve (status dirname))/ref --cites $num 2>/dev/null | string match -r '^\[map\] .*' \
+            | awk '{n=$0; sub(/.*\(/, "", n); sub(/ lines?\)$/, "", n); print n "\t" $0}' | sort -s -t (printf '\t') -k1,1nr | cut -f2-)
+        set -l p (string match -r '^\[map\] (\S+) §(.*?)( \(\d+ lines?\))+$' -- $m)
+        test (count $p) -ge 3; or continue
+        test "$p[3]" = "(header)"; and continue
+        set -l label (string match -rg '^(\d+(?:\.\d+)*)[.:)]?\s' -- $p[3])
+        test -n "$label"; or set label (string sub -l 24 -- $p[3])
+        set -a refs "$p[2] §$label"
+        test (count $refs) -ge 3; and break
+    end
+    test (count $refs) -gt 0; and echo "maps: "(string join ', ' -- $refs)" (ref <doc> <n> to read)"
+end
+true

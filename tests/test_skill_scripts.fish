@@ -296,7 +296,7 @@ rm -rf $host_tmp
 # --- keyword classification ---
 t "keywords-classified.json parses" '^valid$' fish -c "jq -e . skills/mtg-rules/keywords-classified.json >/dev/null; and echo valid"
 t "keyword classes are all in enum" '^0$' fish -c 'jq -r "[.keywords[].class] - [\"intrinsic\",\"composite\",\"composite-given\",\"marker\"] | length" skills/mtg-rules/keywords-classified.json'
-t "keyword count covers both lists" '^265$' fish -c "jq -r '.keywords | length' skills/mtg-rules/keywords-classified.json"
+t "keyword count covers both lists" '^266$' fish -c "jq -r '.keywords | length' skills/mtg-rules/keywords-classified.json"
 t "classified names exactly cover the live keyword catalogs" '^0$' fish -c \
     "source $scripts/lib.fish; jq -n --slurpfile c $repo/skills/mtg-rules/keywords-classified.json --slurpfile k \$rules_dir/keywords.json '((([\$k[0].keywordAbilities[], \$k[0].keywordActions[]] - [\$c[0].keywords[].name]) + ([\$c[0].keywords[].name] - [\$k[0].keywordAbilities[], \$k[0].keywordActions[]])) | length)'"
 # Lint (the Enlist-bug class): a composite-given row whose `how` never names
@@ -503,12 +503,18 @@ t "hook still annotates unrelated Bash output" 'Banding is a static' \
     hookbash $hookrepo x5 'cargo test --workspace' 'panicked: [CR#702.22a] violated'
 t "hook does not exempt a merely similar command" 'Banding is a static' \
     hookbash $hookrepo x6 'cargo build --features rules' 'note [CR#702.22a]'
+t "hook exempts a bare ref invocation" '^$' \
+    hookbash $hookrepo x7 'ref --cites 603.7e' '[CR#702.22a]'
+t "hook does not exempt ref as a later word" 'Banding is a static' \
+    hookbash $hookrepo x8 'git show ref' 'note [CR#702.22a]'
 set -g hookenv
 # The exempt list is hand-maintained; this fails if a script is added to
-# scripts/ without being added to the hook's alternation.
+# scripts/ without being added to the hook's alternation. Whole alternatives
+# only: a bare substring test is satisfied by any word containing the name
+# ("ref" sits inside "references").
 t "hook exempt list covers every skill script" '^$' fish -c "
     for s in (ls $scripts | grep -v '^lib.fish\$' | grep -v '^cite-lib\$' | grep -v '^hooks\$')
-        grep -qF \"\$s\" $hook; or echo \"missing: \$s\"
+        grep -qE \"[(|]\"\$s\"[|)]\" $hook; or echo \"missing: \$s\"
     end"
 set -g hookenv CITE_CONTEXT_MAX=1
 t "hook honors CITE_CONTEXT_MAX" 'not shown' \
@@ -539,9 +545,9 @@ t "version manifest parses with all four keys" '^true$' \
     fish -c "$scripts/version | jq -e 'has(\"plugin_version\") and has(\"git_commit\") and has(\"cr_effective\") and has(\"keywords_classified_sha\")'"
 
 # --- keyword idents (machine enum spellings) ---
-t "idents: all 265 records carry a string ident" '^265$' \
+t "idents: all 266 records carry a string ident" '^266$' \
     jq -r '[.keywords[].ident | select(type == "string")] | length' $repo/skills/mtg-rules/keywords-classified.json
-t "idents: all 265 unique" '^265$' \
+t "idents: all 266 unique" '^266$' \
     jq -r '[.keywords[].ident] | unique | length' $repo/skills/mtg-rules/keywords-classified.json
 t "idents: all match ^[A-Z][A-Za-z0-9]*\$" '^0$' \
     jq -r '[.keywords[].ident | select(test("^[A-Z][A-Za-z0-9]*$") | not)] | length' $repo/skills/mtg-rules/keywords-classified.json
@@ -557,8 +563,162 @@ t "underdetermined retired ids still resolve" '(?s)U3.*settled-by-policy' $scrip
 t_fails "underdetermined bogus id" $scripts/underdetermined UD-999
 t_fails "underdetermined garbage arg" $scripts/underdetermined xyz
 
-# --- health per-doc staleness summary ---
-t "health reports reference-doc sync state" 'reference docs: \d+' fish -c "$scripts/health; true"
+# --- health reference-doc summary and keyword warning ---
+t "health summarizes reference-doc sync on one line" \
+    'reference docs: \d+/\d+ synthesized from CR \d{4}-\d{2}-\d{2} \(live \d{4}-\d{2}-\d{2}\); verify map claims against the cited rules' \
+    fish -c "$scripts/health; true"
+t "health no longer prints per-doc warn lines" '^0$' \
+    fish -c "$scripts/health | grep -c 'no synthesis-date header\|re-sync'; true"
+
+# A throwaway skill tree around the real data: health's skill_dir is its own
+# location, so a copy of the scripts reads the fixture references and
+# keywords-classified.json instead of the real ones.
+set -l real_data (fish -c "source $scripts/lib.fish; echo \$data_dir")
+set -l live_iso (fish -c "source $scripts/lib.fish; cr_effective_iso")
+set -l htree (mktemp -d)
+set -l hskill $htree/skills/mtg-rules
+mkdir -p $hskill/scripts $hskill/references
+cp $scripts/lib.fish $scripts/health $scripts/cite $hskill/scripts/
+cp -r $scripts/cite-lib $hskill/scripts/
+echo '{"format":"bare","lockfile":"cr-citations.lock","sources":{"globs":["references/*.md"]}}' >$hskill/cite-config.json
+printf '# A\n\n*Synthesized from the Comprehensive Rules effective %s.*\n' $live_iso >$hskill/references/a.md
+printf '# B\n\n*Synthesized from the Comprehensive Rules effective 2020-01-01.*\n' >$hskill/references/b.md
+printf '# C\n\nNo header date here.\n' >$hskill/references/c.md
+# the 702.2 (Deathtouch) row removed; every other keyword stays classified
+jq '.keywords |= map(select(.rule != "702.2"))' $repo/skills/mtg-rules/keywords-classified.json >$hskill/keywords-classified.json
+t "health counts docs in sync with the live CR" \
+    "reference docs: 1/3 synthesized from CR $live_iso \\(live $live_iso\\); verify map claims" \
+    fish -c "env MTG_RULES_DATA=$real_data fish $hskill/scripts/health; true"
+t "health names lagging and undated docs compactly" \
+    'lagging or undated \(warning only\): b\.md \(2020-01-01\), c\.md \(no date\)' \
+    fish -c "env MTG_RULES_DATA=$real_data fish $hskill/scripts/health; true"
+t "health warns about a keyword heading with no classified row" \
+    'warn: 1 CR keyword heading\(s\) with no row in keywords-classified\.json: 702\.2 Deathtouch' \
+    fish -c "env MTG_RULES_DATA=$real_data fish $hskill/scripts/health; true"
+rm -rf $htree
+
+# Every 701.N keyword action and 702.N keyword ability heading (x.1 is the
+# section introduction) has a keywords-classified row. Empty output = pass; a
+# failure prints the unclassified headings.
+function unclassified_keywords --argument-names rules_dir
+    jq -r --slurpfile kc $repo/skills/mtg-rules/keywords-classified.json '
+        ($kc[0].keywords | map(.rule)) as $have
+        | to_entries[]
+        | select((.key | test("^70[12][.][0-9]+$")) and (.key | test("^70[12][.]1$") | not))
+        | select(.key | IN($have[]) | not)
+        | .key + " " + .value.ruleText' $rules_dir/cr.json
+end
+t "every 701/702 keyword section has a keywords-classified row" '^$' \
+    unclassified_keywords (path dirname $real_data/rules/cr.json)
+
+# --- define prints the first referenced rule ---
+t "define prints the rule a glossary entry points at" '(?s)See rule 700\.4\..*\n→ 700\.4\. The term dies means' $scripts/define dies
+t "define follows the first of several referenced rules" '(?s)See rules 613\.2, 707\.2.*\n→ 613\.2\. Within layer 1' $scripts/define copiable values
+t "define points at rule for the rest of a long rule" '\(scripts/rule 613\.2 for the rest\)' $scripts/define copiable values
+t "define clips a very long rule" '→ 120\.4a .*…\n  \(scripts/rule 120\.4a for the rest\)' $scripts/define lethal damage
+t "define skips a bare section reference" '^0$' \
+    fish -c "$scripts/define 'basic land type' | grep -c '→'; true"
+t "define adds no rule line to an unofficial entry" '^0$' \
+    fish -c "$scripts/define battalion | grep -c '→'; true"
+
+# --- ref (section reader for the reference docs) ---
+# Fixture skill tree: ref resolves references/ from its own location and reads
+# `cite list` from the sibling cite, so a copy sees only the fixture docs. Rule
+# data still comes from the real CR, which the range expansion needs.
+set -l rtree (mktemp -d)
+set -l rskill $rtree/skills/mtg-rules
+mkdir -p $rskill/scripts $rskill/references
+cp $scripts/lib.fish $scripts/ref $scripts/cite $rskill/scripts/
+cp -r $scripts/cite-lib $rskill/scripts/
+echo '{"format":"bare","lockfile":"cr-citations.lock","sources":{"globs":["references/*.md"]}}' >$rskill/cite-config.json
+printf '%s\n' \
+    '# Fixture — Cites' '' \
+    '*Synthesized from the Comprehensive Rules effective 2026-01-01.*' '' \
+    '## 1. Delayed triggers' '' \
+    'Source and controller per 603.7d–h.' \
+    'Duration is 603.7a.' '' \
+    '## 2. Costs (118)' '' \
+    'Plain text about priority 117.1 and costs.' '' \
+    '### 2.1 Nested' '' \
+    'Cites 510.1c-d here. Whenever a thing happens.' '' \
+    '```' '## 3. Not a heading' '```' '' \
+    '## 4. Tail' '' \
+    'Final words with no citations.' >$rskill/references/fixture.md
+printf '%s\n' '# Fixture — No Date' '' 'Text without a synthesis header.' '' '## 1. Only section' '' 'Body.' >$rskill/references/nodate.md
+set -g rref env MTG_RULES_DATA=$real_data fish $rskill/scripts/ref
+
+t "ref lists docs with title and synthesis date" 'fixture +Fixture — Cites +\[2026-01-01\]' $rref
+t "ref lists docs without a date too" 'nodate +Fixture — No Date +\[no date\]' $rref
+t "ref lists a doc's sections with sizes (unique prefix resolves)" \
+    '(?s)§1\. Delayed triggers \(\d+ lines\).*§2\. Costs \(118\).*§2\.1 Nested' $rref fix
+t "ref section list ignores headings inside code fences" '^0$' \
+    fish -c "env MTG_RULES_DATA=$real_data fish $rskill/scripts/ref fixture | grep -c 'Not a heading'; true"
+t "ref prints a section under a map banner" \
+    '(?s)^\[map\] fixture §2\. Costs \(118\) .*synthesized from CR 2026-01-01\. A map, not a source: cite the CR rules.*\n## 2\. Costs \(118\)\n.*Plain text about priority' \
+    $rref fixture 2
+t "ref section stops at the next peer heading" '^0$' \
+    fish -c "env MTG_RULES_DATA=$real_data fish $rskill/scripts/ref fixture 2 | grep -c 'Final words'; true"
+t "ref section includes its nested subsection text" 'Whenever a thing happens' $rref fixture 2
+t "ref resolves a section by dotted number" '(?s)^\[map\] fixture §2\.1 Nested.*Whenever a thing' $rref fixture 2.1
+t "ref resolves a section by heading text, case-insensitively" 'Plain text about priority' $rref fixture COSTS
+t "ref accepts the listing's own section label" 'Plain text about priority' $rref fixture '§2. Costs (118)'
+t "ref banner tolerates a doc without a date" '(?s)^\[map\] nodate §1\. Only section .*no synthesis date\. A map, not a source: cite the CR rules.*\nBody\.' $rref nodate 1
+t_fails "ref rejects an unknown doc" $rref nosuchdoc
+t_fails "ref rejects an unknown section" $rref fixture 99
+t_fails "ref rejects unknown heading text" $rref fixture zzqqxyzzy
+t_fails "ref rejects an unknown option" $rref --bogus
+t "ref unknown doc prints usage" '(?s)usage: ref.*--cites' fish -c "env MTG_RULES_DATA=$real_data fish $rskill/scripts/ref nosuchdoc 2>&1; true"
+t "ref --cites finds a section whose prose range covers the rule (603.7d–h ∋ 603.7e)" \
+    '\[map\] fixture §1\. Delayed triggers \(1 line\)' $rref --cites 603.7e
+t "ref --cites on a rule counts its lettered subrules" '\[map\] fixture §1\. Delayed triggers \(2 lines\)' $rref --cites 603.7
+t "ref --cites reads an ASCII-hyphen range (510.1c-d ∋ 510.1d)" '\[map\] fixture §2\.1 Nested \(1 line\)' $rref --cites 510.1d
+t "ref --cites reports the enclosing subsection, not only the peer section" '^0$' \
+    fish -c "env MTG_RULES_DATA=$real_data fish $rskill/scripts/ref --cites 510.1d | grep -c 'fixture §2\\. '; true"
+t_fails "ref --cites misses a rule outside the range (603.7c)" $rref --cites 603.7c
+t_fails "ref --cites rejects a non-rule argument" $rref --cites abc
+t "ref --grep is case-insensitive" '\[map\] fixture §2\.1 Nested \(1 line\)' $rref --grep WHENEVER
+t "ref --grep keeps the pattern as written (\\D is not lowercased to \\d)" \
+    '\[map\] fixture §2\. Costs \(118\) \(1 line\)' $rref --grep 'about \D+ 117'
+t_fails "ref --grep rejects an invalid regex" $rref --grep '['
+t_fails "ref --grep misses garbage" $rref --grep zzqqxyzzy
+
+# lookup [map] tier and rule footer, against the same fixture tree.
+cp $scripts/lookup $scripts/rule $rskill/scripts/
+printf '%s\n' '# Fixture — Many' '' '*Synthesized from the Comprehensive Rules effective 2026-01-01.*' '' \
+    '## 1. Alpha' 'qzvmarker here' 'qzvmarker again' '## 2. Beta' 'qzvmarker' '## 3. Gamma' 'qzvmarker' \
+    '## 4. Delta' 'qzvmarker' '## 5. Eps' 'qzvmarker' '## 6. Zeta' 'qzvmarker' '## 7. Eta' 'qzvmarker' >$rskill/references/many.md
+set -g rlook env MTG_RULES_DATA=$real_data fish $rskill/scripts/lookup
+set -g rrule env MTG_RULES_DATA=$real_data fish $rskill/scripts/rule
+t "lookup [map] tier finds a body hit with a drill-down command" \
+    '\[map\] fixture §2\. Costs \(118\)  \(ref fixture .2.\)' $rlook 'about priority'
+t "lookup [map] prints one line per section" '^1$' \
+    fish -c "env MTG_RULES_DATA=$real_data fish $rskill/scripts/lookup 'qzvmarker' | grep -c '§1\\. Alpha'"
+t "lookup [map] caps at 6 lines and names ref --grep for the rest" \
+    "\\[map\\] \\(\\+1 more — ref --grep 'qzvmarker'\\)" $rlook qzvmarker
+t "lookup [map] shows exactly 6 section lines when capped" '^7$' \
+    fish -c "env MTG_RULES_DATA=$real_data fish $rskill/scripts/lookup 'qzvmarker' | grep -c '^\\[map\\]'"
+t "rule footer names the map sections citing the rule" \
+    '\nmaps: fixture §1 \(ref <doc> <n> to read\)' $rrule 603.7e
+t "rule footer is silent when no map cites the rule" '^0$' \
+    fish -c "env MTG_RULES_DATA=$real_data fish $rskill/scripts/rule 104.3a | grep -c '^maps:'; true"
+t "rule footer is skipped for a whole section" '^0$' \
+    fish -c "env MTG_RULES_DATA=$real_data fish $rskill/scripts/rule 603 | grep -c '^maps:'; true"
+rm -rf $rtree
+
+# Real docs: every references/*.md lists sections and prints its first one.
+function ref_every_doc
+    for f in $repo/skills/mtg-rules/references/*.md
+        set -l d (path basename -E $f)
+        set -l secs ($scripts/ref $d 2>/dev/null | string match -rg '^ +§(.+) \(\d+ lines\)$')
+        test (count $secs) -gt 0; or begin; echo "no sections: $d"; continue; end
+        set -l out ($scripts/ref $d "$secs[1]" 2>/dev/null | string collect)
+        string match -rq "^\[map\] $d §" -- "$out"; or echo "no banner: $d"
+    end
+end
+t "ref works on every reference doc" '^$' ref_every_doc
+t "ref reads a numbered subsection of oracle-style" '(?s)^\[map\] oracle-style §12\. .*\n#+ 12\. ' $scripts/ref oracle-style 12
+t "ref --cites works on the real reference docs" '\[map\] \S+ §' $scripts/ref --cites 603.7e
+t "ref --grep works on the real reference docs" '\[map\] \S+ §' $scripts/ref --grep 'delayed trigger'
 
 # (tests appended by later tasks above this line)
 

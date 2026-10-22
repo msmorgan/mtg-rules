@@ -1,6 +1,6 @@
 #!/usr/bin/env fish
 # lookup <query> — unified meta-search: one query fanned out across every source.
-# Hits are labeled [rule]/[gloss]/[keyword]/[mtr]/[doc] so the next call can be
+# Hits are labeled [rule]/[gloss]/[keyword]/[mtr]/[map] so the next call can be
 # routed to the right drill-down script. Case-insensitive regex; output kept
 # compact (caps per source) for agent context budgets.
 
@@ -53,17 +53,21 @@ set -l mtr_hits (jq -r --arg pat "$query" '
       ( if ($hits | length) > 4 then "[mtr] (+\(($hits | length) - 4) more — scripts/mtr --search)" else empty end )
 ' $rules_dir/mtr.json)
 
-# [doc] — reference-doc heading hits (cap 8)
+# [map] — reference-doc body hits via `ref --grep`: one line per section, cap 6,
+# densest sections first (ties keep doc order)
 set -l doc_hits
-for f in $skill_dir/references/*.md
-    set -l base (path basename $f)
-    for h in (grep -h '^#' $f | string match -rie -- $query)
-        set -a doc_hits "[doc] $base  $h"
-    end
+set -l map_all (fish (path resolve (status dirname))/ref --grep "$query" 2>/dev/null | string match -r '^\[map\] .*' \
+    | awk '{n=$0; sub(/.*\(/, "", n); sub(/ lines?\)$/, "", n); print n "\t" $0}' | sort -s -t (printf '\t') -k1,1nr | cut -f2-)
+for m in $map_all[1..6]
+    set -l p (string match -r '^\[map\] (\S+) §(.*?)( \(\d+ lines?\))+$' -- $m)
+    test (count $p) -ge 3; or continue
+    set -l arg $p[3]
+    set -l num (string match -rg '^(\d+(?:\.\d+)*)[.:)]?\s' -- $p[3])
+    test -n "$num"; and set arg $num
+    set -a doc_hits "[map] $p[2] §$p[3]  (ref $p[2] '$arg')"
 end
-if test (count $doc_hits) -gt 8
-    set -l extra (math (count $doc_hits) - 8)
-    set doc_hits $doc_hits[1..8] "[doc] (+$extra more headings — grep '^#' references/*.md)"
+if test (count $map_all) -gt 6
+    set -a doc_hits "[map] (+"(math (count $map_all) - 6)" more — ref --grep '$query')"
 end
 
 test (count $rule_hits $gloss_hits $kw_hits $mtr_hits $doc_hits) -gt 0

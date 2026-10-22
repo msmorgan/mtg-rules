@@ -1,12 +1,17 @@
 #!/usr/bin/env fish
 # define <term> — look up a term in the CR glossary, then the unofficial glossary.
+# When the entry points at a specific rule ("See rule 700.4.", "See rules 510.1c-d"),
+# the first such rule's text follows as one "→" line, clipped (a bare section
+# reference such as "See rule 707" is skipped: the entry already names the
+# section, and `rule 707` prints all of it).
 
 source (path resolve (status dirname))/lib.fish; or exit 1
+set -l selfdir (path resolve (status dirname))
 
 test (count $argv) -ge 1; or die "usage: define <term>"
 set -l term (string lower -- "$argv")
 
-jq -r --arg t $term --slurpfile unof $rules_dir/unofficial-glossary.json '
+set -l out (jq -r --arg t $term --slurpfile unof $rules_dir/unofficial-glossary.json '
     def norm: gsub("’"; "\'") | gsub("[“”]"; "\"") | gsub("—"; "--");
     . as $g | $unof[0] as $u
     | ($t | norm) as $q
@@ -21,4 +26,24 @@ jq -r --arg t $term --slurpfile unof $rules_dir/unofficial-glossary.json '
            else "define: no glossary entry for \"\($t)\"\n" end)
         | halt_error(1)
       end
-' $rules_dir/glossary.json
+' $rules_dir/glossary.json)
+set -l jq_status $status
+test $jq_status -eq 0; or exit $jq_status
+printf '%s\n' $out
+
+# Entry points at a numbered rule: show the first one — its own text only,
+# clipped at 500 characters — and point at `rule` for subrules or the rest.
+set -l ref (string match -r 'See rules? ([0-9]{3}[.][0-9]+[a-z]*)' -- (string join ' ' -- $out))
+if test (count $ref) -eq 2
+    set -l ruletext ($selfdir/rule $ref[2] 2>/dev/null)
+    if test (count $ruletext) -gt 0
+        set -l first $ruletext[1]
+        set -l rest (count $ruletext)
+        if test (string length -- $first) -gt 500
+            set first (string sub -l 500 -- $first | string trim -r)"…"
+            set rest 2
+        end
+        echo "→ $first"
+        test $rest -gt 1; and echo "  (scripts/rule $ref[2] for the rest)"
+    end
+end
