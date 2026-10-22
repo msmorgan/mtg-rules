@@ -1877,8 +1877,7 @@ or, when participation varies:
 
 > Then each player who searched a library this way shuffles.
 
-The Vintage corpus uses `shuffle your deck` only on three Draft Matters cards,
-all in this pregame template:
+Use `shuffle your deck` only in the pregame template:
 
 > Before you shuffle your deck to start the game, [effect].
 
