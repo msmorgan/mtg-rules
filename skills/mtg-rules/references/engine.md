@@ -1,6 +1,6 @@
 # Engine Sketch — Pseudo-code Model and the Damage Pipeline
 
-*Synthesized from the Comprehensive Rules effective 2026-08-07
+*Synthesized from the Comprehensive Rules effective 2026-09-25
 (`data/rules/cr.json`).*
 
 Read alongside `generalizations.md` — its 12 engine modeling directives prescribe which operations to model as parameterized records.
@@ -19,16 +19,21 @@ class Game:                                # see state.md §1, §8
     active_player: Player                  # whose turn it is (102.1)
     phase, step: Enum                      # five phases, ordered steps (500.1)
     priority_holder: Player|None           # may act now (117.1)
-    extra_turn_queue: Stack[Turn]          # added one at a time, taken LIFO,
-                                           # most-recent first; APNAP if many (500.7)
+    extra_turn_queue: Stack[Turn]          # extra turns are added directly after the specified
+                                           # turn, one at a time, APNAP if many, most recently
+                                           # created first (500.7). A global LIFO stack is an
+                                           # ENGINE SIMPLIFICATION: valid only while every grant
+                                           # is "after this one" (Emrakul, the Promised End
+                                           # anchors to the controlled turn, 723.1b)
     pending_skips: Map[occurrence, int]    # "skip" = replacement (614.10);
-                                           # COUNT them — two skips skip two (614.10a)
+                                           # COUNT them — two skips skip two (614.10a);
+                                           # consumes the next turn taken, extra or not (614.10a)
     zones: battlefield, exile, command,    # shared zones (400.1); per-player
-           stack                           #   library/hand/graveyard live on Player
+           stack, [ante if used]           #   library/hand/graveyard live on Player
     stack: Stack[StackObject]              # LIFO, top resolves first (405.1, 405.2)
     continuous_effects: list[FloatingEffect]   # timestamp-ordered (613.7); see effects.md
     pending_triggers: list[StackObject]    # triggered, waiting for next priority (603.3)
-    delayed_triggers: list[DelayedTrigger] # persist until their event (603.7)
+    delayed_triggers: list[DelayedTrigger] # once per event unless a stated duration (603.7a-b)
     replacement_usage: per-event set       # each replacement applies once/event (614.5)
     day_night: None|DAY|NIGHT              # game designation; checked in untap (731.1, 502.2)
     monarch: Player|None                   # single-holder designation (725.1)
@@ -40,8 +45,12 @@ class Game:                                # see state.md §1, §8
                                            # None = no active dungeon
     ring_temptation_count: Map[Player, int]  # times the Ring has tempted each player;
                                            # drives which Ring abilities are active (701.54c)
-    attraction_state: Map[Player, AttractionDeck]  # supplementary command-zone deck;
-                                           # unlocked lights track open Attractions (717.2)
+    attraction_deck: Map[Player, ordered face-down pile]  # in the command zone, shuffled
+                                           # at start (717.2, 701.51b)
+    junkyard: Map[Player, face-up pile]    # cards are in the command zone; the pile is not
+                                           # its own zone (717.6, 717.6a)
+    # opened Attractions are ordinary permanents (717.3, 701.51b); lit-up numbers are
+    # printed on the card (717.1), not game state. state.md §8 models both.
     # see designations.md for the full global-flag set (monarch, initiative, ring-bearer, etc.)
 ```
 
@@ -51,11 +60,13 @@ class TurnHistory:                         # see state.md §2 "Per-turn tracked 
     # an event log is REQUIRED. Examples (not exhaustive):
     spells_cast: list[(player, info)]      # storm (702.40a); day/night flip (502.2)
     lands_played: Map[Player, int]         # played vs allowed (305.2a, 305.2b)
-    damage_dealt: Map[(source, recipient), int]  # bloodthirst (702.54a); commander dmg (903.10a)
+    damage_dealt: Map[(source, recipient), int]  # bloodthirst (702.54a)
     attacked_with: ...                     # look-back trigger example (608.2i)
-    descended: int                         # permanent cards to graveyard this turn (700.11)
+    descended: Map[Player, int]            # permanent cards put into that player's graveyard
+                                           # this turn (700.11)
     mana_spent_on_spells: Map[Player, int] # "expend" (700.14)
-    first_card_drawn: Card|None            # miracle (702.94a)
+    cards_drawn: Map[Player, int]          # "the first card you've drawn this turn" = none
+                                           # drawn before it (702.94a)
 ```
 
 ```python
@@ -66,10 +77,19 @@ class Player:                              # see state.md §2
                                            # energy {E} (107.14), ticket {TK} (107.17a)
     library, hand, graveyard: Zone         # per-player zones (400.1); graveyard ordered (400.5)
     max_hand_size: int                     # default 7; excess discarded in cleanup (402.2, 514.1)
-    speed: None|1|2|3|4                    # none until set; max 4; none counts as 0 (702.179b, 702.179e, 702.179f)
+    mana_pool: Multiset[ManaUnit]          # per player (106.4); by default empties as each
+                                           # step/phase ends (500.5, 703.4q) unless a unit's
+                                           # persistence overrides it (702.189a); unit shape
+                                           # in mana.md
+    speed: None|int                        # none until set (702.179b); reads 0 when none
+                                           # (702.179f); max speed = exactly 4 (702.179e); 1-4 is
+                                           # the observed range (702.179d caps only the inherent
+                                           # trigger), not a CR bound
     designations: set                      # city's blessing (702.131c); monarch/initiative held on Game
     commander_tax: Map[cmdr, int]          # +{2} per prior cast from command zone (903.8)
-    commander_damage: Map[cmdr, int]       # 21+ from one commander loses (903.10a)
+    commander_damage: Map[cmdr, int]       # 21+ COMBAT damage from one commander over the game
+                                           # loses; SBA (903.10a, 704.6c). Noncombat damage
+                                           # does not count.
 ```
 
 ```python
@@ -86,20 +106,31 @@ class Zone:                                # see state.md §3
 class Permanent(Object):                   # battlefield only (110.1); see state.md §6
     base: card|token_def|copy_snapshot     # layer-input for the derived getter (613.1)
     controller: Player                     # only stack/battlefield objects have one (109.4);
-                                           # defaults to who it entered under (110.2)
+                                           # base value = who it entered under (110.2); the value
+                                           # rules read is DERIVED after layer 2 (613.1b), though
+                                           # not a characteristic (109.3)
     owner: Player                          # 108.3; token owner = creator (111.2)
     status: {tapped, flipped, face_down, phased_out}   # closed; not a characteristic (110.5)
     counters: Map[kind, int]               # +1/+1 & -1/-1 annihilate (122.3); loyalty (122.1e);
                                            #   defense (122.1g); shield/stun/finality/keyword (122.1)
-    marked_damage: int                     # lethal if >= toughness (SBA); cleared in cleanup (120.6, 514.2)
+    marked_damage: int                     # lethal if >= toughness (SBA); persists even if it stops
+                                           # being a creature (120.6); removed in cleanup, phased-out
+                                           # permanents included (514.2), on regeneration (120.6,
+                                           # 701.19a-b), and by other effects that remove damage,
+                                           # e.g. umbra armor (702.89a)
     dealt_by_deathtouch_flag: bool         # dealt damage by deathtouch source since last SBA (704.5h)
     attached_to / attachments: ...         # Aura/Equip target; kept clear (400.5)
-    timestamp: int                         # on entry (613.7d); renewed on attach/flip/transform
+    timestamp: int                         # on entry (613.7d); renewed on attach (613.7e, Aura/
+                                           # Equipment/Fortification), turning face up or face down
+                                           # (613.7f), transform/convert (613.7g). Flipping (710)
+                                           # does NOT renew it (inference from the 613.7 enumeration)
     counter_timestamps: Map[kind, int]     # each counter timestamped (613.7c)
     stickers: list[Sticker]               # markers that modify characteristics; each sticker
                                            # gets a new timestamp when placed or when the object
                                            # gets a new timestamp (123.1, 613.7k)
-    controlled_since: turn_marker          # summoning sickness: continuous since last turn began (302.6)
+    controlled_since: turn_marker          # summoning sickness: continuous since last turn began (302.6);
+                                           # any controller change breaks it (engine inference: key
+                                           # to object + post-layer-2 controller)
     class_level: int                       # any permanent can have a level; level-1 default;
                                            #   not copiable (716.2b, 716.2d)
     unlocked_doors: set                    # Room: "left/right half unlocked" designations (709.5c)
@@ -119,7 +150,9 @@ class StackObject:                         # spell or ability on the stack (405.
     characteristics|ability_text           # spells carry the card's chars; abilities only text (405.4)
     controller, source                     # ability lives independently of its source (113.7a);
                                            # trigger controlled by source's controller at trigger time (603.3a)
-    targets: list[(slot, chosen)]          # target count/choices locked at cast (601.2c)
+    targets: list[(slot, chosen)]          # count fixed at announcement (601.2c; 603.3d for
+                                           # triggers); chosen targets mutable via change/choose-new-
+                                           # targets effects (115.7a-e), division fixed (115.7f)
     modes, X, costs_paid                    # casting decisions
 ```
 
@@ -131,14 +164,22 @@ class FloatingEffect:                      # from a resolved spell/ability; see 
                                            #   lock their affected set at start (611.2c)
 
 class DelayedTrigger:                      # see state.md §8
-    text, source, controller               # persists until its trigger event (603.7)
+    text, source, controller               # triggers once, at the next occurrence of its event,
+                                           # unless it has a stated duration, in which case it can
+                                           # trigger each time until the duration ends (603.7b);
+                                           # created at resolution, by an applied replacement
+                                           # effect, or by a static ability permitting an action
+                                           # (603.7a); never triggers on events before its creation
+                                           # (603.7a); source and controller per 603.7d-g
 ```
 
 **Last known information.** When an effect needs info from an object that has
 left its expected public zone, use the object's LKI (608.2h, 113.7a); the SBA
 snapshot is from *before* the batch that removed it (704.8). Deathtouch /
 lifelink / wither / infect on a source that changed zones are read from LKI
-(702.2e, 702.15c, 702.80b, 702.90d). (See state.md §7.)
+(702.2e, 702.15c, 702.80b, 702.90d). The extent of the snapshot (attachments,
+choices, marked damage, "this turn" facts) is CR-underdetermined; see
+`underdetermined.md` UD-9. (See state.md §7.)
 
 ## 2. The damage pipeline (CR 120)
 
@@ -147,7 +188,9 @@ player (120.1); damage can't be dealt to anything else (120.1a). Damage is
 combat (each attacker/blocker deals its power, 120.2a) or effect-based (120.2b).
 
 **A. Propose the event.** Form `{source, recipient, amount}` per recipient
-(combat damage is one simultaneous batch, 510.2). A source dealing 0 deals
+(combat damage is one simultaneous batch per combat damage step, 510.2;
+first/double strike adds a second step and a second batch, 510.4; whether order
+within a batch is observable: UD-12). A source dealing 0 deals
 nothing — no triggers, nothing to replace (120.8). The "source" can be chosen
 even after it left its zone (120.7, 609.7).
 
@@ -157,12 +200,16 @@ replacement (614) and prevention (615) effect; the affected object's
 controller/owner or the affected player chooses one per the 616.1a–f order
 (self-replacement first), APNAP across players; apply it; mark it used for this
 event (614.5, 615.12a); re-collect (some only just became applicable, 616.2)
-until none apply (614.6). Ordering details:
+until none apply (616.1f); the modified event then occurs instead (614.6).
+Ordering details:
 
-- **Excess-redirection effects go first** (120.4a): if an effect says excess
-  damage to a permanent is dealt elsewhere, compute excess (over lethal /
-  loyalty / defense, counting marked damage and simultaneous sources; deathtouch
-  makes anything > 1 excess, 702.2c) and rewrite the event.
+- **Excess-redirection effects go first** (120.4a): if the effect causing the
+  damage says excess damage to a permanent is dealt elsewhere, compute excess
+  (over lethal / loyalty / defense, counting marked damage and simultaneous
+  sources) and rewrite the event. Deathtouch makes any amount > 1 dealt to a
+  creature excess (120.4a; cf. 702.2c for combat assignment). For a permanent
+  with more than one of creature/planeswalker/battle, excess = the greatest
+  per-type amount (120.4a, 120.10).
 - **Then damage is dealt as modified** by replacement/prevention (120.4b); a
   prevention "shield" reduces the amount 1-per-point (615.7), redirection moves
   it to another battle/creature/planeswalker/player (614.9). Abilities that
@@ -171,8 +218,10 @@ until none apply (614.6). Ordering details:
   riders) but prevents nothing and doesn't drain shields (615.12, 615.12a).
 
 **C. Process results per recipient** (120.4c — "as modified by replacement
-effects that interact with the results," e.g. life-loss/counter doublers). Each
-recipient resolves to the 120.3 letters (every letter verified against CR 120):
+effects that interact with the results," e.g. life-loss/counter doublers). Apply
+every row whose condition holds; results are cumulative (120.3 "one or more"). A
+creature planeswalker gets both 120.3c and 120.3e (or 120.3d). Every letter
+verified against CR 120:
 
 | Recipient + source property | Result | CR |
 |---|---|---|
@@ -182,12 +231,13 @@ recipient resolves to the 120.3 letters (every letter verified against CR 120):
 | Creature, source with wither and/or infect | controller puts that many -1/-1 counters on it | 120.3d |
 | Creature, source with neither | mark that much damage on it | 120.3e |
 | Battle | remove that many defense counters | 120.3h |
-| (any) source with lifelink | controller gains that much life, in addition; multiple simultaneous lifelink sources produce **separate** life-gain events, so "whenever you gain life" triggers count per source (120.3f, 702.15e) |
+| (any) source with lifelink | source's controller (or owner if it has no controller) gains that much life, in addition; multiple simultaneous lifelink sources produce **separate** life-gain events, so "whenever you gain life" triggers count per source (120.3f, 702.15b, 702.15e) |
 | Player, combat damage from a creature with toxic | give poison = total toxic value, in addition | 120.3g |
 
 Life loss/gain then adjusts the life total (119.3); damage to a player
 *normally* is loss (119.2), but infect routes to poison instead (702.90b).
-Marked damage persists till cleanup and is lethal at >= toughness (120.6).
+Marked damage persists until removed (cleanup, regeneration, or a removal
+effect; 120.6, 514.2, 702.89a) and is lethal at >= toughness (120.6).
 Wither/infect to a creature are -1/-1 counters, never marked damage
 (702.80a, 702.90c). The `dealt_by_deathtouch_flag` is what the deathtouch SBA
 later reads (702.2b, 704.5h) — deathtouch is a *flag at deal time*, not a result.
@@ -195,15 +245,24 @@ later reads (702.2b, 704.5h) — deathtouch is a *flag at deal time*, not a resu
 **D. The damage event occurs** (120.4d). Only now do the results (life change,
 counters, marked damage) actually happen — the whole of A–C built up a modified
 event that fires atomically here. Combat damage is dealt simultaneously as one
-event (120.2a via 510.2). See the two worked examples in CR 120.4d (Boon
-Reflection / wither+lifelink, and Awe Strike / Worship).
+event per combat damage step (510.2, 510.4). See the two worked examples in CR
+120.4d (Boon Reflection / wither+lifelink, and Awe Strike / Worship).
 
 **After.** Damage does not destroy (120.5); destruction is an SBA. So the
-priority handshake (below) runs the SBA fixpoint — lethal marked damage (704.5g),
-the deathtouch flag (704.5h), 0-loyalty planeswalkers (704.5i), 0-defense
-Sieges/non-Sieges (704.5v–w) — and only then do the damage triggers from step B reach the
-stack. Excess-damage trigger conditions read the amount over lethal/loyalty/
-defense computed at deal time (120.10).
+priority handshake (below) runs the SBA fixpoint. The damage-relevant SBAs are:
+0 or less life (704.5a), 10+ poison (704.5c; 15+ per team in 2HG, 704.6b),
+toughness 0 or less, e.g. from wither/infect -1/-1 counters, with no
+regeneration (704.5f), +1/+1 and -1/-1 counter annihilation (704.5q), lethal
+marked damage (704.5g), deathtouch (704.5h), 0 loyalty (704.5i), a non-Siege
+battle at 0 defense (704.5w), a Siege at 0 defense only if it isn't the source
+of a triggered ability that hasn't yet left the stack (704.5v), and commander
+combat damage (704.6c). The full list is in actions.md §3. Only then do the
+damage triggers from step B reach the stack. Excess-damage trigger conditions
+read the amount over lethal/loyalty/defense computed at deal time (120.10); for
+a permanent with more than one of creature/planeswalker/battle, that is the
+greatest per-type amount (120.4a, 120.10). A trigger keyed to specific sources
+reads "damage dealt" from those sources only, not from the whole simultaneous
+batch (120.9).
 
 ## 3. The main loop
 
