@@ -7,8 +7,10 @@ re-run your alignment pass against the new taxonomy and data before
 re-pinning. Taxonomy-meaning changes (reclassifications, primitive
 mints/retirements, notation changes) are always called out explicitly.
 
-## Unreleased
+## 1.12.0 — 2026-10-22
 
+- **Runtime is standard-library Python.** Host manifests now invoke Python
+  launchers. No taxonomy, CR-data, or data-ABI change.
 - Port every remaining runtime lookup and bootstrap/card hook to shared
   standard-library Python modules and thin launchers, following jj-sensei.
   Remove runtime fish, rg, jq, sha256sum, curl, xz and sqlite3 CLI dependencies.
@@ -29,6 +31,14 @@ mints/retirements, notation changes) are always called out explicitly.
   HTML fallbacks. Repository base-data refresh uses the same implementation.
 - Add fixtures mapped to all 33 deckmaste.rs citation tests, documenting the
   deliberate exemption-contract differences, plus plugin regression tests.
+- Review fixes:
+  - interactive `cite audit --diff` falls back to `git diff`;
+  - the exemption lexer skips Rust lifetimes and zero-hash raw strings;
+  - `cite context` accepts dotted `coverage.out_of_scope` prefixes;
+  - `health` reports the data source discovery actually used;
+  - `setup-data` prints its destination and each download URL.
+- `oracle-style.md`: the "shuffle your deck" guidance is reworded in the
+  guide's own voice.
 
 ## 1.11.0 — 2026-10-21
 
