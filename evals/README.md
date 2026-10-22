@@ -33,8 +33,13 @@ The `--answer-probe` mode uses the numbered questions from `probes.json` unchang
 requiring card/rule lookups and the listed `frame_docs` as observable routes.
 
 Evidence recognition covers literal script paths (optionally run with `fish`
-or after `cd &&`) and explicit reference Read calls. Compound pipelines, shell
-wrappers, and alternative valid routes require manual trace review. Tool success
+or after `cd &&`) and three kinds of reference read: a Read call, a Bash `cat`,
+`sed`, `head`, `tail`, `less`, `rg` or `grep` on one literal doc path
+(`skills/mtg-rules/references/<doc>.md`, absolute or relative, or
+`references/<doc>.md`), and `scripts/ref <doc> [section]` with or without `.md`.
+Only a literal doc path names a doc: globs and directories credit none, and a
+search credits a doc only when it is the command's sole file operand. Compound
+pipelines, shell wrappers, and alternative valid routes require manual trace review. Tool success
 establishes that evidence was obtained; answer correctness still needs semantic
 review. A passing discovery probe is not an answer-quality verdict.
 
@@ -68,7 +73,7 @@ explained.
 ## Probe eval (paid)
 
 Regression eval for the **skill**, not the data: each probe asks a headless
-agent one of the eighteen rulings-check questions with explicit skill instructions and grades the answer
+agent one of the nineteen rulings-check questions with explicit skill instructions and grades the answer
 against the citations and verdicts derived in
 `evals/rulings-check.md`. Run after CR refreshes or reference-doc edits to
 spot missing verdict terms or citations. This test does not measure autonomous
@@ -76,7 +81,7 @@ invocation; use the invocation probes above for discovery and route evidence.
 This directory lives outside the skill's runtime reference tree.
 
 **Cost warning:** every non-`--dry` run is one full `claude -p` agent run
-(skill lookups included). Spot-check single probes; don't loop all 18 casually.
+(skill lookups included). Spot-check single probes; don't loop all 19 casually.
 
 ## Usage
 

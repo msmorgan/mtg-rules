@@ -4,6 +4,7 @@
 import argparse
 import json
 from pathlib import Path
+import re
 import shlex
 import subprocess
 import tempfile
@@ -16,15 +17,28 @@ def is_skill(name):
     return isinstance(name, str) and name.split(":")[-1] == "mtg-rules"
 
 
-def script_commands(command, require_success_boundary=True):
-    """Recognize literal executable positions, excluding echoed paths and comments."""
+# Shell readers whose file operands count as reading a reference doc.
+READ_COMMANDS = {"cat", "sed", "head", "tail", "less", "rg", "grep"}
+SEARCH_COMMANDS = {"rg", "grep"}
+# Search options that take a separate value, so the value is not mistaken for a file.
+SEARCH_VALUE_SHORT = set("efmABCgtT")
+SEARCH_VALUE_LONG = {"--regexp", "--file", "--max-count", "--glob", "--type", "--type-not",
+                     "--include", "--exclude", "--context", "--after-context", "--before-context"}
+# A literal path to one reference doc: absolute or relative under skills/mtg-rules/,
+# or relative to the skill directory. Globs, directories and other paths do not match.
+DOC_OPERAND = re.compile(r"(?:\./)?(?:(?:|.*/)skills/mtg-rules/)?references/([A-Za-z0-9][A-Za-z0-9_-]*\.md)")
+REF_DOC = re.compile(r"([A-Za-z0-9][A-Za-z0-9_-]*)(?:\.md)?")
+
+
+def command_groups(command, require_success_boundary=True):
+    """Split a shell command into simple commands, each a list of tokens."""
     lexer = shlex.shlex(command, posix=True, punctuation_chars=";&|()\n")
     lexer.whitespace = " \t\r"
     lexer.whitespace_split = True
     try:
         tokens = list(lexer)
     except ValueError:
-        return set()
+        return []
     groups = [[]]
     for token in tokens:
         if token and all(c in ";&|()\n" for c in token):
@@ -37,20 +51,73 @@ def script_commands(command, require_success_boundary=True):
     if require_success_boundary and len(groups) == 2 and groups[0][0] == "cd" and "&&" in tokens:
         groups = groups[1:]
     if require_success_boundary and len(groups) != 1:
-        return set()
-    found = set()
-    for group in groups:
-        if not group:
-            continue
-        if Path(group[0]).name == "fish":
+        return []
+    return groups
+
+
+def skill_script(group):
+    """Return (script name, arguments) when the command runs one of this plugin's scripts."""
+    if Path(group[0]).name == "fish":
+        group = group[1:]
+        if group and group[0] == "--no-config":
             group = group[1:]
-            if group and group[0] == "--no-config":
-                group = group[1:]
-        if not group:
-            continue
-        path = group[0].removeprefix("./")
-        if "/skills/mtg-rules/scripts/" in path or path.startswith("skills/mtg-rules/scripts/") or path.startswith("scripts/"):
-            found.add(Path(path).name)
+    if not group:
+        return None
+    path = group[0].removeprefix("./")
+    if "/skills/mtg-rules/scripts/" in path or path.startswith("skills/mtg-rules/scripts/") or path.startswith("scripts/"):
+        return Path(path).name, group[1:]
+    return None
+
+
+def script_commands(command, require_success_boundary=True):
+    """Recognize literal executable positions, excluding echoed paths and comments."""
+    scripts = (skill_script(g) for g in command_groups(command, require_success_boundary))
+    return {script[0] for script in scripts if script}
+
+
+def search_operands(args):
+    """Operands of grep or rg after the pattern; a pattern from -e or -f leaves them all."""
+    operands, has_pattern, tokens = [], False, iter(args)
+    for arg in tokens:
+        if arg == "--":
+            operands.extend(tokens)
+        elif arg.startswith("--"):
+            name = arg.split("=")[0]
+            has_pattern |= name in ("--regexp", "--file")
+            if name in SEARCH_VALUE_LONG and "=" not in arg:
+                next(tokens, None)
+        elif arg.startswith("-") and len(arg) > 1:
+            for i, flag in enumerate(arg[1:], 1):
+                if flag in SEARCH_VALUE_SHORT:
+                    has_pattern |= flag in "ef"
+                    if i == len(arg) - 1:
+                        next(tokens, None)
+                    break
+        else:
+            operands.append(arg)
+    return operands if has_pattern else operands[1:]
+
+
+def doc_reads(command, require_success_boundary=True):
+    """Reference docs a Bash command reads by name: a reader on one literal doc path,
+    or `ref <doc>`. Globs and directories name no specific doc. A search names a doc
+    only as its sole file operand, since matches need not come from every file."""
+    found = set()
+    for group in command_groups(command, require_success_boundary):
+        script = skill_script(group)
+        if script:
+            name, args = script
+            match = REF_DOC.fullmatch(args[0]) if name == "ref" and args else None
+            if match:
+                found.add(match[1] + ".md")
+        elif Path(group[0]).name in READ_COMMANDS:
+            command_name, args = Path(group[0]).name, group[1:]
+            if command_name in SEARCH_COMMANDS:
+                operands = search_operands(args)
+                operands = operands if len(operands) == 1 else []
+            else:
+                operands = [a for a in args if not a.startswith("-")]
+            found.update(m[1] for m in map(DOC_OPERAND.fullmatch, operands) if m)
     return found
 
 
@@ -82,20 +149,22 @@ def grade(probe, events):
                                         or path == "skills/mtg-rules/SKILL.md"))
                 commands = script_commands(args.get("command", "")) if name == "Bash" else set()
                 command_attempts = script_commands(args.get("command", ""), False) if name == "Bash" else set()
-                doc = None
+                read_docs = doc_attempts = set()
                 if name == "Read" and ("/skills/mtg-rules/references/" in path
                                        or path.startswith("skills/mtg-rules/references/")):
-                    doc = Path(path).name
-                attempted |= bool(skill_load or command_attempts or doc)
-                pending[block["id"]] = (skill_load, commands, doc)
+                    read_docs = doc_attempts = {Path(path).name}
+                elif name == "Bash":
+                    read_docs = doc_reads(args.get("command", ""))
+                    doc_attempts = doc_reads(args.get("command", ""), False)
+                attempted |= bool(skill_load or command_attempts or doc_attempts)
+                pending[block["id"]] = (skill_load, commands, read_docs)
             elif block.get("type") == "tool_result":
                 action = pending.pop(block.get("tool_use_id"), None)
                 if action and not block.get("is_error", False) and block.get("content"):
-                    skill_load, commands, doc = action
+                    skill_load, commands, read_docs = action
                     loaded |= skill_load
                     scripts.update(commands)
-                    if doc:
-                        docs.add(doc)
+                    docs.update(read_docs)
     failures = []
     if not available:
         failures.append("INCONCLUSIVE: init event does not advertise mtg-rules")

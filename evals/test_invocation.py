@@ -2,7 +2,7 @@
 
 import unittest
 
-from invocation import grade, script_commands
+from invocation import doc_reads, grade, script_commands
 
 
 POSITIVE = {"invoke": True, "scripts": ["rule"], "docs": ["state.md"]}
@@ -70,6 +70,83 @@ class EvidenceTests(unittest.TestCase):
             self.assertEqual(script_commands(command), set(), command)
         self.assertEqual(script_commands('fish "/plugin/skills/mtg-rules/scripts/rule" 400.7'), {"rule"})
         self.assertEqual(script_commands("cd /plugin/skills/mtg-rules && scripts/rule 400.7"), {"rule"})
+
+
+    def test_shell_reads_credit_the_named_doc(self):
+        refs = "/plugin/skills/mtg-rules/references/state.md"
+        for command in [f"cat {refs}", f"sed -n '1,40p' {refs}", f"head -n 30 {refs}",
+                        f"tail -20 {refs}", f"less {refs}", f"grep -n 'zone' {refs}",
+                        f"rg -i -e zone -e object {refs}", f"rg --glob '*.md' zone {refs}",
+                        f"grep -A 3 -m 2 zone {refs}", f"grep -ne zone {refs}",
+                        "cat skills/mtg-rules/references/state.md",
+                        "cat ./skills/mtg-rules/references/state.md",
+                        "cat references/state.md", "cat ./references/state.md",
+                        "/usr/bin/cat references/state.md", "head -5 -- references/state.md",
+                        "cd /plugin/skills/mtg-rules && sed -n '1,9p' references/state.md"]:
+            self.assertEqual(doc_reads(command), {"state.md"}, command)
+        self.assertEqual(doc_reads("cat references/state.md references/turn.md"),
+                         {"state.md", "turn.md"})
+
+    def test_ref_script_credits_the_named_doc(self):
+        for command in ["/plugin/skills/mtg-rules/scripts/ref state", "scripts/ref state.md",
+                        "skills/mtg-rules/scripts/ref state 'Zone changes'",
+                        "./scripts/ref state.md zones", 'fish "/plugin/skills/mtg-rules/scripts/ref" state',
+                        "cd /plugin/skills/mtg-rules && scripts/ref state"]:
+            self.assertEqual(doc_reads(command), {"state.md"}, command)
+        self.assertEqual(script_commands("scripts/ref state"), {"ref"})
+        for command in ["ref state", "echo scripts/ref state", "scripts/ref", "scripts/ref --list",
+                        "scripts/ref ../state", "scripts/ref references/state.md", "scripts/ref state; true"]:
+            self.assertEqual(doc_reads(command), set(), command)
+
+    def test_broad_or_unrelated_shell_reads_name_no_doc(self):
+        for command in ["grep -rn zone skills/mtg-rules/references",
+                        "grep -rn zone skills/mtg-rules/references/",
+                        "grep -n zone skills/mtg-rules/references/*.md",
+                        "rg zone skills/mtg-rules/references/", "cat references/*.md",
+                        "cat skills/mtg-rules/references/s*.md", "cat references/{state,turn}.md",
+                        "grep zone references/state.md references/turn.md",
+                        "rg zone references/state.md references/",
+                        "grep references/state.md notes.txt", "rg -g 'references/state.md' zone",
+                        "cat /other/references/state.md", "cat /other/state.md", "cat state.md",
+                        "cat references/sub/state.md", "cat references/state.txt",
+                        "cat skills/mtg-rules/SKILL.md", "ls skills/mtg-rules/references",
+                        "echo references/state.md", "# cat references/state.md",
+                        "wc -l references/state.md", "cat references/state.md | head",
+                        "cat references/state.md; true", "bash -c 'cat references/state.md'"]:
+            self.assertEqual(doc_reads(command), set(), command)
+
+    def test_shell_read_is_evidence_only_after_success(self):
+        trace = [INIT] + action("Skill", {"skill": "mtg-rules:mtg-rules"}) + action(
+            "Bash", {"command": "/plugin/skills/mtg-rules/scripts/rule 400.7"}) + action(
+            "Bash", {"command": "sed -n '1,40p' references/state.md"}) + [FINAL]
+        self.assertEqual(grade(POSITIVE, trace), [])
+        trace[6]["message"]["content"][0]["is_error"] = True
+        self.assertEqual(grade(POSITIVE, trace), ["missing successful reference read: state.md"])
+        trace[6]["message"]["content"][0].update(is_error=False, content="")
+        self.assertEqual(grade(POSITIVE, trace), ["missing successful reference read: state.md"])
+
+    def test_ref_script_satisfies_doc_and_script_routes(self):
+        trace = [INIT] + action("Skill", {"skill": "mtg-rules:mtg-rules"}) + action(
+            "Bash", {"command": "/plugin/skills/mtg-rules/scripts/ref state 'Zone changes'"}) + [FINAL]
+        self.assertEqual(grade({**POSITIVE, "scripts": ["ref"]}, trace), [])
+        self.assertEqual(grade(POSITIVE, trace), ["missing successful script: rule"])
+        self.assertEqual(grade({**POSITIVE, "docs": ["turn.md"]}, trace),
+                         ["missing successful script: rule", "missing successful reference read: turn.md"])
+
+    def test_directory_grep_does_not_satisfy_doc_route(self):
+        trace = self.trace()
+        trace[5] = action("Bash", {"command": "grep -rn zone /plugin/skills/mtg-rules/references"})[0]
+        trace[6] = action("Bash", {"command": "grep -rn zone /plugin/skills/mtg-rules/references"})[1]
+        self.assertEqual(grade(POSITIVE, trace), ["missing successful reference read: state.md"])
+
+    def test_negative_rejects_shell_reference_read_attempts(self):
+        for command in ["cat references/state.md", "grep zone skills/mtg-rules/references/state.md",
+                        "cat references/state.md; true", "cat references/state.md | head",
+                        "scripts/ref state"]:
+            trace = [INIT] + action("Bash", {"command": command}, error=True) + [FINAL]
+            self.assertEqual(grade(NEGATIVE, trace), ["unexpected MTG skill activity"], command)
+        trace = [INIT] + action("Bash", {"command": "cat notes/state.md"}) + [FINAL]
+        self.assertEqual(grade(NEGATIVE, trace), [])
 
 
 if __name__ == "__main__":
